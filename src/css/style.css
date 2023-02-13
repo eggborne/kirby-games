@@ -1,0 +1,92 @@
+:root {
+  --actual-height: 100vh;
+}
+
+*, * *, * * * {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+  image-rendering: pixelated;
+  width: 100%;
+  height: var(--actual-height);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  overflow: hidden;
+  background: orange;
+}
+
+.hidden {
+  transition: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+#game-select {
+  background-color: #aaa;
+  flex-grow: 1;
+  transition: opacity 300ms ease;
+}
+
+.game-selection {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#quick-draw-logo {
+  background-image: url("../media/images/qdlogo.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 4rem;
+  width: calc(4rem * (205/50));
+  border-image-source: url("../media/images/qdborder.png");
+  border-image-slice: 33.3% 33.3% 33.3% 33.3%;
+  border-image-width: calc(4rem * 0.32);
+  border-image-outset: 0 calc(4rem * 0.32);
+  border-image-repeat: stretch stretch;
+  border-style: solid;
+}
+
+#quick-draw {
+  width: 100vw;
+  flex-grow: 1;
+  background: rgb(57, 77, 52);
+  display: flex;
+  flex-direction: column;
+  transition: opacity 300ms ease;
+}
+
+#quick-draw-screen {
+  width: 100vw;
+  height: calc(100vw / (16/14));
+  background-image: url("../media/images/quickdrawbg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#quick-draw-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+#quick-draw-button {
+  border-radius: 50%;
+  background-color: red;
+  color: #ddd;
+  font-size: 5rem;
+  font-weight: bold;
+  width: 50vw;
+  height: 50vw;
+}
+

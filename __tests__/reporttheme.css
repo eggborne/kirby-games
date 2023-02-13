@@ -1,0 +1,299 @@
+html,
+body {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  background-color: #222;
+  color: #333;
+}
+
+*,
+* *,
+* * * {
+  box-sizing: border-box;
+  text-shadow: 1px 1px 2px #000000;
+}
+
+body {
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+#jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+}
+
+#title {
+  margin: 0;
+  flex-grow: 1;
+  color: green;
+}
+
+#logo {
+  height: 4rem;
+}
+
+#timestamp {
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(161, 204, 155);
+  margin-top: 0.5rem;
+}
+
+/** SUMMARY */
+#summary {
+  color: rgb(0, 0, 0);
+  margin: 2rem 0;
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+#summary>div {
+  margin-right: 2rem;
+  background: rgba(78, 78, 78, 0.446);
+  color: rgb(255, 255, 255);
+  padding: 1rem;
+  min-width: 15rem;
+}
+
+#summary>div {
+  display: none;
+}
+
+#summary>div:last-child {
+  margin-right: 0;
+  margin-top: 0;
+}
+
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+
+  #summary>div {
+    margin-right: 0;
+    margin-top: 2rem;
+  }
+
+  #summary>div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.summary-passed {
+  color: #4f8a106b;
+  border-left: 0.4rem solid #4f8a10;
+  padding-left: 0.5rem;
+}
+
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: #d8000b83;
+  border-left: 0.4rem solid #d8000c;
+  padding-left: 0.5rem;
+}
+
+.summary-pending {
+  color: #9f5f0078;
+  border-left: 0.4rem solid #9f6000;
+  padding-left: 0.5rem;
+}
+
+.summary-empty {
+  color: rgba(168, 168, 168, 0.406);
+  border-left: 0.4rem solid #999;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
+.test-result:last-child {
+  border: 0;
+}
+
+.test-result.passed {
+  background-color: #dff2bf26;
+  color: #98e24a;
+}
+
+.test-result.failed {
+  background-color: #ffbaba2d;
+  color: #fd878d;
+}
+
+.test-result.pending {
+  background-color: #ffdf617a;
+  color: #9f6000;
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.test-suitename {
+  flex-grow: 1;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+  font-size: 1.1rem;
+  padding-right: 1rem;
+}
+
+.test-title {
+  width: 30%;
+  text-align: left;
+  font-style: italic;
+}
+
+.test-status {
+  width: 20%;
+  text-align: right;
+  display: none;
+}
+
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.failureMessages {
+  font-size: 0.9rem;
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #d8000c;
+}
+
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 2rem;
+}
+
+.suite-info {
+  padding: 1rem;
+  background-color: rgb(119, 119, 119);
+  color: rgb(255, 255, 255);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.suite-info .suite-time {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.75rem;
+}
+
+.suite-info .suite-time.warn {
+  background-color: #d8000c;
+  color: #fff;
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: #d5d5be;
+  width: 100%;
+}
+
+.suite-consolelog-header {
+  font-weight: bold;
+}
+
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-consolelog-item-origin {
+  color: rgb(191, 191, 191);
+  font-weight: bold;
+  font-size: 1rem;
+  text-shadow: none;
+  padding: 1rem;
+  width: 100%;
+  background-color: #00000077;
+}
+
+.suite-consolelog-item-message {
+  color: #000;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+  text-shadow: none;
+  width: 100%;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: #ffbaba;
+  color: #d8000c;
+}
+
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-obsolete-snapshots-item-message {
+  color: #000;
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
