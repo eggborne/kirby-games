@@ -1,5 +1,7 @@
 :root {
   --actual-height: 100vh;
+  --game-screen-width: 100vw;
+  --game-screen-height: calc(var(--game-screen-width) / (16/14));
 }
 
 *, * *, * * * {
@@ -64,12 +66,14 @@ body {
 }
 
 #quick-draw-screen {
+  position: relative;
   width: 100vw;
-  height: calc(100vw / (16/14));
-  background-image: url("../media/images/quickdrawbg.png");
+  height: var(--game-screen-height);
+  background-image: url(../media/images/quickdrawbg.png);
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: top center;
+  overflow: hidden;
 }
 
 #quick-draw-controls {
@@ -88,5 +92,138 @@ body {
   font-weight: bold;
   width: 50vw;
   height: 50vw;
+}
+
+.fighter {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform-origin: 80% 80%;
+  transition: translate 300ms ease;;
+}
+
+#kirby {
+  width: calc(var(--game-screen-height) * 0.45);
+  height: calc(var(--game-screen-height) * 0.45);
+  left:  calc(var(--game-screen-height) * 0.03);
+  bottom:  calc(var(--game-screen-height) / 10);
+}
+
+#enemy {
+  height: calc(var(--game-screen-height) * 0.6);
+  width: calc((var(--game-screen-height) * 0.6) / (96/128));
+  left:  unset;
+  right: calc(var(--game-screen-height) / 18);
+  bottom:  calc(var(--game-screen-height) / 2.2);
+  display: none;
+}
+
+body:not(.round-started) #kirby {
+  translate: calc(var(--game-screen-height) * -0.5) 0;
+}
+
+body:not(.round-started) #enemy {
+  translate: 100% 0;
+}
+
+#quick-draw.kirby-attacking #enemy {
+  animation: fly-off-right 800ms linear forwards;
+}
+
+#quick-draw.time-up #kirby {
+  animation: fly-off-left 400ms linear forwards;
+}
+
+#exclamation-point {
+  position: absolute;
+  background-image: url(../media/images/exclamationpointfilled.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: calc(var(--game-screen-height) * 0.3125);
+  height: calc(var(--game-screen-height) * 0.3125);
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  opacity: 0;
+  scale: 0.7;
+  transition: opacity 200ms ease, scale 200ms ease;
+  animation: flash 60ms linear infinite;
+}
+
+#quick-draw.called #exclamation-point {
+  opacity: 1;
+  scale: 1;
+}
+
+#score-post {
+  position: absolute;
+  bottom: 0;
+  right: calc(var(--game-screen-height) / 40);
+  width: calc(var(--game-screen-height) / 4);
+  height: calc(var(--game-screen-height) / 4);
+  background-image: url(../media/images/scorepost.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 0.5%;
+  translate: 0 100%;
+  transition: translate 500ms ease;
+}
+
+#score-post.showing {
+  translate: none;
+}
+
+.score-numeral {
+  width: calc(var(--game-screen-height) * 0.05625);
+  height: calc(var(--game-screen-height) * 0.05625 * (16/9));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left;
+}
+
+@keyframes flash {
+  from {
+    background-image: url(../media/images/exclamationpointfilled.png);
+  }
+  to {
+    background-image: url(../media/images/exclamationpoint.png);
+  }
+}
+
+@keyframes fly-off-right {
+  from {
+    translate: 0;
+    rotate: 0;
+    scale: 1;
+  }
+  50% {
+    translate: 5% -80%;
+    scale: 0.75;
+  }
+  to {
+    translate: -10% 0;
+    rotate: 430deg;
+    scale: 0.2;
+  }
+}
+
+@keyframes fly-off-left {
+  from {
+    translate: 0;
+    rotate: 0;
+    scale: 1;
+  }
+  50% {
+    translate: -5% -60%;
+    scale: 1.05;
+  }
+  to {
+    translate: -40% -20%;
+    rotate: -180deg;
+    scale: 1.1;
+  }
 }
 
