@@ -71,6 +71,7 @@ export default class QuickDrawGame {
       this.printScore(currentScore);
     }, 5);
     await pause(this.attacker.drawSpeed);
+    // if player clicked A phase won't be 'called'
     if (this.phase === 'called') {
       clearInterval(this.callInterval);
       this.phase = 'time-up';
@@ -102,10 +103,12 @@ export default class QuickDrawGame {
     });
   }
 
-  handleAButtonClick(e) {
+  async handleAButtonClick(e) {
     this.phase = 'kirby-attacking';
     this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
     document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
     clearInterval(this.callInterval);
+    // await pause(300);
+    // this.phase = 'kirby-won';
   }
 }
