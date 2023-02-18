@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
     document.getElementById('quick-draw-button').addEventListener('pointerdown', e => {
       game.handleAButtonClick(e);
     });
-    game.startRound(1);
+    game.playRound(1);
   });
 });
 

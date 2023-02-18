@@ -75,23 +75,64 @@ body {
   background-position: top center;
   overflow: hidden;
 }
-
 #slash-screen {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: var(--game-screen-height);
-  background-color: #00000099;
+  background-color: #000000;
   z-index: 1;
   display: none;
 }
-
 .slash-mark {
   position: absolute;
-  width: 2rem;
-  height: 50vmin;
-  background-color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transform-origin: center;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: none;
+}
+.slash-mark.showing {
+  display: block;
+}
+.slash-mark::after {
+  content: '';
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  background-color: #000000;
+  /* opacity: 0.5; */
+  transform-origin: right;
+  transform: scaleX(1);
+  transition: transform 80ms linear;
+}
+.slash-mark.revealing::after {
+  transform: scaleX(0);
+}
+.slash-mark:first-child {
+  --height: calc(var(--game-screen-height) * 0.6);
+  height: var(--height);
+  width: calc(var(--height) * (180/96));
+  background-image: url(../media/images/slashmark1.png);
+}
+#center-slash {
+  --height: calc(var(--game-screen-height) * 0.2);
+  height: var(--height);
+  width: calc(var(--height) * (54/32));
+  background-image: url(../media/images/slashcenter.png);
+  animation: blink 2ms linear infinite;
+}
+#center-slash::after {
+  display: none;
+}
+.slash-mark:last-child {
+  --height: calc(var(--game-screen-height) * 0.9);
+  height: var(--height);
+  width: calc(var(--height) / (144/65));
+  background-image: url(../media/images/slashmark2.png);
 }
 
 #quick-draw-controls {
@@ -117,7 +158,7 @@ body {
   background-repeat: no-repeat;
   background-size: contain;
   transform-origin: 80% 80%;
-  transition: translate 300ms ease, left 100ms ease, bottom 100ms ease;
+  transition: translate 300ms ease, left 100ms ease, right 100ms ease, bottom 100ms ease;
 }
 
 #kirby {
@@ -151,6 +192,7 @@ body:not(.round-started) #enemy {
 #quick-draw.kirby-attacking #kirby {
   left:  calc(var(--game-screen-height) * 0.25);
   bottom:  calc(var(--game-screen-height) / 4.5);
+  transition-delay: 335ms;
 }
 
 #quick-draw.time-up #kirby {
@@ -158,8 +200,9 @@ body:not(.round-started) #enemy {
 }
 
 #quick-draw.time-up #enemy {
-  right: calc(var(--game-screen-height) / 18);
-  bottom:  calc(var(--game-screen-height) / 2.2);
+  right: calc(var(--game-screen-height) / 6);
+  bottom:  calc(var(--game-screen-height) / 3.5);
+  transition-delay: 335ms;
 }
 
 #exclamation-point {
@@ -218,6 +261,15 @@ body:not(.round-started) #enemy {
   }
   to {
     background-image: url(../media/images/exclamationpoint.png);
+  }
+}
+
+@keyframes blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
