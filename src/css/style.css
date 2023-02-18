@@ -167,10 +167,34 @@ body {
   border-radius: 50%;
   background-color: red;
   color: #ddd;
-  font-size: 5rem;
   font-weight: bold;
   width: 50vw;
   height: 50vw;
+}
+
+#quick-draw.waiting #quick-draw-button::after {
+  content: 'NOT YET';
+  font-size: 2rem;
+}
+
+#quick-draw.called #quick-draw-button::after {
+  content: 'DRAW!';
+  font-size: 2.5rem;
+}
+
+#quick-draw.time-up #quick-draw-button::after {
+  content: 'TOO SLOW';
+  font-size: 1.5rem;
+}
+
+#quick-draw.fouled #quick-draw-button,
+#quick-draw.time-up #quick-draw-button {
+  pointer-events: none;
+  background-color: rgb(150, 82, 82);
+}
+#quick-draw.fouled #quick-draw-button::after {
+  content: 'FOUL';
+  font-size: 1.5rem;
 }
 
 .fighter {

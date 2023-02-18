@@ -24,7 +24,7 @@ export default class QuickDrawGame {
       {
         name: 'eyeballman',
         drawSpeed: 800,
-        suspenseTime: { min: 1500, max: 2500 },
+        suspenseTime: { min: 2000, max: 2500 },
       },
       {
         name: 'wheelbro',
@@ -34,7 +34,7 @@ export default class QuickDrawGame {
       {
         name: 'fishchef',
         drawSpeed: 300,
-        suspenseTime: { min: 1500, max: 7000 },
+        suspenseTime: { min: 3000, max: 7000 },
       },
       {
         name: 'dedede',
