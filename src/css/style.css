@@ -65,9 +65,14 @@ body {
   transition: opacity 300ms ease;
 }
 
+#quick-draw.resetting * {
+  outline: 2px solid red !important;
+  transition-duration: 0ms !important;
+}
+
 #quick-draw-screen {
   position: relative;
-  width: 100vw;
+  width: var(--game-screen-width);
   height: var(--game-screen-height);
   background-image: url(../media/images/quickdrawbg.png);
   background-repeat: no-repeat;
@@ -75,11 +80,26 @@ body {
   background-position: top center;
   overflow: hidden;
 }
+
+#quick-draw-screen > .veil {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--game-screen-width);
+  height: var(--game-screen-height);
+  background-color: white;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  z-index: 1;
+}
+#quick-draw-screen > .veil.showing {
+  opacity: 1;
+}
 #slash-screen {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: var(--game-screen-width);
   height: var(--game-screen-height);
   background-color: #000000;
   z-index: 1;

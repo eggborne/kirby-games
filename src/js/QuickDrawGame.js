@@ -15,6 +15,7 @@ export default class QuickDrawGame {
     this.level = 0;
     this.attacker;
     this.scorePost = document.getElementById('score-post');
+    this.veil = document.querySelector('#quick-draw-screen > .veil');
     this.calledAt;
 
     this.attackers = [
@@ -47,6 +48,7 @@ export default class QuickDrawGame {
 
     this.kirbyElement = document.getElementById('kirby');
     this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/waiting.png']})`;
+    this.enemyElement = document.getElementById('enemy');
   }
 
   get phase() {
@@ -82,11 +84,21 @@ export default class QuickDrawGame {
     }
   }
 
+  async endRound() {
+    document.body.classList.remove('round-started');
+    this.phase = 'resetting';
+    this.scorePost.classList.remove('showing');
+    this.kirbyElement.classList = ['fighter'];
+    this.enemyElement.classList = ['fighter'];
+    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/waiting.png']})`;
+    await pause(10);
+    this.phase = '';
+  }
+
   loadAttacker(attacker) {
     this.attacker = attacker;
-    let enemyElement = document.getElementById('enemy');
-    enemyElement.style.display = 'block';
-    enemyElement.style.backgroundImage = `url(${images[attacker.name + '/waiting.png']})`;
+    this.enemyElement.style.display = 'block';
+    this.enemyElement.style.backgroundImage = `url(${images[attacker.name + '/waiting.png']})`;
   }
 
   displayScorePost() {
@@ -136,13 +148,21 @@ export default class QuickDrawGame {
   }
 
   async handleAButtonClick(e) {
-    clearInterval(this.callInterval);
-    this.phase = 'kirby-attacking';
-    await this.displaySlashes(90);
-    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
-    document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
-
-    // await pause(300);
-    // this.phase = 'kirby-won';
+    if (this.phase === 'called') {
+      clearInterval(this.callInterval);
+      this.phase = 'kirby-attacking';
+      await this.displaySlashes(90);
+      this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
+      document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
+      await pause(1000);
+      this.veil.classList.add('showing');
+      await pause(600);
+      await this.endRound();
+      await pause(300);
+      this.veil.classList.remove('showing');
+  
+      this.level++;
+      this.playRound(this.level + 1);
+    }
   }
 }
