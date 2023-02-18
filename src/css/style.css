@@ -188,6 +188,29 @@ body {
   bottom:  calc(var(--game-screen-height) / 10);
 }
 
+#kirby::after {
+  content: '';
+  position: absolute;
+  bottom: 35%;
+  right: 20%;
+  --height: calc(var(--game-screen-height) * 0.1);
+  height: var(--height);
+  width: calc(var(--height) * (12/16));
+  background-image: url(../media/images/teardrop.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: none;
+}
+
+#quick-draw.fouled #kirby::after {
+  display: block;
+  animation: drip 1000ms ease forwards;
+}
+
+#quick-draw.fouled #enemy {
+  animation: hop 300ms ease forwards;
+}
+
 #enemy {
   height: calc(var(--game-screen-height) * 0.6);
   width: calc((var(--game-screen-height) * 0.6) / (96/128));
@@ -263,6 +286,20 @@ body:not(.round-started) #enemy {
   transition: translate 500ms ease;
 }
 
+#quick-draw.fouled #score-post::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: calc(var(--game-screen-height) * 0.15);
+  height: calc(var(--game-screen-height) * 0.15);
+  background-image: url(../media/images/xmark.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  rotate: -90deg;
+}
+
 #score-post.showing {
   translate: none;
 }
@@ -327,3 +364,22 @@ body:not(.round-started) #enemy {
   }
 }
 
+@keyframes drip {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--game-screen-height) * 0.08);
+  }
+}
+@keyframes hop {
+  from {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 calc(var(--game-screen-height) * -0.05);
+  }
+  to {
+    translate: 0 0;
+  }
+}

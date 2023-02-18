@@ -1,16 +1,20 @@
 import './css/style.css';
 import QuickDrawGame from './js/QuickDrawGame';
 
+let game;
+
 window.addEventListener('load', () => {
   document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px');
+  if (!game) {
+    game = new QuickDrawGame();
+  }
+  document.getElementById('quick-draw-button').addEventListener('pointerdown', e => {
+    game.handleAButtonClick(e);
+  });
   document.getElementById('quick-draw-selection').addEventListener('click', () => {
     document.getElementById('game-select').classList.add('hidden');
     document.getElementById('quick-draw').classList.remove('hidden');
-    let game = new QuickDrawGame();
-    document.getElementById('quick-draw-button').addEventListener('pointerdown', e => {
-      game.handleAButtonClick(e);
-    });
-    game.playRound(1);
+    game.playRound(0);
   });
 });
 

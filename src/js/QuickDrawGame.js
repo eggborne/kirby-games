@@ -11,12 +11,14 @@ const images = importAll(
 
 export default class QuickDrawGame {
   constructor() {
-    this.score = 0;
+    this.totalScore = 0;
     this.level = 0;
     this.attacker;
     this.scorePost = document.getElementById('score-post');
     this.veil = document.querySelector('#quick-draw-screen > .veil');
     this.calledAt;
+    this.currentRoundTime = 0;
+    this.roundTimes = [];
 
     this.attackers = [
       {
@@ -26,28 +28,28 @@ export default class QuickDrawGame {
       },
       {
         name: 'wheelbro',
-        drawSpeed: 700,
+        drawSpeed: 400,
         suspenseTime: { min: 1500, max: 5000 },
       },
       {
         name: 'fishchef',
-        drawSpeed: 600,
+        drawSpeed: 300,
         suspenseTime: { min: 1500, max: 7000 },
       },
       {
         name: 'dedede',
-        drawSpeed: 500,
+        drawSpeed: 200,
         suspenseTime: { min: 2000, max: 4000 },
       },
       {
         name: 'metaknight',
-        drawSpeed: 200,
+        drawSpeed: 100,
         suspenseTime: { min: 750, max: 9000 },
       },
     ];
 
     this.kirbyElement = document.getElementById('kirby');
-    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/waiting.png']})`;
+    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
     this.enemyElement = document.getElementById('enemy');
   }
 
@@ -60,6 +62,7 @@ export default class QuickDrawGame {
   }
 
   async playRound(roundNumber) {
+    this.phase = 'waiting';
     this.loadAttacker(this.attackers[roundNumber]);
     await pause(100);
     document.body.classList.add('round-started');
@@ -67,32 +70,48 @@ export default class QuickDrawGame {
     this.displayScorePost();
     let suspenseTime = randomInt(this.attacker.suspenseTime.min, this.attacker.suspenseTime.max);
     await pause(suspenseTime);
-    this.calledAt = Date.now();
-    this.phase = 'called';
-    this.callInterval = setInterval(() => {
-      let currentScore = Math.round((Date.now() - this.calledAt) / 50);
-      this.printScore(currentScore);
-    }, 5);
-    await pause(this.attacker.drawSpeed);
-    // if player clicked, phase will be 'kirby-attacking'
-    if (this.phase === 'called') {
-      clearInterval(this.callInterval);
-      this.phase = 'time-up';
-      await this.displaySlashes(90);
-      document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
-      this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
+    if (this.phase === 'waiting') { // if no foul
+      this.calledAt = Date.now();
+      this.phase = 'called';
+      this.callInterval = setInterval(() => {
+        let currentScore = Math.round((Date.now() - this.calledAt) / 50);
+        this.printScore(currentScore);
+        this.currentRoundTime = currentScore;
+      }, 5);
+  
+      await pause(this.attacker.drawSpeed);
+  
+      if (this.phase === 'called') { // if no kirby attack
+        clearInterval(this.callInterval);
+        this.phase = 'time-up';
+        await this.displaySlashes(90);
+        document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
+        this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
+        await pause(2000);
+        this.endGame();
+      }
     }
   }
 
-  async endRound() {
+  async resetForNewRound() {
     document.body.classList.remove('round-started');
     this.phase = 'resetting';
     this.scorePost.classList.remove('showing');
     this.kirbyElement.classList = ['fighter'];
     this.enemyElement.classList = ['fighter'];
-    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/waiting.png']})`;
+    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
     await pause(10);
     this.phase = '';
+  }
+
+  async endGame() {
+    this.veil.classList.add('showing');
+    await pause(600);
+    await this.resetForNewRound();
+    await pause(300);
+    this.veil.classList.remove('showing');
+    document.getElementById('quick-draw').classList.add('hidden');
+    document.getElementById('game-select').classList.remove('hidden');
   }
 
   loadAttacker(attacker) {
@@ -102,7 +121,7 @@ export default class QuickDrawGame {
   }
 
   displayScorePost() {
-    this.printScore(0);
+    this.printScore('00');
     this.scorePost.classList.add('showing');
   }
 
@@ -147,22 +166,36 @@ export default class QuickDrawGame {
     document.getElementById('slash-screen').style.display = 'none';
   }
 
+  async advanceToRound(round) {
+    this.veil.classList.add('showing');
+    await pause(600);
+    await this.resetForNewRound();
+    await pause(300);
+    this.veil.classList.remove('showing');
+    await pause(600);
+    this.playRound(round);
+  }
+
   async handleAButtonClick(e) {
     if (this.phase === 'called') {
+      // Kirby wins
       clearInterval(this.callInterval);
       this.phase = 'kirby-attacking';
       await this.displaySlashes(90);
       this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
       document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
-      await pause(1000);
-      this.veil.classList.add('showing');
-      await pause(600);
-      await this.endRound();
-      await pause(300);
-      this.veil.classList.remove('showing');
-  
+      await pause(1500);
+      console.warn('time is', this.currentRoundTime);
+      this.roundTimes[this.level] = this.currentRoundTime;
       this.level++;
-      this.playRound(this.level + 1);
+      this.advanceToRound(this.level);
+    } else if (this.phase === 'waiting') {
+      // Kirby fouled
+      clearInterval(this.callInterval);
+      this.phase = 'fouled';
+      this.enemyElement.style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
+      await pause(800);
+      this.advanceToRound(this.level);
     }
   }
 }
