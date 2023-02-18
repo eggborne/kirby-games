@@ -11,6 +11,9 @@ window.addEventListener('load', () => {
   document.getElementById('quick-draw-button').addEventListener('pointerdown', e => {
     game.handleAButtonClick(e);
   });
+  document.getElementById('quit-button').addEventListener('click', e => {
+    game.handleQuitButtonClick(e);
+  });
   document.getElementById('quick-draw-selection').addEventListener('click', () => {
     document.getElementById('game-select').classList.add('hidden');
     document.getElementById('quick-draw').classList.remove('hidden');

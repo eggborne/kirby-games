@@ -19,6 +19,7 @@ export default class QuickDrawGame {
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
+    this.lives = 1;
 
     this.attackers = [
       {
@@ -74,10 +75,10 @@ export default class QuickDrawGame {
       this.calledAt = Date.now();
       this.phase = 'called';
       this.callInterval = setInterval(() => {
-        let currentScore = Math.round((Date.now() - this.calledAt) / 50);
+        let currentScore = Math.round((Date.now() - this.calledAt) / 10);
         this.printScore(currentScore);
         this.currentRoundTime = currentScore;
-      }, 5);
+      }, 1);
   
       await pause(this.attacker.drawSpeed);
   
@@ -88,7 +89,11 @@ export default class QuickDrawGame {
         document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
         this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
         await pause(2000);
-        this.endGame();
+        this.lives--;
+        if (this.lives === 0) {
+          this.showScoreScreen();
+        }
+        // this.endGame();
       }
     }
   }
@@ -102,6 +107,23 @@ export default class QuickDrawGame {
     this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
     await pause(10);
     this.phase = '';
+  }
+
+  async showScoreScreen() {
+    this.veil.classList.add('showing');
+    await pause(600);
+    await this.resetForNewRound();
+    await pause(300);
+    document.getElementById('enemy-count-display').innerText = this.level;
+    let fastestTime = this.roundTimes.sort((a, b) => a - b)[0];
+    if (this.level === 0) {
+      document.getElementById('fastest-time').style.opacity = 0;
+    } else {
+      document.getElementById('fastest-time').style.opacity = 1;
+    }
+    document.getElementById('fastest-time-display').innerText = fastestTime;
+    this.veil.classList.remove('showing');
+    this.phase = 'showing-score';
   }
 
   async endGame() {
@@ -137,6 +159,7 @@ export default class QuickDrawGame {
   }
 
   async displaySlashes(speed) {
+    document.getElementById('slash-screen').style.backgroundColor = '#000000';
     document.getElementById('slash-screen').style.display = 'block';
     let slash1 = document.querySelector('.slash-mark:first-child');
     let slash2 = document.querySelector('.slash-mark:last-child');
@@ -159,8 +182,10 @@ export default class QuickDrawGame {
     slash2.classList.remove('showing');
     slash2.classList.remove('revealing');
 
+    document.getElementById('slash-screen').style.backgroundColor = 'transparent';
+
     centerSlash.classList.add('showing');
-    await pause(Math.round(speed * 1.5));
+    await pause(speed);
     centerSlash.classList.remove('showing');
 
     document.getElementById('slash-screen').style.display = 'none';
@@ -169,6 +194,7 @@ export default class QuickDrawGame {
   async advanceToRound(round) {
     this.veil.classList.add('showing');
     await pause(600);
+    this.phase = 'waiting';
     await this.resetForNewRound();
     await pause(300);
     this.veil.classList.remove('showing');
@@ -196,6 +222,14 @@ export default class QuickDrawGame {
       this.enemyElement.style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
       await pause(800);
       this.advanceToRound(this.level);
+    } else if (this.phase === 'showing-score') {
+      // Game is over
+      
+      this.advanceToRound(0);
     }
+  }
+
+  async handleQuitButtonClick() {
+    this.endGame();
   }
 }

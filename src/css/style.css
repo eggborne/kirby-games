@@ -90,12 +90,12 @@ body {
   background-color: white;
   opacity: 0;
   transition: opacity 600ms ease;
-  z-index: 1;
+  z-index: 2;
 }
 #quick-draw-screen > .veil.showing {
   opacity: 1;
 }
-#slash-screen {
+#slash-screen, #score-screen {
   position: absolute;
   top: 0;
   left: 0;
@@ -155,12 +155,36 @@ body {
   background-image: url(../media/images/slashmark2.png);
 }
 
+#score-screen {
+  background-color: transparent;
+  font-size: calc(var(--game-screen-height) * 0.08);
+  color: rgb(60, 38, 17);
+  font-weight: bold;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--game-screen-height) * 0.08) 0;
+  padding-bottom: calc(var(--game-screen-height) * 0.2);
+  display: none;
+  z-index: 1;
+}
+
+#quick-draw.showing-score #score-screen {
+  display: flex;
+}
+
+#enemy-count-display {
+  color: red;
+}
+
 #quick-draw-controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: calc(var(--game-screen-height) * 0.1);
   flex-grow: 1;
+  padding-top: calc(var(--game-screen-height) * 0.2);
 }
 
 #quick-draw-button {
@@ -187,6 +211,11 @@ body {
   font-size: 1.5rem;
 }
 
+#quick-draw.showing-score #quick-draw-button::after {
+  content: 'TRY AGAIN';
+  font-size: 1.5rem;
+}
+
 #quick-draw.fouled #quick-draw-button,
 #quick-draw.time-up #quick-draw-button {
   pointer-events: none;
@@ -195,6 +224,20 @@ body {
 #quick-draw.fouled #quick-draw-button::after {
   content: 'FOUL';
   font-size: 1.5rem;
+}
+
+#quit-button {
+  background-color: rgb(120, 120, 120);
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  display: none;
+}
+
+#quick-draw.showing-score #quit-button {
+  display: block;
 }
 
 .fighter {
@@ -210,6 +253,16 @@ body {
   height: calc(var(--game-screen-height) * 0.45);
   left:  calc(var(--game-screen-height) * 0.03);
   bottom:  calc(var(--game-screen-height) / 10);
+}
+
+#score-kirby {
+  width: calc(var(--game-screen-height) * 0.45);
+  height: calc(var(--game-screen-height) * 0.45);
+  left: 42%;
+  bottom: unset;
+  top: 37%;
+  translate: -50% -50%;
+  background-image: url(../media/images/samuraikirby/waiting.png);
 }
 
 #kirby::after {
@@ -254,22 +307,24 @@ body:not(.round-started) #enemy {
 
 #quick-draw.kirby-attacking #enemy {
   animation: fly-off-right 800ms linear forwards;
+  animation-delay: 200ms
 }
 
 #quick-draw.kirby-attacking #kirby {
   left:  calc(var(--game-screen-height) * 0.25);
   bottom:  calc(var(--game-screen-height) / 4.5);
-  transition-delay: 335ms;
+  transition-delay: 200ms;
 }
 
 #quick-draw.time-up #kirby {
   animation: fly-off-left 400ms linear forwards;
+  animation-delay: 200ms
 }
 
 #quick-draw.time-up #enemy {
   right: calc(var(--game-screen-height) / 6);
   bottom:  calc(var(--game-screen-height) / 3.5);
-  transition-delay: 335ms;
+  transition-delay: 200ms;
 }
 
 #exclamation-point {
