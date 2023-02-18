@@ -63,6 +63,9 @@ export default class QuickDrawGame {
   }
 
   async playRound(roundNumber) {
+    document.getElementById('player-level').innerText = `Level ${roundNumber + 1}`;
+    document.getElementById('player-score').innerText = `${this.totalScore}`;
+
     this.phase = 'waiting';
     this.loadAttacker(this.attackers[roundNumber]);
     await pause(100);
@@ -106,7 +109,8 @@ export default class QuickDrawGame {
     this.enemyElement.classList = ['fighter'];
     this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
     await pause(10);
-    this.phase = '';
+    this.calledAt = 0;
+    this.currentRoundTime = 0;
   }
 
   async showScoreScreen() {
@@ -126,14 +130,23 @@ export default class QuickDrawGame {
     this.phase = 'showing-score';
   }
 
-  async endGame() {
+  async endGame(resetOnly) {
+    this.phase = '';
     this.veil.classList.add('showing');
     await pause(600);
     await this.resetForNewRound();
     await pause(300);
+    this.lives = 1;
+    this.level = 0;
+    this.totalScore = 0;
+    this.roundTimes = [];
     this.veil.classList.remove('showing');
-    document.getElementById('quick-draw').classList.add('hidden');
-    document.getElementById('game-select').classList.remove('hidden');
+    if (!resetOnly) {
+      document.getElementById('quick-draw').classList.add('hidden');
+      document.getElementById('game-select').classList.remove('hidden');
+    } else {
+      this.playRound(0);
+    }
   }
 
   loadAttacker(attacker) {
@@ -213,6 +226,8 @@ export default class QuickDrawGame {
       await pause(1500);
       console.warn('time is', this.currentRoundTime);
       this.roundTimes[this.level] = this.currentRoundTime;
+      this.totalScore += this.currentRoundTime;
+      document.getElementById('player-score').innerText = this.totalScore;
       this.level++;
       this.advanceToRound(this.level);
     } else if (this.phase === 'waiting') {
@@ -225,7 +240,7 @@ export default class QuickDrawGame {
     } else if (this.phase === 'showing-score') {
       // Game is over
       
-      this.advanceToRound(0);
+      this.endGame(true);
     }
   }
 
