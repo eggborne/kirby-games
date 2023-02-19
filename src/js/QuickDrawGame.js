@@ -11,6 +11,7 @@ const images = importAll(
 
 export default class QuickDrawGame {
   constructor() {
+    this.roundStartDelay = 800;
     this.totalScore = 0;
     this.level = 0;
     this.attacker;
@@ -19,7 +20,7 @@ export default class QuickDrawGame {
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
-    this.maxLives = 1;
+    this.maxLives = 3;
     this.lives = this.maxLives;
 
     this.attackers = [
@@ -130,7 +131,6 @@ export default class QuickDrawGame {
       await pause(600);
       await this.resetForNewRound();
       await pause(300);
-      this.updateLivesDisplay();
       this.veil.classList.remove('showing');
       this.playRound(0);
     }
@@ -141,6 +141,7 @@ export default class QuickDrawGame {
     this.level = 0;
     this.totalScore = 0;
     this.roundTimes = [];
+    this.updateLivesDisplay();
   }
 
   loadAttacker(attacker) {
@@ -212,17 +213,16 @@ export default class QuickDrawGame {
     this.phase = 'waiting';
     await this.resetForNewRound();
     await pause(300);
-    this.phase = '';
+    // this.phase = '';
     this.veil.classList.remove('showing');
-    await pause(600);
+    await pause(this.roundStartDelay);
     this.playRound(round);
   }
 
-  async playRound(roundNumber) {
+  async playRound(roundNumber, extraPause=0) {
     await pause(2);
     this.veil.classList.remove('showing');
-    await pause(600);
-    // document.getElementById('player-level').innerText = `Round ${roundNumber + 1}`;
+    await pause(extraPause);
     this.printNumerals((roundNumber + 1), document.getElementById('round-display'), 'white');
     this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
     this.phase = 'waiting';
@@ -234,8 +234,7 @@ export default class QuickDrawGame {
     let suspenseTime = randomInt(this.attacker.suspenseTime.min, this.attacker.suspenseTime.max);
 
     await pause(suspenseTime);
-    // user could foul here...
-
+    // user could foul now...
     if (this.phase === 'waiting') { // but if not, call for the draw
       this.calledAt = Date.now();
       this.phase = 'called';
@@ -246,8 +245,7 @@ export default class QuickDrawGame {
       }, 1);
 
       await pause(this.attacker.drawSpeed);
-      // user needs to click here, or else...
-
+      // user needs to click now, or else...
       if (this.phase === 'called') { // if no kirby attack
         clearInterval(this.callInterval);
         this.phase = 'time-up';
@@ -272,7 +270,6 @@ export default class QuickDrawGame {
 
   updateLivesDisplay() {
     let filledLives = (this.maxLives - this.lives);
-    console.log('filling lives', filledLives);
     let lifeElements = [...document.getElementsByClassName('life-marker')];
     lifeElements.forEach((lifeEl, i) => {
       if (i < filledLives) {
@@ -283,7 +280,7 @@ export default class QuickDrawGame {
     });
   }
 
-  async handleAButtonClick(e) {
+  async handleAButtonClick() {
     if (this.phase === 'called') {
       // Kirby wins
       clearInterval(this.callInterval);
@@ -291,10 +288,8 @@ export default class QuickDrawGame {
       await this.displaySlashes(90);
       this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
       document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
-      // await pause(1500);
-      console.warn('time is', this.currentRoundTime);
       this.roundTimes[this.level] = this.currentRoundTime;
-      let scoreForRound = (this.attacker.drawSpeed - (this.currentRoundTime * 5));
+      let scoreForRound = ((this.attacker.drawSpeed + (this.level * 250)) - (this.currentRoundTime * 5)) * (this.level + 1);
       this.totalScore += scoreForRound;
       document.getElementById('score-change-display').classList.add('showing');
       this.printNumerals(scoreForRound, document.getElementById('score-change-display'), 'green', 1800);
@@ -317,9 +312,7 @@ export default class QuickDrawGame {
       this.printNumerals(penalty, document.getElementById('score-change-display'), 'red', 1200);
       this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
       await this.loseLife(1000);
-      // await pause(800);
       document.getElementById('score-change-display').classList.remove('showing');
-      // this.advanceToRound(this.level);
     } else if (this.phase === 'showing-score') {
       // Game is over, button says 'Try Again'
       this.endGame(true);

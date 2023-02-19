@@ -17,7 +17,7 @@ window.addEventListener('load', () => {
   document.getElementById('quick-draw-selection').addEventListener('click', () => {
     document.getElementById('game-select').classList.add('hidden');
     document.getElementById('quick-draw').classList.remove('hidden');
-    game.playRound(0);
+    game.playRound(0, game.roundStartDelay);
   });
 });
 

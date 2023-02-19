@@ -278,7 +278,7 @@ body {
   justify-content: flex-start;
   gap: calc(var(--game-screen-height) * 0.1);
   flex-grow: 1;
-  padding-top: calc(var(--game-screen-height) * 0.2);
+  padding-top: calc(var(--game-screen-height) / 4);
 }
 
 #quick-draw #quick-draw-button {
@@ -307,7 +307,7 @@ body {
 #quick-draw #quick-draw-button::after
 {
   content: 'NOT YET';
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 #quick-draw.called #quick-draw-button::after {
@@ -336,7 +336,9 @@ body {
 #quick-draw.kirby-attacking #quick-draw-button {
   pointer-events: none;
 }
-#quick-draw.called #quick-draw-button {
+#quick-draw.called #quick-draw-button,
+#quick-draw.showing-score #quick-draw-button
+{
   background-color: red;
 }
 
@@ -405,14 +407,13 @@ body {
   animation: drip 1000ms ease forwards;
 }
 
-#quick-draw.fouled #enemy,
-#quick-draw.fouled #kirby
-{
+#quick-draw.fouled #enemy {
   animation: hop 300ms ease forwards;
 }
 
 #quick-draw.fouled #kirby {
-  animation-delay: 60ms;
+  animation: hop-left 300ms ease forwards;
+  animation-delay: 100ms;
 }
 
 #enemy {
@@ -549,11 +550,14 @@ body:not(.round-started) #enemy {
 
 #player-score, #player-level {
   position: absolute;
-  top: calc(var(--game-screen-height) * 1.05);
+  top: calc(var(--game-screen-height));
   left: 0;
   font-size: 1.5rem;
   margin-left: 1rem;
   color: white;
+  height: calc(var(--game-screen-height) / 6);
+  display: flex;
+  align-items: center;
 }
 
 #player-score-display, #score-change-display, #player-level, #fastest-time-display {
@@ -562,10 +566,11 @@ body:not(.round-started) #enemy {
 
 #score-change-display {
   position: absolute;
-  top: 0;
+  top: calc(var(--game-screen-height) / 12);
   left: calc(100% + (var(--game-screen-height) / 30));
   opacity: 0;
   scale: 0.75;
+  translate: 0 -50%;
   transform-origin: left;
   transition: opacity 300ms ease;
   z-index: 1;
@@ -593,6 +598,7 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   left: unset;
   right: 0;
   margin-right: 1rem;
+  font-size: calc(var(--game-screen-height) / 16);
 }
 
 #lives-area {
@@ -659,11 +665,11 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
     scale: 1;
   }
   50% {
-    translate: -5% -60%;
+    translate: -25% -60%;
     scale: 1.05;
   }
   to {
-    translate: -40% -20%;
+    translate: -50% -30%;
     rotate: -180deg;
     scale: 1.1;
   }
@@ -677,6 +683,7 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
     translate: 0 calc(var(--game-screen-height) * 0.08);
   }
 }
+
 @keyframes hop {
   from {
     translate: 0 0;
@@ -689,12 +696,29 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   }
 }
 
-@keyframes slide-left {
+@keyframes hop-left {
   from {
-    translate: calc(var(--game-screen-height) / 12) 0;
+    translate: 0 0;
+    rotate: 0deg
+  }
+  50% {
+    translate: calc(var(--game-screen-height) * -0.05) calc(var(--game-screen-height) * -0.05);
+  }
+  65% {
+    rotate: -9deg
   }
   to {
     translate: 0 0;
+    rotate: 0deg
+  }
+}
+
+@keyframes slide-left {
+  from {
+    translate: calc(var(--game-screen-height) / 12) -50%;
+  }
+  to {
+    translate: 0 -50%;
   }
 }
 
