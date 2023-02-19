@@ -80,7 +80,7 @@ body {
   transition: opacity 300ms ease;
 }
 
-#quick-draw.resetting *:not(.player-status) {
+#quick-draw.resetting *:not(.player-status, .veil) {
   transition-duration: 0ms !important;
 }
 
@@ -292,14 +292,20 @@ body {
   transition-duration: 200ms ease !important;
 }
 
-#quick-draw.waiting #quick-draw-button {
+#quick-draw.waiting #quick-draw-button,
+#quick-draw.resetting #quick-draw-button,
+#quick-draw #quick-draw-button
+{
   background-color: rgb(150, 82, 82);
 }
 
 #quick-draw #quick-draw-button::after {
   content: '';
 }
-#quick-draw.waiting #quick-draw-button::after {
+#quick-draw.waiting #quick-draw-button::after,
+#quick-draw.resetting #quick-draw-button::after,
+#quick-draw #quick-draw-button::after
+{
   content: 'NOT YET';
   font-size: 2rem;
 }
@@ -327,15 +333,28 @@ body {
   content: 'KIRBY WINS';
   font-size: 2.5rem;
 }
+#quick-draw.kirby-attacking #quick-draw-button {
+  pointer-events: none;
+}
+#quick-draw.called #quick-draw-button {
+  background-color: red;
+}
 
-#quick-draw.fouled #quick-draw-button,
-#quick-draw.time-up #quick-draw-button {
+#quick-draw:not(.waiting, .called, .time-up, .kirby-attacking, .showing-score) #quick-draw-button {
   pointer-events: none;
   background-color: rgb(150, 82, 82);
 }
+/* #quick-draw.fouled #quick-draw-button,
+#quick-draw.time-up #quick-draw-button {
+  pointer-events: none;
+  background-color: rgb(150, 82, 82);
+} */
 #quick-draw.fouled #quick-draw-button::after {
   content: 'FOUL';
   font-size: 1.5rem;
+}
+#quick-draw.fouled #quick-draw-button {
+  background-color: rgb(83, 67, 67);
 }
 
 #quit-button {
@@ -397,6 +416,14 @@ body {
   right: calc(var(--game-screen-height) / 18);
   bottom:  calc(var(--game-screen-height) / 2.2);
   display: none;
+}
+
+#kirby.bouncing {
+  animation: bounce-right 100ms ease alternate infinite forwards;
+}
+
+#enemy.bouncing {
+  animation: bounce-left 100ms ease alternate infinite forwards;
 }
 
 body:not(.round-started) #kirby {
@@ -650,5 +677,23 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   to {
     opacity: 1;
     scale: 1;
+  }
+}
+
+@keyframes bounce-left {
+  from {
+    margin-right: 0;
+  }
+  to {
+    margin-right: calc(var(--game-screen-height) / 80);
+  }
+}
+
+@keyframes bounce-right {
+  from {
+    margin-left: 0;
+  }
+  to {
+    margin-left: calc(var(--game-screen-height) / 80);
   }
 }

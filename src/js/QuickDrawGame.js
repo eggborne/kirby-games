@@ -51,7 +51,19 @@ export default class QuickDrawGame {
 
     this.kirbyElement = document.getElementById('kirby');
     this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
+    this.kirbyElement.addEventListener('transitionend', e => {
+      e.target.classList.add('bouncing');
+      pause(200).then(() => {
+        e.target.classList.remove('bouncing');
+      });
+    });
     this.enemyElement = document.getElementById('enemy');
+    this.enemyElement.addEventListener('transitionend', e => {
+      e.target.classList.add('bouncing');
+      pause(200).then(() => {
+        e.target.classList.remove('bouncing');
+      });
+    });
   }
 
   get phase() {
@@ -106,6 +118,8 @@ export default class QuickDrawGame {
     if (!resetOnly) {
       document.getElementById('quick-draw').classList.add('hidden');
       document.getElementById('game-select').classList.remove('hidden');
+      await pause(600);
+      this.veil.classList.add('showing');
     } else {
       this.playRound(0);
     }
@@ -188,6 +202,9 @@ export default class QuickDrawGame {
   }
 
   async playRound(roundNumber) {
+    await pause(2);
+    this.veil.classList.remove('showing');
+    await pause(600);
     // document.getElementById('player-level').innerText = `Round ${roundNumber + 1}`;
     this.printNumerals((roundNumber + 1), document.getElementById('round-display'), 'white');
     this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
