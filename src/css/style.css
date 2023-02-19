@@ -405,8 +405,14 @@ body {
   animation: drip 1000ms ease forwards;
 }
 
-#quick-draw.fouled #enemy {
+#quick-draw.fouled #enemy,
+#quick-draw.fouled #kirby
+{
   animation: hop 300ms ease forwards;
+}
+
+#quick-draw.fouled #kirby {
+  animation-delay: 100ms;
 }
 
 #enemy {
@@ -586,6 +592,28 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   left: unset;
   right: 0;
   margin-right: 1rem;
+}
+
+#lives-area {
+  position: absolute;
+  top: calc(var(--game-screen-height) / 60);
+  left: calc(var(--game-screen-height) / 60);
+  display: flex;
+  gap: calc(var(--game-screen-height) / 60);
+}
+
+#lives-area > .life-marker {
+  width: calc(var(--game-screen-height) * 0.1);
+  height: calc(var(--game-screen-height) * 0.1);
+  background-image: url(../media/quickdraw/images/ui/xmark.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.3;
+  transition: opacity 300ms ease;
+}
+
+#lives-area > .life-marker.filled {
+  opacity: 1
 }
 
 @keyframes flash {

@@ -19,7 +19,8 @@ export default class QuickDrawGame {
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
-    this.lives = 1;
+    this.maxLives = 3;
+    this.lives = this.maxLives;
 
     this.attackers = [
       {
@@ -64,6 +65,7 @@ export default class QuickDrawGame {
         e.target.classList.remove('bouncing');
       });
     });
+    this.buildLifeMarkers();
   }
 
   get phase() {
@@ -72,6 +74,16 @@ export default class QuickDrawGame {
 
   set phase(newPhase) {
     document.getElementById('quick-draw').className = newPhase;
+  }
+
+  buildLifeMarkers() {
+    let livesArea = document.getElementById('lives-area');
+    livesArea.innerHTML = '';
+    for (let i = 0; i < this.maxLives; i++) {
+      livesArea.innerHTML += `
+        <div class="life-marker"></div>
+      `;
+    }
   }
 
   async resetForNewRound() {
@@ -104,13 +116,13 @@ export default class QuickDrawGame {
     this.phase = 'showing-score';
   }
 
-  async endGame(resetOnly) {
-    
+  async endGame(resetOnly, startingRound = 0) {
     this.veil.classList.add('showing');
     await pause(600);
     await this.resetForNewRound();
     await pause(300);
-    this.lives = 1;
+    this.lives = this.maxLives;
+    this.updateLivesDisplay();
     this.level = 0;
     this.totalScore = 0;
     this.roundTimes = [];
@@ -121,7 +133,7 @@ export default class QuickDrawGame {
       await pause(600);
       this.veil.classList.add('showing');
     } else {
-      this.playRound(0);
+      this.playRound(startingRound);
     }
   }
 
@@ -139,7 +151,6 @@ export default class QuickDrawGame {
   async printNumerals(score, targetElement, color, timeLimit) {
     if (color) {
 
-      console.log('giving', color,'to classLsit', targetElement.classList);
       targetElement.classList.add(color);
     }
     targetElement.innerHTML = '';
@@ -227,7 +238,7 @@ export default class QuickDrawGame {
         this.printNumerals(currentScore, this.scorePost);
         this.currentRoundTime = currentScore;
       }, 1);
-  
+
       await pause(this.attacker.drawSpeed);
       // user needs to click here, or else...
 
@@ -237,14 +248,33 @@ export default class QuickDrawGame {
         await this.displaySlashes(90);
         document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
         this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
-        await pause(2000);
-        this.lives--;
-        if (this.lives === 0) {
-          this.showScoreScreen();
-        }
-        // this.endGame();
+        this.loseLife(2000);
       }
     }
+  }
+
+  async loseLife(pauseTime) {
+    this.lives--;
+    this.updateLivesDisplay();
+    await pause(pauseTime);
+    if (this.lives === 0) {
+      this.showScoreScreen();
+    } else {
+      this.advanceToRound(this.level);
+    }
+  }
+
+  updateLivesDisplay() {
+    let filledLives = (this.maxLives - this.lives);
+    console.log('filling lives', filledLives);
+    let lifeElements = [...document.getElementsByClassName('life-marker')];
+    lifeElements.forEach((lifeEl, i) => {
+      if (i < filledLives) {
+        lifeEl.classList.add('filled');
+      } else {
+        lifeEl.classList.remove('filled');
+      }
+    });
   }
 
   async handleAButtonClick(e) {
@@ -280,12 +310,12 @@ export default class QuickDrawGame {
       document.getElementById('score-change-display').classList.add('showing');
       this.printNumerals(penalty, document.getElementById('score-change-display'), 'red', 1000);
       this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
-      await pause(800);
+      // await pause(800);
+      this.loseLife(800);
       document.getElementById('score-change-display').classList.remove('showing');
-      this.advanceToRound(this.level);
+      // this.advanceToRound(this.level);
     } else if (this.phase === 'showing-score') {
-      // Game is over
-      
+      // Game is over, button says 'Try Again'
       this.endGame(true);
     }
   }
