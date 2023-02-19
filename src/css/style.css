@@ -412,7 +412,7 @@ body {
 }
 
 #quick-draw.fouled #kirby {
-  animation-delay: 100ms;
+  animation-delay: 60ms;
 }
 
 #enemy {
@@ -568,6 +568,7 @@ body:not(.round-started) #enemy {
   scale: 0.75;
   transform-origin: left;
   transition: opacity 300ms ease;
+  z-index: 1;
   /* display: none; */
 }
 

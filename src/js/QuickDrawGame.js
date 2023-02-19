@@ -19,7 +19,7 @@ export default class QuickDrawGame {
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
-    this.maxLives = 3;
+    this.maxLives = 1;
     this.lives = this.maxLives;
 
     this.attackers = [
@@ -105,7 +105,9 @@ export default class QuickDrawGame {
     await pause(300);
     this.printNumerals(this.level, document.getElementById('enemy-count-display'), 'red');
     let fastestTime = this.roundTimes.sort((a, b) => a - b)[0];
-    this.printNumerals(fastestTime, document.getElementById('fastest-time-display'), 'green');
+    if (fastestTime) {
+      this.printNumerals(fastestTime, document.getElementById('fastest-time-display'), 'green');
+    }
     this.printNumerals(this.totalScore, document.getElementById('total-score-display'), 'white');
     if (this.level === 0) {
       document.getElementById('fastest-time').style.opacity = 0;
@@ -116,25 +118,29 @@ export default class QuickDrawGame {
     this.phase = 'showing-score';
   }
 
-  async endGame(resetOnly, startingRound = 0) {
-    this.veil.classList.add('showing');
-    await pause(600);
-    await this.resetForNewRound();
-    await pause(300);
+  async endGame(resetOnly) {
+    this.resetPlayerStatus();
+    if (!resetOnly) {
+      this.resetForNewRound();
+      document.getElementById('quick-draw').classList.add('hidden');
+      document.getElementById('game-select').classList.remove('hidden');
+      this.veil.classList.add('showing');
+    } else {
+      this.veil.classList.add('showing');
+      await pause(600);
+      await this.resetForNewRound();
+      await pause(300);
+      this.updateLivesDisplay();
+      this.veil.classList.remove('showing');
+      this.playRound(0);
+    }
+  }
+
+  resetPlayerStatus() {
     this.lives = this.maxLives;
-    this.updateLivesDisplay();
     this.level = 0;
     this.totalScore = 0;
     this.roundTimes = [];
-    this.veil.classList.remove('showing');
-    if (!resetOnly) {
-      document.getElementById('quick-draw').classList.add('hidden');
-      document.getElementById('game-select').classList.remove('hidden');
-      await pause(600);
-      this.veil.classList.add('showing');
-    } else {
-      this.playRound(startingRound);
-    }
   }
 
   loadAttacker(attacker) {
@@ -308,10 +314,10 @@ export default class QuickDrawGame {
         this.totalScore = 0;
       }
       document.getElementById('score-change-display').classList.add('showing');
-      this.printNumerals(penalty, document.getElementById('score-change-display'), 'red', 1000);
+      this.printNumerals(penalty, document.getElementById('score-change-display'), 'red', 1200);
       this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
+      await this.loseLife(1000);
       // await pause(800);
-      this.loseLife(800);
       document.getElementById('score-change-display').classList.remove('showing');
       // this.advanceToRound(this.level);
     } else if (this.phase === 'showing-score') {
