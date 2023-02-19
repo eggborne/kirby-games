@@ -6,7 +6,7 @@ const importAll = require =>
   }, {});
 
 const images = importAll(
-  require.context("../media/images/", true, /\.(png|jpe?g|svg)$/)
+  require.context("../media/quickdraw/images/", true, /\.(png|jpe?g|svg)$/)
 );
 
 export default class QuickDrawGame {
@@ -29,23 +29,23 @@ export default class QuickDrawGame {
       },
       {
         name: 'wheelbro',
-        drawSpeed: 400,
+        drawSpeed: 500,
         suspenseTime: { min: 1500, max: 5000 },
       },
       {
         name: 'fishchef',
-        drawSpeed: 300,
+        drawSpeed: 350,
         suspenseTime: { min: 3000, max: 7000 },
       },
       {
         name: 'dedede',
-        drawSpeed: 200,
+        drawSpeed: 300,
         suspenseTime: { min: 2000, max: 4000 },
       },
       {
         name: 'metaknight',
-        drawSpeed: 100,
-        suspenseTime: { min: 750, max: 9000 },
+        drawSpeed: 200,
+        suspenseTime: { min: 4000, max: 10000 },
       },
     ];
 
@@ -60,45 +60,6 @@ export default class QuickDrawGame {
 
   set phase(newPhase) {
     document.getElementById('quick-draw').className = newPhase;
-  }
-
-  async playRound(roundNumber) {
-    document.getElementById('player-level').innerText = `Level ${roundNumber + 1}`;
-    document.getElementById('player-score').innerText = `${this.totalScore}`;
-
-    this.phase = 'waiting';
-    this.loadAttacker(this.attackers[roundNumber]);
-    await pause(100);
-    document.body.classList.add('round-started');
-    await pause(400);
-    this.displayScorePost();
-    let suspenseTime = randomInt(this.attacker.suspenseTime.min, this.attacker.suspenseTime.max);
-    await pause(suspenseTime);
-    if (this.phase === 'waiting') { // if no foul
-      this.calledAt = Date.now();
-      this.phase = 'called';
-      this.callInterval = setInterval(() => {
-        let currentScore = Math.round((Date.now() - this.calledAt) / 10);
-        this.printScore(currentScore);
-        this.currentRoundTime = currentScore;
-      }, 1);
-  
-      await pause(this.attacker.drawSpeed);
-  
-      if (this.phase === 'called') { // if no kirby attack
-        clearInterval(this.callInterval);
-        this.phase = 'time-up';
-        await this.displaySlashes(90);
-        document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
-        this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
-        await pause(2000);
-        this.lives--;
-        if (this.lives === 0) {
-          this.showScoreScreen();
-        }
-        // this.endGame();
-      }
-    }
   }
 
   async resetForNewRound() {
@@ -118,20 +79,21 @@ export default class QuickDrawGame {
     await pause(600);
     await this.resetForNewRound();
     await pause(300);
-    document.getElementById('enemy-count-display').innerText = this.level;
+    this.printNumerals(this.level, document.getElementById('enemy-count-display'), 'red');
     let fastestTime = this.roundTimes.sort((a, b) => a - b)[0];
+    this.printNumerals(fastestTime, document.getElementById('fastest-time-display'), 'green');
+    this.printNumerals(this.totalScore, document.getElementById('total-score-display'), 'white');
     if (this.level === 0) {
       document.getElementById('fastest-time').style.opacity = 0;
     } else {
       document.getElementById('fastest-time').style.opacity = 1;
     }
-    document.getElementById('fastest-time-display').innerText = fastestTime;
     this.veil.classList.remove('showing');
     this.phase = 'showing-score';
   }
 
   async endGame(resetOnly) {
-    this.phase = '';
+    
     this.veil.classList.add('showing');
     await pause(600);
     await this.resetForNewRound();
@@ -156,19 +118,28 @@ export default class QuickDrawGame {
   }
 
   displayScorePost() {
-    this.printScore('00');
+    this.printNumerals('00', this.scorePost);
     this.scorePost.classList.add('showing');
   }
 
-  printScore(score) {
-    this.scorePost.innerHTML = '';
+  async printNumerals(score, targetElement, color, timeLimit) {
+    if (color) {
+
+      console.log('giving', color,'to classLsit', targetElement.classList);
+      targetElement.classList.add(color);
+    }
+    targetElement.innerHTML = '';
     let scoreNumerals = score.toString().split('');
     scoreNumerals.forEach(numeral => {
       let numeralElement = document.createElement('div');
       numeralElement.className = 'score-numeral';
       numeralElement.style.backgroundImage = `url(${images[`numerals/tile00${numeral}.png`]})`;
-      this.scorePost.append(numeralElement);
+      targetElement.append(numeralElement);
     });
+    if (timeLimit) {
+      await pause(timeLimit);
+      targetElement.classList.remove(color);
+    }
   }
 
   async displaySlashes(speed) {
@@ -210,9 +181,53 @@ export default class QuickDrawGame {
     this.phase = 'waiting';
     await this.resetForNewRound();
     await pause(300);
+    this.phase = '';
     this.veil.classList.remove('showing');
     await pause(600);
     this.playRound(round);
+  }
+
+  async playRound(roundNumber) {
+    // document.getElementById('player-level').innerText = `Round ${roundNumber + 1}`;
+    this.printNumerals((roundNumber + 1), document.getElementById('round-display'), 'white');
+    this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
+    this.phase = 'waiting';
+    this.loadAttacker(this.attackers[roundNumber]);
+    await pause(100);
+    document.body.classList.add('round-started');
+    await pause(400);
+    this.displayScorePost();
+    let suspenseTime = randomInt(this.attacker.suspenseTime.min, this.attacker.suspenseTime.max);
+
+    await pause(suspenseTime);
+    // user could foul here...
+
+    if (this.phase === 'waiting') { // but if not, call for the draw
+      this.calledAt = Date.now();
+      this.phase = 'called';
+      this.callInterval = setInterval(() => {
+        let currentScore = Math.round((Date.now() - this.calledAt) / 5);
+        this.printNumerals(currentScore, this.scorePost);
+        this.currentRoundTime = currentScore;
+      }, 1);
+  
+      await pause(this.attacker.drawSpeed);
+      // user needs to click here, or else...
+
+      if (this.phase === 'called') { // if no kirby attack
+        clearInterval(this.callInterval);
+        this.phase = 'time-up';
+        await this.displaySlashes(90);
+        document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
+        this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
+        await pause(2000);
+        this.lives--;
+        if (this.lives === 0) {
+          this.showScoreScreen();
+        }
+        // this.endGame();
+      }
+    }
   }
 
   async handleAButtonClick(e) {
@@ -223,11 +238,16 @@ export default class QuickDrawGame {
       await this.displaySlashes(90);
       this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
       document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
-      await pause(1500);
+      // await pause(1500);
       console.warn('time is', this.currentRoundTime);
       this.roundTimes[this.level] = this.currentRoundTime;
-      this.totalScore += this.currentRoundTime;
-      document.getElementById('player-score').innerText = this.totalScore;
+      let scoreForRound = (this.attacker.drawSpeed - (this.currentRoundTime * 5));
+      this.totalScore += scoreForRound;
+      document.getElementById('score-change-display').classList.add('showing');
+      this.printNumerals(scoreForRound, document.getElementById('score-change-display'), 'green', 1800);
+      this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
+      await pause(1500);
+      document.getElementById('score-change-display').classList.remove('showing');
       this.level++;
       this.advanceToRound(this.level);
     } else if (this.phase === 'waiting') {
@@ -235,7 +255,16 @@ export default class QuickDrawGame {
       clearInterval(this.callInterval);
       this.phase = 'fouled';
       this.enemyElement.style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
+      let penalty = Math.round((1000 - this.attacker.drawSpeed) / 2);
+      this.totalScore -= penalty;
+      if (this.totalScore <= 0) {
+        this.totalScore = 0;
+      }
+      document.getElementById('score-change-display').classList.add('showing');
+      this.printNumerals(penalty, document.getElementById('score-change-display'), 'red', 1000);
+      this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
       await pause(800);
+      document.getElementById('score-change-display').classList.remove('showing');
       this.advanceToRound(this.level);
     } else if (this.phase === 'showing-score') {
       // Game is over

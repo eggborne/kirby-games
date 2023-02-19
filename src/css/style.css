@@ -2,6 +2,12 @@
   --actual-height: 100vh;
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / (16/14));
+  --control-panel-bg-color: #586838;
+}
+
+@font-face {
+  font-family: kirbyFont;
+  src: url(../media/Connection.otf);
 }
 
 *, * *, * * * {
@@ -19,7 +25,7 @@ body {
   align-items: stretch;
   justify-content: space-between;
   overflow: hidden;
-  background: orange;
+  background-color: orange;
 }
 
 .hidden {
@@ -43,12 +49,12 @@ body {
 }
 
 #quick-draw-logo {
-  background-image: url("../media/images/qdlogo.png");
+  background-image: url("../media/quickdraw/images/ui/qdlogo.png");
   background-repeat: no-repeat;
   background-size: cover;
   height: 4rem;
   width: calc(4rem * (205/50));
-  border-image-source: url("../media/images/qdborder.png");
+  border-image-source: url("../media/quickdraw/images/ui/qdborder.png");
   border-image-slice: 33.3% 33.3% 33.3% 33.3%;
   border-image-width: calc(4rem * 0.32);
   border-image-outset: 0 calc(4rem * 0.32);
@@ -57,15 +63,24 @@ body {
 }
 
 #quick-draw {
+  font-family: kirbyFont;
+  /* font-weight: bold; */
+  color: #402a00;
+  text-shadow:
+    -1px 0 0 #222, 
+    1px 0 0 #222,
+    0 -1px 0 #222,
+    0 1px 0 #222
+  ;
+  letter-spacing: 1px;
   width: 100vw;
   flex-grow: 1;
-  background: rgb(57, 77, 52);
   display: flex;
   flex-direction: column;
   transition: opacity 300ms ease;
 }
 
-#quick-draw.resetting * {
+#quick-draw.resetting *:not(.player-status) {
   transition-duration: 0ms !important;
 }
 
@@ -73,7 +88,7 @@ body {
   position: relative;
   width: var(--game-screen-width);
   height: var(--game-screen-height);
-  background-image: url(../media/images/quickdrawbg.png);
+  background-image: url(../media/quickdraw/images/ui/quickdrawbg.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top center;
@@ -135,13 +150,13 @@ body {
   --height: calc(var(--game-screen-height) * 0.6);
   height: var(--height);
   width: calc(var(--height) * (180/96));
-  background-image: url(../media/images/slashmark1.png);
+  background-image: url(../media/quickdraw/images/ui/slashmark1.png);
 }
 #center-slash {
   --height: calc(var(--game-screen-height) * 0.2);
   height: var(--height);
   width: calc(var(--height) * (54/32));
-  background-image: url(../media/images/slashcenter.png);
+  background-image: url(../media/quickdraw/images/ui/slashcenter.png);
   animation: blink 2ms linear infinite;
 }
 #center-slash::after {
@@ -151,32 +166,112 @@ body {
   --height: calc(var(--game-screen-height) * 0.9);
   height: var(--height);
   width: calc(var(--height) / (144/65));
-  background-image: url(../media/images/slashmark2.png);
+  background-image: url(../media/quickdraw/images/ui/slashmark2.png);
 }
 
 #score-screen {
   background-color: transparent;
   font-size: calc(var(--game-screen-height) * 0.08);
-  color: rgb(60, 38, 17);
-  font-weight: bold;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: calc(var(--game-screen-height) * 0.08) 0;
-  padding-bottom: calc(var(--game-screen-height) * 0.2);
-  display: none;
+  display: grid;
+  grid-template-rows: 
+    calc(var(--game-screen-height) / 8) 
+    auto
+    1fr
+    1fr
+  ;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  opacity: 0;
   z-index: 1;
+  height: var(--game-screen-height);
 }
 
 #quick-draw.showing-score #score-screen {
-  display: flex;
+  opacity: 1;
 }
 
-#enemy-count-display {
-  color: red;
+#enemies-defeated, #fastest-time {
+  display: flex;
+  gap: calc(var(--game-screen-height) / 30);
+  align-items: center;
+
+  align-items: baseline;
+  align-self: center;
+}
+
+#enemies-defeated > span:last-child, 
+#fastest-time > span:last-child {
+  translate: 0 25%;
+}
+
+#enemies-defeated {
+  padding-top: calc(var(--game-screen-height) * 0.07);
+}
+
+#fastest-time {
+  align-self: stretch;
+}
+
+#score-kirby {
+  position: relative;
+  width: calc(var(--game-screen-height) * 0.45);
+  height: calc(var(--game-screen-height) * 0.45);
+  translate: -17% 3%;
+  background-image: url(../media/quickdraw/images/samuraikirby/waiting.png);
+}
+
+#total-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: flex-end;
+  font-size: calc(var(--game-screen-height) * 0.06);
+  gap: calc(var(--game-screen-height) * 0.01);
+  padding: calc(var(--game-screen-height) * 0.04) 0;
+}
+
+.score-numeral 
+{
+  filter: 
+    drop-shadow(2px 0px rgb(255, 255, 255))
+    drop-shadow(-1px 0px rgb(255, 255, 255))
+    drop-shadow(0px -1px rgb(255, 255, 255))
+    drop-shadow(0px 2px rgb(255, 255, 255))
+  ;
+}
+
+.score-screen-display {
+  opacity: 0;
+  scale: 0.8;
+}
+#total-score-display {
+  display: flex;
+  align-items: center;
+  transform-origin: center;
+  opacity: 0;
+  scale: 0.8;
+}
+
+#total-score-display > .score-numeral {
+  width: calc(var(--game-screen-height) * 0.07);
+  height: calc(var(--game-screen-height) * 0.07 * (16/9));
+}
+
+#quick-draw.showing-score .score-screen-display {
+  animation: zoom-fade-in 1000ms ease forwards;
+}
+#quick-draw.showing-score #enemy-count-display {
+  animation-delay: 1000ms;
+}
+#quick-draw.showing-score #fastest-time-display {
+  animation-delay: 1800ms;
+}
+#quick-draw.showing-score #total-score-display {
+  animation-delay: 2600ms;
 }
 
 #quick-draw-controls {
+  background-color: var(--control-panel-bg-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -186,15 +281,24 @@ body {
   padding-top: calc(var(--game-screen-height) * 0.2);
 }
 
-#quick-draw-button {
+#quick-draw #quick-draw-button {
   border-radius: 50%;
   background-color: red;
   color: #ddd;
   font-weight: bold;
   width: 50vw;
   height: 50vw;
+  transition: background-color 200ms ease !important;
+  transition-duration: 200ms ease !important;
 }
 
+#quick-draw.waiting #quick-draw-button {
+  background-color: rgb(150, 82, 82);
+}
+
+#quick-draw #quick-draw-button::after {
+  content: '';
+}
 #quick-draw.waiting #quick-draw-button::after {
   content: 'NOT YET';
   font-size: 2rem;
@@ -213,6 +317,15 @@ body {
 #quick-draw.showing-score #quick-draw-button::after {
   content: 'TRY AGAIN';
   font-size: 1.5rem;
+}
+
+#quick-draw.kirby-attacking #quick-draw-button {
+  background-color: rgb(0, 184, 0);
+}
+
+#quick-draw.kirby-attacking #quick-draw-button::after {
+  content: 'KIRBY WINS';
+  font-size: 2.5rem;
 }
 
 #quick-draw.fouled #quick-draw-button,
@@ -254,16 +367,6 @@ body {
   bottom:  calc(var(--game-screen-height) / 10);
 }
 
-#score-kirby {
-  width: calc(var(--game-screen-height) * 0.45);
-  height: calc(var(--game-screen-height) * 0.45);
-  left: 42%;
-  bottom: unset;
-  top: 37%;
-  translate: -50% -50%;
-  background-image: url(../media/images/samuraikirby/waiting.png);
-}
-
 #kirby::after {
   content: '';
   position: absolute;
@@ -272,7 +375,7 @@ body {
   --height: calc(var(--game-screen-height) * 0.1);
   height: var(--height);
   width: calc(var(--height) * (12/16));
-  background-image: url(../media/images/teardrop.png);
+  background-image: url(../media/quickdraw/images/ui/teardrop.png);
   background-repeat: no-repeat;
   background-size: contain;
   display: none;
@@ -328,7 +431,7 @@ body:not(.round-started) #enemy {
 
 #exclamation-point {
   position: absolute;
-  background-image: url(../media/images/exclamationpointfilled.png);
+  background-image: url(../media/quickdraw/images/ui/exclamationpointfilled.png);
   background-repeat: no-repeat;
   background-size: contain;
   width: calc(var(--game-screen-height) * 0.3125);
@@ -351,9 +454,10 @@ body:not(.round-started) #enemy {
   position: absolute;
   bottom: 0;
   right: calc(var(--game-screen-height) / 40);
-  width: calc(var(--game-screen-height) / 4);
-  height: calc(var(--game-screen-height) / 4);
-  background-image: url(../media/images/scorepost.png);
+  --height: calc(var(--game-screen-height) / 4);
+  height: var(--height);
+  width: calc(var(--height) * 1.5);
+  background-image: url(../media/quickdraw/images/ui/scorepostwide.png);
   background-repeat: no-repeat;
   background-size: contain;
   display: flex;
@@ -364,6 +468,10 @@ body:not(.round-started) #enemy {
   transition: translate 500ms ease;
 }
 
+#score-post > .score-numeral {
+  filter: unset;
+}
+
 #quick-draw.fouled #score-post::after {
   content: '';
   position: absolute;
@@ -372,7 +480,7 @@ body:not(.round-started) #enemy {
   translate: -50% -50%;
   width: calc(var(--game-screen-height) * 0.15);
   height: calc(var(--game-screen-height) * 0.15);
-  background-image: url(../media/images/xmark.png);
+  background-image: url(../media/quickdraw/images/ui/xmark.png);
   background-repeat: no-repeat;
   background-size: contain;
   rotate: -90deg;
@@ -390,16 +498,64 @@ body:not(.round-started) #enemy {
   background-position: left;
 }
 
+.white {
+  filter: invert();
+}
+
+.green {
+  filter: invert() sepia(100%) hue-rotate(30deg) saturate(100);
+}
+
+.red {
+  filter: invert() sepia(100%) hue-rotate(289deg) saturate(220);
+}
+
+.brown {
+  filter: invert() sepia(100%) hue-rotate(313deg) saturate(280) brightness(0.25);
+}
+
 #player-score, #player-level {
   position: absolute;
-  top: var(--game-screen-height);
+  top: calc(var(--game-screen-height) * 1.05);
   left: 0;
   font-size: 1.5rem;
-  color: white;
   margin-left: 1rem;
+  color: white;
+}
+
+#player-score-display, #score-change-display, #player-level, #fastest-time-display {
+  display: flex;
+}
+
+#score-change-display {
+  position: absolute;
+  top: 0;
+  left: calc(100% + (var(--game-screen-height) / 30));
+  opacity: 0;
+  scale: 0.75;
+  transform-origin: left;
+  transition: opacity 300ms ease;
+  /* display: none; */
+}
+
+#score-change-display.showing {
+  opacity: 1;
+  animation: slide-left 300ms ease forwards;
+}
+
+.player-status {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
+  opacity: 1;
 }
 
 #player-level {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   left: unset;
   right: 0;
   margin-right: 1rem;
@@ -407,10 +563,10 @@ body:not(.round-started) #enemy {
 
 @keyframes flash {
   from {
-    background-image: url(../media/images/exclamationpointfilled.png);
+    background-image: url(../media/quickdraw/images/ui/exclamationpointfilled.png);
   }
   to {
-    background-image: url(../media/images/exclamationpoint.png);
+    background-image: url(../media/quickdraw/images/ui/exclamationpoint.png);
   }
 }
 
@@ -474,5 +630,25 @@ body:not(.round-started) #enemy {
   }
   to {
     translate: 0 0;
+  }
+}
+
+@keyframes slide-left {
+  from {
+    translate: calc(var(--game-screen-height) / 12) 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes zoom-fade-in {
+  from {
+    opacity: 0;
+    scale: 0.8;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
   }
 }
