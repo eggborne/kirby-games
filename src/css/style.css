@@ -3,6 +3,9 @@
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / (16/14));
   --control-panel-bg-color: #586838;
+  /* --button-height: 4rem; */
+  /* --button-height: calc(var(--actual-height) / 12); */
+  --button-height: calc(var(--actual-height) / 8);
 }
 
 @font-face {
@@ -16,7 +19,7 @@
 }
 
 body {
-  font-family: sans-serif;
+  font-family: kirbyFont;
   image-rendering: pixelated;
   width: 100%;
   height: var(--actual-height);
@@ -40,35 +43,71 @@ button {
   display: none !important;
 }
 
-#game-select {
+#game-select-screen {
   background-color: #aaa;
-  flex-grow: 1;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr calc(var(--button-height) * 2);
+  grid-template-columns: 1fr;
   transition: opacity 300ms ease;
 }
 
-.game-selection {
-  padding: 3rem 1rem;
+#game-list {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: calc(var(--button-height) * 0.1);
+  padding: calc(var(--button-height) * 0.5) 0;
 }
 
-.quick-draw-logo {
-  background-image: url("../media/quickdraw/images/ui/qdlogo.png");
+.game-selection {
+  height: var(--button-height);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#quick-draw .logo,
+.game-selection .logo {
+  --button-logo-height: calc(var(--button-height) * 0.65);
   background-repeat: no-repeat;
   background-size: cover;
-  height: 4rem;
-  width: calc(4rem * (205/50));
+  height: var(--button-logo-height);
+  width: calc(var(--button-logo-height) * (205/50));
   border-image-source: url("../media/quickdraw/images/ui/qdborder.png");
   border-image-slice: 33.3% 33.3% 33.3% 33.3%;
-  border-image-width: calc(4rem * 0.32);
-  border-image-outset: 0 calc(4rem * 0.32);
+  /* border-image-width: calc(var(--button-logo-height) * 0.32); */
+  border-image-outset: 0 calc(var(--button-logo-height) * 0.32);
   border-image-repeat: stretch stretch;
   border-style: solid;
+  border-image-width: 0;
+  pointer-events: none;
+}
+
+#quick-draw .logo,
+#quick-draw-selection > .logo {
+  background-image: url("../media/quickdraw/images/ui/qdlogo.png");
+}
+
+#bomb-rally-selection > .logo {
+  background-image: url("../media/bombrally/images/ui/brlogo.png");
+  translate: 0 18%;
+}
+
+.game-selection.selected .logo {
+  border-image-width: calc(var(--button-logo-height) * 0.32);
+  animation: blink-border-image 300ms linear infinite alternate;
 }
 
 #quick-draw {
-  font-family: kirbyFont;
   /* font-weight: bold; */
   color: #402a00;
   text-shadow:
@@ -91,7 +130,10 @@ button {
   left: 0;
   width: var(--game-screen-width);
   height: var(--game-screen-height);
-  background-color: #f8f8f8;
+  background-color: #dbdbdb;
+  color: 586058;
+  text-shadow: none;
+  font-weight: bold;
   z-index: 3;
   display: flex;
   flex-direction: column;
@@ -111,18 +153,31 @@ button {
   height: calc(var(--width) / (240/90));
 }
 
-#quick-draw-instructions-screen .quick-draw-logo {
+#button-name {
+  position: absolute;
+  font-size: calc(var(--game-screen-height) / 18);
+  width: calc(var(--game-screen-height / 12));
+  right: calc(var(--game-screen-height) / 3.25);
+  top: calc(var(--game-screen-height) * 0.775);
+  transform-origin: center;
+  translate: 50% 0;
+}
+
+#quick-draw-instructions-screen .logo {
   border-image: none;
   border-width: 0;
   transform-origin: center;
   opacity: 0;
   scale: 1.2;
   transition: opacity 300ms ease, scale 300ms ease;
+  transition-delay: 3000ms;
 }
 
-#quick-draw.showing-instructions .quick-draw-logo {
+#quick-draw.showing-instructions #quick-draw-instructions-screen {
   opacity: 1;
-  scale: 1;
+}
+#quick-draw.showing-instructions .quick-draw-logo {
+  animation: land 600ms ease forwards;
 }
 
 #quick-draw.resetting *:not(.player-status, .veil) {
@@ -347,6 +402,15 @@ button {
 #quick-draw #quick-draw-button::after {
   content: '';
 }
+
+#quick-draw.showing-instructions #quick-draw-button {
+  background-color: green !important;
+}
+#quick-draw.showing-instructions #quick-draw-button::after {
+  content: 'I\'M READY';
+  font-size: 2.5rem;
+}
+
 #quick-draw.waiting #quick-draw-button::after,
 #quick-draw.resetting #quick-draw-button::after,
 #quick-draw #quick-draw-button::after
@@ -387,7 +451,7 @@ button {
   background-color: red;
 }
 
-#quick-draw:not(.waiting, .called, .time-up, .kirby-attacking, .showing-score) #quick-draw-button {
+#quick-draw:not(.waiting, .called, .time-up, .kirby-attacking, .showing-score, .showing-instructions) #quick-draw-button {
   pointer-events: none;
   background-color: rgb(150, 82, 82);
 }
@@ -404,18 +468,27 @@ button {
   background-color: rgb(83, 67, 67);
 }
 
-#quit-button {
+#start-button, #quit-button {
   background-color: rgb(120, 120, 120);
   font-size: 2rem;
   color: white;
   font-weight: bold;
   padding: 1rem 2rem;
   border-radius: 2rem;
+}
+
+#quit-button {
   display: none;
 }
 
 #quick-draw.showing-score #quit-button {
   display: block;
+}
+
+#start-button {
+  height: calc(var(--button-height) * 0.9);
+  width: calc(var(--button-height) * 2.5);
+  background-color: green;
 }
 
 .fighter {
@@ -793,5 +866,24 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   }
   to {
     margin-left: calc(var(--game-screen-height) / 80);
+  }
+}
+
+@keyframes blink-border-image {
+  from {
+    border-image-outset: calc(var(--button-height) * 0.1);
+  }
+  to {
+    border-image-outset: calc(var(--button-height) * 0.25);
+  }
+}
+@keyframes land {
+  from {
+    opacity: 0;
+    scale: 1.2
+  }
+  to {
+    opacity: 1;
+    scale: 1
   }
 }

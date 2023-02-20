@@ -9,8 +9,11 @@ const images = importAll(
   require.context("../media/quickdraw/images/", true, /\.(png|jpe?g|svg)$/)
 );
 
+let isMobile = true;
+
 export default class QuickDrawGame {
   constructor() {
+    this.className = 'quick-draw';
     this.roundStartDelay = 800;
     this.totalScore = 0;
     this.level = 0;
@@ -20,7 +23,7 @@ export default class QuickDrawGame {
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
-    this.maxLives = 3;
+    this.maxLives = 1;
     this.lives = this.maxLives;
 
     this.attackers = [
@@ -67,6 +70,13 @@ export default class QuickDrawGame {
       });
     });
     this.buildLifeMarkers();
+    console.log('----------- initialized QuickDrawGame!');
+    if (isMobile) {
+      document.getElementById('button-name').innerHTML = 'the button!';
+    } else {
+      document.getElementById('button-name').innerHTML = 'the space bar!';
+    }
+    this.assignHandlers();
   }
 
   get phase() {
@@ -77,6 +87,15 @@ export default class QuickDrawGame {
     document.getElementById('quick-draw').className = newPhase;
   }
 
+  assignHandlers() {
+    document.getElementById('quick-draw-button').addEventListener('pointerdown', e => {
+      this.handleAButtonClick(e);
+    });
+    document.getElementById('quit-button').addEventListener('click', e => {
+      this.handleQuitButtonClick(e);
+    });
+  }
+
   buildLifeMarkers() {
     let livesArea = document.getElementById('lives-area');
     livesArea.innerHTML = '';
@@ -85,6 +104,13 @@ export default class QuickDrawGame {
         <div class="life-marker"></div>
       `;
     }
+  }
+
+  async startGame() {
+    console.log('--------------- starting game --------------------');
+    this.phase = '';
+    document.getElementById(this.className).classList.remove('hidden');
+    this.playRound(0, this.roundStartDelay);
   }
 
   async resetForNewRound() {
@@ -122,9 +148,9 @@ export default class QuickDrawGame {
   async endGame(resetOnly) {
     this.resetPlayerStatus();
     if (!resetOnly) {
-      this.resetForNewRound();
+      await this.resetForNewRound();
       document.getElementById('quick-draw').classList.add('hidden');
-      document.getElementById('game-select').classList.remove('hidden');
+      document.getElementById('game-select-screen').classList.remove('hidden');
       this.veil.classList.add('showing');
     } else {
       this.veil.classList.add('showing');
@@ -280,6 +306,10 @@ export default class QuickDrawGame {
     });
   }
 
+  async showInstructions() {
+    this.phase = 'showing-instructions';
+  }
+
   async handleAButtonClick() {
     if (this.phase === 'called') {
       // Kirby wins
@@ -316,6 +346,8 @@ export default class QuickDrawGame {
     } else if (this.phase === 'showing-score') {
       // Game is over, button says 'Try Again'
       this.endGame(true);
+    } else if (this.phase === 'showing-instructions') {
+      this.startGame();
     }
   }
 

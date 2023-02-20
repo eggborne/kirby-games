@@ -6,15 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
   <title>Kirby Games</title>
 <body>
-  <div id="game-select">
-    <div id="quick-draw-selection" class="game-selection">
-      <div class="quick-draw-logo"></div>
+  <div id="game-select-screen">
+    <div id="game-list">
+      <div id="quick-draw-selection" class="game-selection selected">
+        <div class="quick-draw-logo logo"></div>
+      </div>
+      <div id="bomb-rally-selection" class="game-selection">
+        <div class="bomb-rally-logo logo"></div>
+      </div>
+    </div>
+    <div class="button-area">
+      <button type="button" id="start-button">START GAME</button>
     </div>
   </div>
+
   <div id="quick-draw" class="hidden">
     <div id="quick-draw-instructions-screen">
-      <div class="quick-draw-logo"></div>
-      <div id="quick-draw-instructions"></div>
+      <div class="quick-draw-logo logo"></div>
+      <div id="quick-draw-instructions">
+        <div id="button-name"></div>
+      </div>
     </div>
     <div id="quick-draw-screen">
       <div class="veil showing"></div>
@@ -51,5 +62,6 @@
       <button type="button" id="quit-button">QUIT</button>
     </div>
   </div>
+
 </body>
 </html>
