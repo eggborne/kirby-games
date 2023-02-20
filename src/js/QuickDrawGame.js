@@ -23,7 +23,7 @@ export default class QuickDrawGame {
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
-    this.maxLives = 1;
+    this.maxLives = 3;
     this.lives = this.maxLives;
 
     this.attackers = [
@@ -39,17 +39,17 @@ export default class QuickDrawGame {
       },
       {
         name: 'fishchef',
-        drawSpeed: 350,
+        drawSpeed: 450,
         suspenseTime: { min: 3000, max: 7000 },
       },
       {
         name: 'dedede',
-        drawSpeed: 300,
+        drawSpeed: 400,
         suspenseTime: { min: 2000, max: 4000 },
       },
       {
         name: 'metaknight',
-        drawSpeed: 200,
+        drawSpeed: 300,
         suspenseTime: { min: 4000, max: 10000 },
       },
     ];
