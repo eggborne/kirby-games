@@ -31,6 +31,9 @@ class KirbyGames {
 window.addEventListener('load', () => {
 
   document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px');
+  window.addEventListener('resize', () => {
+    document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px');
+  });
   
   let app = new KirbyGames();
   
