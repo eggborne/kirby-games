@@ -56,7 +56,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: calc(var(--button-height) * 0.1);
+  gap: calc(var(--button-height) * 0.15);
   padding: calc(var(--button-height) * 0.5) 0;
 }
 
@@ -79,7 +79,8 @@ button {
 .game-selection .logo {
   --button-logo-height: calc(var(--button-height) * 0.65);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
+  background-position: center;
   height: var(--button-logo-height);
   width: calc(var(--button-logo-height) * (205/50));
   border-image-source: url("../media/quickdraw/images/ui/qdborder.png");
@@ -99,12 +100,22 @@ button {
 
 #bomb-rally-selection > .logo {
   background-image: url("../media/bombrally/images/ui/brlogo.png");
-  translate: 0 18%;
+  /* translate: 0 10%; */
+}
+
+#kotd-selection {
+  margin: calc(var(--button-height) / 12) 0;
+}
+
+#kotd-selection > .logo {
+  background-image: url("../media/kotd/images/ui/kotdlogo.png");
+  --button-logo-height: calc(var(--button-height) * 1.1);
+  width: calc(var(--button-logo-height) * (235/90));
 }
 
 .game-selection.selected .logo {
-  border-image-width: calc(var(--button-logo-height) * 0.32);
-  animation: blink-border-image 300ms linear infinite alternate;
+  border-image-width: calc(var(--button-height) * 0.3);
+  animation: blink-border-image 300ms ease-in-out infinite alternate;
 }
 
 #quick-draw {
@@ -426,7 +437,7 @@ button {
 #quick-draw.resetting #quick-draw-button,
 #quick-draw #quick-draw-button
 {
-  background-color: rgb(150, 82, 82);
+  --draw-button-color: rgb(150, 82, 82);
 }
 
 #quick-draw #quick-draw-button::after {
@@ -496,13 +507,8 @@ button {
 
 #quick-draw:not(.waiting, .called, .time-up, .kirby-attacking, .showing-score, .showing-instructions) #quick-draw-button {
   pointer-events: none;
-  --draw-button-color: rgb(150, 82, 82);
+  /* --draw-button-color: rgb(150, 82, 82); */
 }
-/* #quick-draw.fouled #quick-draw-button,
-#quick-draw.time-up #quick-draw-button {
-  pointer-events: none;
-  background-color: rgb(150, 82, 82);
-} */
 #quick-draw.fouled #quick-draw-button::after {
   content: 'FOUL!';
   font-size: calc(var(--button-height) / 2.5);
@@ -517,7 +523,6 @@ button {
   font-size: 2rem;
   color: white;
   font-weight: bold;
-  /* padding: 1rem 2rem; */
   border-radius: 2rem;
 }
 
@@ -916,10 +921,10 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
 
 @keyframes blink-border-image {
   from {
-    border-image-outset: calc(var(--button-height) * 0.1);
+    border-image-outset: calc(var(--button-height) * 0.18) calc(var(--button-height) * 0.2);
   }
   to {
-    border-image-outset: calc(var(--button-height) * 0.25);
+    border-image-outset: calc(var(--button-height) * 0.28) calc(var(--button-height) * 0.28);
   }
 }
 
@@ -935,7 +940,6 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
 }
 
 #preload-area {
-  /* visibility: hidden; */
   scale: 0;
   height: 0;
 }

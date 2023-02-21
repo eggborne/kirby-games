@@ -1,13 +1,13 @@
 import './css/style.css';
 import QuickDrawGame from './js/QuickDrawGame';
-import BombRallyGame from './js/BombRallyGame';
+// import BombRallyGame from './js/BombRallyGame';
 
 class KirbyGames {
   constructor() {
     this.game;
     this.games = {
       'quickdraw': () => new QuickDrawGame(),
-      'bombrally': () => new BombRallyGame(),
+      // 'bombrally': () => new BombRallyGame(),
     };
 
   }
