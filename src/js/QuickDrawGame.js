@@ -1,13 +1,33 @@
-import { pause, randomInt } from './util.js';
-const importAll = require =>
-  require.keys().reduce((acc, next) => {
+import { pause, randomInt, getPercent } from './util.js';
+  
+const loadImage = (bundledPath) => {
+  return new Promise(resolve => {
+    let loaderImage = new Image();
+    loaderImage.src = bundledPath;
+    document.getElementById('preload-area').append(loaderImage);
+    loaderImage.addEventListener('load', () => resolve(bundledPath));
+  });
+}
+const importAll = async require => {
+  let reduced = require.keys().reduce((acc, next) => { 
     acc[next.replace("./", "")] = require(next);
     return acc;
   }, {});
-
-const images = importAll(
-  require.context("../media/quickdraw/images/", true, /\.(png|jpe?g|svg)$/)
-);
+  document.querySelector('#loading-bar > #details').innerText = `loading images...`;
+  let count = 0;
+  for (const imagePath in reduced) {
+    count++;
+    await loadImage(reduced[imagePath]);
+    let percentDone = getPercent(count / Object.keys(reduced).length);
+    document.querySelector('#loading-bar > #label').innerText = `${percentDone}%`;
+    document.querySelector('#loading-bar > #filler').style.scale = `${percentDone}% 1`;
+    if (percentDone === 100) {
+      document.querySelector('#loading-bar > #details').innerText = `done!`;
+    }
+  }
+  return reduced;
+};
+let images; 
 
 let isMobile = true;
 
@@ -54,21 +74,6 @@ export default class QuickDrawGame {
       },
     ];
 
-    this.kirbyElement = document.getElementById('kirby');
-    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
-    this.kirbyElement.addEventListener('transitionend', e => {
-      e.target.classList.add('bouncing');
-      pause(200).then(() => {
-        e.target.classList.remove('bouncing');
-      });
-    });
-    this.enemyElement = document.getElementById('enemy');
-    this.enemyElement.addEventListener('transitionend', e => {
-      e.target.classList.add('bouncing');
-      pause(200).then(() => {
-        e.target.classList.remove('bouncing');
-      });
-    });
     this.buildLifeMarkers();
     console.log('----------- initialized QuickDrawGame!');
     if (isMobile) {
@@ -85,6 +90,31 @@ export default class QuickDrawGame {
 
   set phase(newPhase) {
     document.getElementById('quick-draw').className = newPhase;
+  }
+
+  async loadImages() {
+    let startedLoadAt = Date.now();
+    console.log('started images load at', startedLoadAt);
+    images = await importAll(
+      require.context("../media/quickdraw/images/", true, /\.(png)$/)
+    );
+    document.querySelector('#loading-bar > #details').innerText = `Loaded in ${Date.now() - startedLoadAt}ms`;
+    this.kirbyElement = document.getElementById('kirby');
+    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
+    this.kirbyElement.addEventListener('transitionend', e => {
+      e.target.classList.add('bouncing');
+      pause(200).then(() => {
+        e.target.classList.remove('bouncing');
+      });
+    });
+    this.enemyElement = document.getElementById('enemy');
+    this.enemyElement.addEventListener('transitionend', e => {
+      e.target.classList.add('bouncing');
+      pause(200).then(() => {
+        e.target.classList.remove('bouncing');
+      });
+    });
+    return images;
   }
 
   assignHandlers() {
@@ -307,7 +337,10 @@ export default class QuickDrawGame {
   }
 
   async showInstructions() {
+    document.getElementById('quick-draw-button').classList.add('receded');
     this.phase = 'showing-instructions';
+    await this.loadImages();
+    document.getElementById('quick-draw-button').classList.remove('receded');
   }
 
   async handleAButtonClick() {

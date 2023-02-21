@@ -27,6 +27,11 @@ const radToDeg = (radians) => {
   return radians * (180 / Math.PI);
 };
 
+const getPercent = (decimal) => {
+  console.log('got in', decimal, typeof decimal)
+  return  Math.round(Math.round(decimal * 1e4) / 1e2);
+}
+
 export {
   pause,
   randomInt,
@@ -34,5 +39,6 @@ export {
   pointAtAngle,
   angleOfPointABFromXY,
   degToRad,
-  radToDeg
+  radToDeg,
+  getPercent
 };

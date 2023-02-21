@@ -43,8 +43,10 @@ window.addEventListener('load', () => {
       console.log(app.selectedGame);
     });
   });
-  document.getElementById('start-button').addEventListener('pointerdown', e => {
+  document.getElementById('start-button').addEventListener('pointerdown', async e => {
+    
     let selectedGameTitle = app.selectedGame.id.split('-').slice(0, 2).join('');
+    
     app.game = app.games[selectedGameTitle]();
     document.getElementById('game-select-screen').classList.add('hidden');
     app.game.showInstructions();
