@@ -2,10 +2,11 @@
   --actual-height: 100vh;
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / (16/14));
-  --control-panel-bg-color: #586838;
-  /* --button-height: 4rem; */
-  /* --button-height: calc(var(--actual-height) / 12); */
+  --bottom-padding: calc(var(--game-screen-height) / 6);
+  --quick-draw-button-width: calc(var(--game-screen-height) / 1.5);
+  --quick-draw-button-height: calc(var(--game-screen-height) / 1.5);
   --button-height: calc(var(--actual-height) / 8);
+  --control-panel-bg-color: #586838;
 }
 
 @font-face {
@@ -28,12 +29,23 @@ body {
   align-items: stretch;
   justify-content: space-between;
   overflow: hidden;
+  user-select: none;
 }
 
 button {
   font-family: inherit;
   text-shadow: inherit;
   padding-top: calc(var(--button-height) / 10);
+  /* letter-spacing: calc(var(--button-height) / 100); */
+}
+
+button::after {
+  pointer-events: none;
+}
+
+button, .game-selection {
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .hidden {
@@ -72,7 +84,8 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-bottom: var(--bottom-padding);
 }
 
 #quick-draw .logo,
@@ -142,7 +155,7 @@ button {
   width: var(--game-screen-width);
   height: var(--game-screen-height);
   background-color: #dbdbdb;
-  color: 586058;
+  color: #586058;
   text-shadow: none;
   font-weight: bold;
   z-index: 3;
@@ -386,61 +399,63 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: calc(var(--game-screen-height) * 0.1);
   flex-grow: 1;
   padding-top: calc(var(--game-screen-height) / 4);
+  padding-bottom: var(--bottom-padding);
 }
 
-#quick-draw #quick-draw-button {
+.fancy-button {
   --draw-button-color: red;
   position: relative;
   border-radius: 50%;
   background: transparent !important;
   color: #ddd;
   font-weight: bold;
-  width: calc(var(--game-screen-height) / 1.75);
-  height: calc(var(--game-screen-height) / 1.75);
   border: 0;
   filter: drop-shadow(0 4px black);
   transition: background-color 200ms ease, all 100ms ease;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-#quick-draw #quick-draw-button:active::after {
+#quick-draw-button {
+  width: var(--quick-draw-button-width);
+  height: var(--quick-draw-button-height);
+}
+
+.fancy-button:active::after {
   margin-top: calc(var(--button-height) / 16);
-  /* background-color:#F78900; */
-  -webkit-box-shadow:inset 0 1px 0 #FFE5C4, inset 0 -3px 0 #915100;
-  -moz-box-shadow:inset 0 1px 0 #FFE5C4, inset 0 -3pxpx 0 #915100;
-  box-shadow:inset 0 1px 0 #FFE5C4, inset 0 -3px 0 #915100;
+  -webkit-box-shadow:inset 0 1px 0 #FFE5C4;
+  -moz-box-shadow:inset 0 1px 0 #FFE5C4;
+  box-shadow:inset 0 1px 0 #FFE5C4;
   transition: all 100ms ease;
 }
 
-#quick-draw #quick-draw-button::before {
-  content: 'cocks';
+.fancy-button::before {
+  content: '';
   position: absolute;
   width: inherit;
   height: inherit;
-  top: calc(var(--button-height) / 16);
+  top: 2.5%;
   left: 0;
   background-color: var(--draw-button-color);
   filter: brightness(50%);
   border-radius: inherit;
 }
 
-#quick-draw #quick-draw-button.receded {
+.fancy-button.receded {
   opacity: 0;
   scale: 0.8;
 }
 
 #quick-draw.waiting #quick-draw-button,
 #quick-draw.resetting #quick-draw-button,
-#quick-draw #quick-draw-button
+.fancy-button
 {
   --draw-button-color: rgb(150, 82, 82);
 }
 
-#quick-draw #quick-draw-button::after {
+.fancy-button::after {
   content: '';
   background-color: var(--draw-button-color);
   width: inherit;
@@ -454,7 +469,7 @@ button {
   left: 50%;
   box-shadow: inset 0 1px 0 #ffe5c49c;
   translate: -50% -50%;
-  transition: all 200ms ease;
+  transition: all 100ms ease;
 }
 
 #quick-draw.showing-instructions #quick-draw-button {
@@ -462,12 +477,12 @@ button {
 }
 #quick-draw.showing-instructions #quick-draw-button::after {
   content: 'I\'M READY';
-  font-size: calc(var(--button-height) / 2.5);
+  font-size: calc(var(--button-height) / 2.75);
 }
 
+#quick-draw.time-up #quick-draw-button::after,
 #quick-draw.waiting #quick-draw-button::after,
-#quick-draw.resetting #quick-draw-button::after,
-#quick-draw #quick-draw-button::after
+#quick-draw.resetting #quick-draw-button::after
 {
   content: 'NOT YET';
   font-size: calc(var(--button-height) / 3.5);
@@ -497,7 +512,7 @@ button {
   font-size: calc(var(--button-height) / 2.5);
 }
 #quick-draw.kirby-attacking #quick-draw-button {
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 #quick-draw.called #quick-draw-button,
 #quick-draw.showing-score #quick-draw-button
@@ -505,8 +520,15 @@ button {
   --draw-button-color: red;
 }
 
-#quick-draw:not(.waiting, .called, .time-up, .kirby-attacking, .showing-score, .showing-instructions) #quick-draw-button {
-  pointer-events: none;
+#quick-draw:not(
+.waiting, 
+.called, 
+.time-up, 
+.kirby-attacking, 
+.showing-score, 
+.showing-instructions) #quick-draw-button 
+{
+  /* pointer-events: none; */
   /* --draw-button-color: rgb(150, 82, 82); */
 }
 #quick-draw.fouled #quick-draw-button::after {
@@ -518,15 +540,21 @@ button {
 }
 
 #start-button, #quit-button {
-  width: calc(var(--button-height) * 2.5);
-  background-color: rgb(120, 120, 120);
-  font-size: 2rem;
-  color: white;
+  height: calc(var(--button-height) * 1);
+  font-size: calc(var(--button-height) / 3.5);
+  font-size: calc(var(--button-height) * 0.35);
   font-weight: bold;
-  border-radius: 2rem;
+  border-radius: calc(var(--button-height) * 0.325);
+}
+
+#start-button {
+  --start-button-color: green;
+  width: calc(var(--button-height) * 2.75);
 }
 
 #quit-button {
+  --quit-button-color: rgb(120, 120, 120);
+  width: calc(var(--game-screen-height) / 1.75);
   height: calc(var(--button-height) * 0.8);
   display: none;
 }
@@ -535,10 +563,35 @@ button {
   display: block;
 }
 
-#start-button {
-  height: calc(var(--button-height) * 1);
-  font-size: calc(var(--button-height) / 3.5);
-  background-color: green;
+#start-button::before,
+#quit-button::before {
+  top: 5%;
+}
+
+#start-button::before {
+  background-color: var(--start-button-color);
+  filter: brightness(50%);
+}
+
+#quit-button::before {
+  background-color: var(--quit-button-color);
+  filter: brightness(50%);
+}
+
+#start-button::after, #quit-button::after {
+  text-shadow:
+    -1px 0 0 #222, 
+    1px 0 0 #222,
+    0 -1px 0 #222,
+    0 1px 0 #222;
+}
+#start-button::after {
+  content: 'START GAME';
+  background-color: var(--start-button-color);
+}
+#quit-button::after {
+  content: 'QUIT';
+  background-color: var(--quit-button-color);
 }
 
 .fighter {
@@ -939,11 +992,6 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   }
 }
 
-#preload-area {
-  scale: 0;
-  height: 0;
-}
-
 #loading-bar {
   position: fixed;
   left: 50%;
@@ -957,7 +1005,7 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
   border: calc(var(--button-height) / 48) solid #ffffff99;
   transform-origin: left center;
   translate: -50% 0;
-  box-sizing: padding-box;
+  pointer-events: none;
 }
 
 #loading-bar > #label {

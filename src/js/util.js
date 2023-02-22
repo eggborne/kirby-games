@@ -13,11 +13,11 @@ const angleOfPointABFromXY = (a, b, x, y) => {
   return Math.atan2(b - y, a - x) + (Math.PI / 2);
 };
 
-const degToRad = (radians) => {
-  return radians * (Math.PI / 180);
+const degToRad = degrees => {
+  return degrees * (Math.PI / 180);
 };
 
-const radToDeg = (radians) => {
+const radToDeg = radians => {
   let deg = radians * (180 / Math.PI);
   if (deg < 0) {
     deg += 360;
@@ -27,12 +27,39 @@ const radToDeg = (radians) => {
   return radians * (180 / Math.PI);
 };
 
-const getPercent = (decimal) => {
-  console.log('got in', decimal, typeof decimal)
-  return  Math.round(Math.round(decimal * 1e4) / 1e2);
-}
+const importAll = async require => {
+  let reduced = require.keys().reduce((acc, next) => { 
+    acc[next.replace("./", "")] = require(next);
+    return acc;
+  }, {});
+  document.querySelector('#loading-bar > #details').innerText = `loading images...`;
+  let count = 0;
+  for (const imagePath in reduced) {
+    count++;
+    await loadImage(reduced[imagePath]);
+    let percentDone = getPercent(count / Object.keys(reduced).length);
+    document.querySelector('#loading-bar > #label').innerText = `${percentDone}%`;
+    document.querySelector('#loading-bar > #filler').style.scale = `${percentDone}% 1`;
+    if (percentDone === 100) {
+      document.querySelector('#loading-bar > #details').innerText = `done!`;
+    }
+  }
+  return reduced;
+};
+
+const loadImage = (bundledPath) => {
+  return new Promise(resolve => {
+    let loaderImage = new Image();
+    loaderImage.src = bundledPath;
+    document.getElementById('preload-area').append(loaderImage);
+    loaderImage.addEventListener('load', () => resolve(bundledPath));
+  });
+};
+
+const getPercent = decimal => Math.round(Math.round(decimal * 1e4) / 1e2);
 
 export {
+  importAll,
   pause,
   randomInt,
   distanceFromABToXY,

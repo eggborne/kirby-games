@@ -1,7 +1,8 @@
 import './css/style.css';
+import { pause } from './js/util.js';
 import QuickDrawGame from './js/QuickDrawGame';
 // import BombRallyGame from './js/BombRallyGame';
-
+let isMobile = true;
 class KirbyGames {
   constructor() {
     this.game;
@@ -29,7 +30,11 @@ class KirbyGames {
 }
 
 window.addEventListener('load', () => {
-
+  if (isMobile) {
+    document.getElementById('button-name').innerHTML = 'the button!';
+  } else {
+    document.getElementById('button-name').innerHTML = 'the space bar!';
+  }
   document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px');
   window.addEventListener('resize', () => {
     document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px');
@@ -43,11 +48,10 @@ window.addEventListener('load', () => {
       console.log(app.selectedGame);
     });
   });
-  document.getElementById('start-button').addEventListener('pointerdown', async e => {
-    
+  document.getElementById('start-button').addEventListener('click', async e => {
     let selectedGameTitle = app.selectedGame.id.split('-').slice(0, 2).join('');
-    
     app.game = app.games[selectedGameTitle]();
+    await pause(150);
     document.getElementById('game-select-screen').classList.add('hidden');
     app.game.showInstructions();
   });

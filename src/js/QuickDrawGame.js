@@ -1,13 +1,13 @@
 import { pause, randomInt, getPercent } from './util.js';
-  
+
+let totalKBLoaded = 0;
 const loadImage = (bundledPath) => {
   return new Promise(resolve => {
     let loaderImage = new Image();
     loaderImage.src = bundledPath;
-    document.getElementById('preload-area').append(loaderImage);
-    loaderImage.addEventListener('load', () => resolve(bundledPath));
+    loaderImage.addEventListener('load', () => resolve(fetch(bundledPath).then(r => r.blob())));
   });
-}
+};
 const importAll = async require => {
   let reduced = require.keys().reduce((acc, next) => { 
     acc[next.replace("./", "")] = require(next);
@@ -17,9 +17,11 @@ const importAll = async require => {
   let count = 0;
   for (const imagePath in reduced) {
     count++;
-    await loadImage(reduced[imagePath]);
+    let loadResponse = await loadImage(reduced[imagePath]);
+    let imageKB = Math.round(loadResponse.size / 1024);
+    totalKBLoaded += imageKB;
     let percentDone = getPercent(count / Object.keys(reduced).length);
-    document.querySelector('#loading-bar > #label').innerText = `${percentDone}%`;
+    document.querySelector('#loading-bar > #label').innerText = `${percentDone}% (${totalKBLoaded}kb)`;
     document.querySelector('#loading-bar > #filler').style.scale = `${percentDone}% 1`;
     if (percentDone === 100) {
       document.querySelector('#loading-bar > #details').innerText = `done!`;
@@ -27,9 +29,7 @@ const importAll = async require => {
   }
   return reduced;
 };
-let images; 
-
-let isMobile = true;
+let images;
 
 export default class QuickDrawGame {
   constructor() {
@@ -59,28 +59,23 @@ export default class QuickDrawGame {
       },
       {
         name: 'fishchef',
-        drawSpeed: 450,
+        drawSpeed: 400,
         suspenseTime: { min: 3000, max: 7000 },
       },
       {
         name: 'dedede',
-        drawSpeed: 400,
+        drawSpeed: 300,
         suspenseTime: { min: 2000, max: 4000 },
       },
       {
         name: 'metaknight',
-        drawSpeed: 300,
-        suspenseTime: { min: 4000, max: 10000 },
+        drawSpeed: 200,
+        suspenseTime: { min: 4000, max: 9000 },
       },
     ];
 
     this.buildLifeMarkers();
     console.log('----------- initialized QuickDrawGame!');
-    if (isMobile) {
-      document.getElementById('button-name').innerHTML = 'the button!';
-    } else {
-      document.getElementById('button-name').innerHTML = 'the space bar!';
-    }
     this.assignHandlers();
   }
 
@@ -94,11 +89,16 @@ export default class QuickDrawGame {
 
   async loadImages() {
     let startedLoadAt = Date.now();
-    console.log('started images load at', startedLoadAt);
+    
     images = await importAll(
       require.context("../media/quickdraw/images/", true, /\.(png)$/)
     );
-    document.querySelector('#loading-bar > #details').innerText = `Loaded in ${Date.now() - startedLoadAt}ms`;
+    console.log('loaded in', (Date.now() - startedLoadAt));
+    document.querySelector('#loading-bar > #details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
+    return images;
+  }
+
+  createSprites() {
     this.kirbyElement = document.getElementById('kirby');
     this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
     this.kirbyElement.addEventListener('transitionend', e => {
@@ -114,7 +114,6 @@ export default class QuickDrawGame {
         e.target.classList.remove('bouncing');
       });
     });
-    return images;
   }
 
   assignHandlers() {
@@ -264,15 +263,15 @@ export default class QuickDrawGame {
   }
 
   async advanceToRound(round) {
+    let roundToPlay = round < this.attackers.length ? round : (round - this.attackers.length);
     this.veil.classList.add('showing');
     await pause(600);
     this.phase = 'waiting';
     await this.resetForNewRound();
     await pause(300);
-    // this.phase = '';
     this.veil.classList.remove('showing');
     await pause(this.roundStartDelay);
-    this.playRound(round);
+    this.playRound(roundToPlay);
   }
 
   async playRound(roundNumber, extraPause=0) {
@@ -340,6 +339,7 @@ export default class QuickDrawGame {
     document.getElementById('quick-draw-button').classList.add('receded');
     this.phase = 'showing-instructions';
     await this.loadImages();
+    this.createSprites();
     document.getElementById('quick-draw-button').classList.remove('receded');
   }
 
