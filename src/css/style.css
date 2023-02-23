@@ -1,12 +1,14 @@
 :root {
   --actual-height: 100vh;
+  --screen-aspect-ratio: (8/7);
   --game-screen-width: 100vw;
-  --game-screen-height: calc(var(--game-screen-width) / (16/14));
+  --game-screen-height: calc(var(--game-screen-width) / var(--screen-aspect-ratio));
   --bottom-padding: calc(var(--game-screen-height) / 6);
-  --quick-draw-button-width: calc(var(--game-screen-height) / 1.5);
-  --quick-draw-button-height: calc(var(--game-screen-height) / 1.5);
+  --samurai-kirby-button-width: calc(var(--game-screen-height) / 1.65);
+  --samurai-kirby-button-height: calc(var(--game-screen-height) / 1.65);
   --button-height: calc(var(--actual-height) / 8);
   --control-panel-bg-color: #586838;
+  --level-select-bg-color: #393939;
 }
 
 @font-face {
@@ -36,7 +38,6 @@ button {
   font-family: inherit;
   text-shadow: inherit;
   padding-top: calc(var(--button-height) / 10);
-  /* letter-spacing: calc(var(--button-height) / 100); */
 }
 
 button::after {
@@ -74,7 +75,7 @@ button, .game-selection {
 
 .game-selection {
   height: var(--button-height);
-  width: 100%;
+  width: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,7 +89,14 @@ button, .game-selection {
   padding-bottom: var(--bottom-padding);
 }
 
-#quick-draw .logo,
+.game-selection {
+  border-image-source: url("../media/samurai-kirby/images/ui/qdborder.png");
+  border-image-slice: 33.3% 33.3% 33.3% 33.3%;
+  border-image-repeat: stretch stretch;
+  border-style: solid;
+  border-image-width: 0;
+}
+#samurai-kirby .logo,
 .game-selection .logo {
   --button-logo-height: calc(var(--button-height) * 0.65);
   background-repeat: no-repeat;
@@ -96,24 +104,19 @@ button, .game-selection {
   background-position: center;
   height: var(--button-logo-height);
   width: calc(var(--button-logo-height) * (205/50));
-  border-image-source: url("../media/quickdraw/images/ui/qdborder.png");
-  border-image-slice: 33.3% 33.3% 33.3% 33.3%;
-  /* border-image-width: calc(var(--button-logo-height) * 0.32); */
-  border-image-outset: 0 calc(var(--button-logo-height) * 0.32);
-  border-image-repeat: stretch stretch;
-  border-style: solid;
-  border-image-width: 0;
   pointer-events: none;
 }
 
-#quick-draw .logo,
-#quick-draw-selection > .logo {
-  background-image: url("../media/quickdraw/images/ui/qdlogo.png");
+#samurai-kirby-selection {
+  height: calc(var(--button-height) * 1.25);
+}
+#samurai-kirby-selection > .logo {
+  background-image: url("../media/samurai-kirby/images/ui/sklogo.png");
+  
 }
 
 #bomb-rally-selection > .logo {
   background-image: url("../media/bombrally/images/ui/brlogo.png");
-  /* translate: 0 10%; */
 }
 
 #kotd-selection {
@@ -121,17 +124,17 @@ button, .game-selection {
 }
 
 #kotd-selection > .logo {
-  background-image: url("../media/kotd/images/ui/kotdlogo.png");
   --button-logo-height: calc(var(--button-height) * 1.1);
+  background-image: url("../media/kotd/images/ui/kotdlogo.png");
   width: calc(var(--button-logo-height) * (235/90));
 }
 
-.game-selection.selected .logo {
+.game-selection.selected {
   border-image-width: calc(var(--button-height) * 0.3);
   animation: blink-border-image 300ms ease-in-out infinite alternate;
 }
 
-#quick-draw {
+#samurai-kirby {
   /* font-weight: bold; */
   color: #402a00;
   text-shadow:
@@ -148,7 +151,7 @@ button, .game-selection {
   transition: opacity 300ms ease;
 }
 
-#quick-draw-instructions-screen {
+#samurai-kirby-instructions-screen {
   position: absolute;
   top: 0;
   left: 0;
@@ -162,14 +165,11 @@ button, .game-selection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 10%;
-  padding-bottom: 15%;
   opacity: 0;
 }
 
-#quick-draw-instructions {
-  background-image: url(../media/quickdraw/images/ui/quickdrawinstructions.png);
+#samurai-kirby-instructions {
+  background-image: url(../media/samurai-kirby/images/ui/quickdrawinstructions.png);
   background-repeat: no-repeat;
   background-size: cover;
   --width: calc(var(--game-screen-width) * 0.9);
@@ -177,49 +177,100 @@ button, .game-selection {
   height: calc(var(--width) / (240/90));
 }
 
+#samurai-kirby #level-bar {
+  position: absolute;
+  background-image: url(../media/samurai-kirby/images/ui/levelbar.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  left: 0;
+  bottom: 0;
+  width: var(--game-screen-width);
+  height: calc(var(--game-screen-width) / 6.55);
+}
+
+#samurai-kirby #level-bar > .star {
+  position: absolute;
+  bottom: calc(var(--button-height) * 0.05);
+  background-image: url(../media/samurai-kirby/images/ui/star.png);
+  width: calc(var(--game-screen-height) / 20);
+  height: calc(var(--game-screen-height) / 20);
+}
+
 #button-name {
   position: absolute;
   font-size: calc(var(--game-screen-height) / 18);
   width: calc(var(--game-screen-height / 12));
   right: calc(var(--game-screen-height) / 3.25);
-  top: calc(var(--game-screen-height) * 0.775);
+  top: calc(var(--game-screen-height) * 0.72);
   transform-origin: center;
   translate: 50% 0;
 }
 
-#quick-draw-instructions-screen .logo {
+#samurai-kirby-instructions-screen .logo {
   border-image: none;
   border-width: 0;
   transform-origin: center;
-  opacity: 0;
-  scale: 1.2;
-  transition: opacity 300ms ease, scale 300ms ease;
-  transition-delay: 3000ms;
+  transition: all 1200ms ease !important;
+  /* transition-delay: 3000ms; */
 }
 
-#quick-draw.showing-instructions #quick-draw-instructions-screen {
+#samurai-kirby-instructions-screen .samurai-kirby-logo,
+#samurai-kirby-selection .samurai-kirby-logo {
+  --button-logo-height: calc(var(--button-height) * 1.35);
+  height: var(--button-logo-height);
+  width: calc(var(--button-logo-height) / 0.583);
+}
+
+#samurai-kirby.showing-instructions #samurai-kirby-instructions-screen {
   opacity: 1;
 }
-#quick-draw.showing-instructions .quick-draw-logo {
-  animation: land 600ms ease forwards;
+
+#samurai-kirby.showing-instructions
+  #samurai-kirby-instructions-screen
+    .samurai-kirby-logo-right {
+  position: absolute;
+  background-image: url("../media/samurai-kirby/images/ui/sklogoright.png");
+  translate: 100% 0;
+}
+#samurai-kirby.showing-instructions
+  #samurai-kirby-instructions-screen
+    .samurai-kirby-logo-left {
+  background-image: url("../media/samurai-kirby/images/ui/sklogoleft.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  translate: -100% 0;
+
+}
+#samurai-kirby.showing-instructions
+  #samurai-kirby-instructions-screen
+    .samurai-kirby-logo-right,
+#samurai-kirby.showing-instructions 
+  #samurai-kirby-instructions-screen
+    .samurai-kirby-logo-left {
+  translate: 0 0;
+  opacity: 1;
+  
+  /* animation: land 600ms ease forwards; */
 }
 
-#quick-draw.resetting *:not(.player-status, .veil) {
+#samurai-kirby.resetting *:not(.player-status, .veil) {
   transition-duration: 0ms !important;
 }
 
-#quick-draw-screen {
+#samurai-kirby-screen {
   position: relative;
   width: var(--game-screen-width);
   height: var(--game-screen-height);
-  background-image: url(../media/quickdraw/images/ui/quickdrawbg.png);
+  background-image: url(../media/samurai-kirby/images/ui/quickdrawbg.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top center;
-  overflow: hidden;
+  overflow: scroll;
 }
 
-#quick-draw-screen > .veil {
+#samurai-kirby-screen > .veil {
   position: absolute;
   top: 0;
   left: 0;
@@ -230,7 +281,7 @@ button, .game-selection {
   transition: opacity 600ms ease;
   z-index: 2;
 }
-#quick-draw-screen > .veil.showing {
+#samurai-kirby-screen > .veil.showing {
   opacity: 1;
 }
 #slash-screen, #score-screen {
@@ -274,13 +325,13 @@ button, .game-selection {
   --height: calc(var(--game-screen-height) * 0.6);
   height: var(--height);
   width: calc(var(--height) * (180/96));
-  background-image: url(../media/quickdraw/images/ui/slashmark1.png);
+  background-image: url(../media/samurai-kirby/images/ui/slashmark1.png);
 }
 #center-slash {
   --height: calc(var(--game-screen-height) * 0.2);
   height: var(--height);
   width: calc(var(--height) * (54/32));
-  background-image: url(../media/quickdraw/images/ui/slashcenter.png);
+  background-image: url(../media/samurai-kirby/images/ui/slashcenter.png);
   animation: blink 2ms linear infinite;
 }
 #center-slash::after {
@@ -290,7 +341,7 @@ button, .game-selection {
   --height: calc(var(--game-screen-height) * 0.9);
   height: var(--height);
   width: calc(var(--height) / (144/65));
-  background-image: url(../media/quickdraw/images/ui/slashmark2.png);
+  background-image: url(../media/samurai-kirby/images/ui/slashmark2.png);
 }
 
 #score-screen {
@@ -310,7 +361,7 @@ button, .game-selection {
   height: var(--game-screen-height);
 }
 
-#quick-draw.showing-score #score-screen {
+#samurai-kirby.showing-score #score-screen {
   opacity: 1;
 }
 
@@ -341,7 +392,7 @@ button, .game-selection {
   width: calc(var(--game-screen-height) * 0.45);
   height: calc(var(--game-screen-height) * 0.45);
   translate: -17% 3%;
-  background-image: url(../media/quickdraw/images/samuraikirby/waiting.png);
+  background-image: url(../media/samurai-kirby/images/samuraikirby/waiting.png);
 }
 
 #total-score {
@@ -381,20 +432,20 @@ button, .game-selection {
   height: calc(var(--game-screen-height) * 0.07 * (16/9));
 }
 
-#quick-draw.showing-score .score-screen-display {
+#samurai-kirby.showing-score .score-screen-display {
   animation: zoom-fade-in 1000ms ease forwards;
 }
-#quick-draw.showing-score #enemy-count-display {
+#samurai-kirby.showing-score #enemy-count-display {
   animation-delay: 1000ms;
 }
-#quick-draw.showing-score #fastest-time-display {
+#samurai-kirby.showing-score #fastest-time-display {
   animation-delay: 1800ms;
 }
-#quick-draw.showing-score #total-score-display {
+#samurai-kirby.showing-score #total-score-display {
   animation-delay: 2600ms;
 }
 
-#quick-draw-controls {
+#samurai-kirby-controls {
   background-color: var(--control-panel-bg-color);
   display: flex;
   flex-direction: column;
@@ -418,9 +469,13 @@ button, .game-selection {
   transition: background-color 200ms ease, all 100ms ease;
 }
 
-#quick-draw-button {
-  width: var(--quick-draw-button-width);
-  height: var(--quick-draw-button-height);
+#samurai-kirby-button {
+  width: var(--samurai-kirby-button-width);
+  height: var(--samurai-kirby-button-height);
+  max-width: var(--samurai-kirby-button-width);
+  max-height: var(--samurai-kirby-button-height);
+  /* max-width: calc(var(--actual-height) / 3.5);
+  max-height: calc(var(--actual-height) / 3.5); */
 }
 
 .fancy-button:active::after {
@@ -436,6 +491,8 @@ button, .game-selection {
   position: absolute;
   width: inherit;
   height: inherit;
+  max-width: inherit;
+  max-height: inherit;
   top: 2.5%;
   left: 0;
   background-color: var(--draw-button-color);
@@ -448,8 +505,8 @@ button, .game-selection {
   scale: 0.8;
 }
 
-#quick-draw.waiting #quick-draw-button,
-#quick-draw.resetting #quick-draw-button,
+#samurai-kirby.waiting #samurai-kirby-button,
+#samurai-kirby.resetting #samurai-kirby-button,
 .fancy-button
 {
   --draw-button-color: rgb(150, 82, 82);
@@ -460,6 +517,8 @@ button, .game-selection {
   background-color: var(--draw-button-color);
   width: inherit;
   height: inherit;
+  max-width: inherit;
+  max-height: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -467,75 +526,66 @@ button, .game-selection {
   position: absolute;
   top: 50%;
   left: 50%;
+  padding: 0 1rem;
+  box-sizing: border-box;
   box-shadow: inset 0 1px 0 #ffe5c49c;
   translate: -50% -50%;
   transition: all 100ms ease;
 }
 
-#quick-draw.showing-instructions #quick-draw-button {
+#samurai-kirby.showing-instructions #samurai-kirby-button {
   --draw-button-color: green;
 }
-#quick-draw.showing-instructions #quick-draw-button::after {
+#samurai-kirby.showing-instructions #samurai-kirby-button::after {
   content: 'I\'M READY';
   font-size: calc(var(--button-height) / 2.75);
 }
 
-#quick-draw.time-up #quick-draw-button::after,
-#quick-draw.waiting #quick-draw-button::after,
-#quick-draw.resetting #quick-draw-button::after
+#samurai-kirby.time-up #samurai-kirby-button::after,
+#samurai-kirby.waiting #samurai-kirby-button::after,
+#samurai-kirby.resetting #samurai-kirby-button::after
 {
   content: 'NOT YET';
   font-size: calc(var(--button-height) / 3.5);
 }
 
-#quick-draw.called #quick-draw-button::after {
+#samurai-kirby.called #samurai-kirby-button::after {
   content: 'DRAW!';
   font-size: calc(var(--button-height) / 2.5);
 }
 
-#quick-draw.time-up #quick-draw-button::after {
+#samurai-kirby.time-up #samurai-kirby-button::after {
   content: 'TOO SLOW';
   font-size: calc(var(--button-height) / 3.5);
 }
 
-#quick-draw.showing-score #quick-draw-button::after {
+#samurai-kirby.showing-score #samurai-kirby-button::after {
   content: 'TRY AGAIN';
   font-size: calc(var(--button-height) / 3.5);
 }
 
-#quick-draw.kirby-attacking #quick-draw-button {
+#samurai-kirby.kirby-attacking #samurai-kirby-button {
   --draw-button-color: rgb(0, 184, 0);
 }
 
-#quick-draw.kirby-attacking #quick-draw-button::after {
+#samurai-kirby.kirby-attacking #samurai-kirby-button::after {
   content: 'KIRBY WINS';
   font-size: calc(var(--button-height) / 2.5);
 }
-#quick-draw.kirby-attacking #quick-draw-button {
+#samurai-kirby.kirby-attacking #samurai-kirby-button {
   /* pointer-events: none; */
 }
-#quick-draw.called #quick-draw-button,
-#quick-draw.showing-score #quick-draw-button
+#samurai-kirby.called #samurai-kirby-button,
+#samurai-kirby.showing-score #samurai-kirby-button
 {
   --draw-button-color: red;
 }
 
-#quick-draw:not(
-.waiting, 
-.called, 
-.time-up, 
-.kirby-attacking, 
-.showing-score, 
-.showing-instructions) #quick-draw-button 
-{
-  /* pointer-events: none; */
-  /* --draw-button-color: rgb(150, 82, 82); */
-}
-#quick-draw.fouled #quick-draw-button::after {
+#samurai-kirby.fouled #samurai-kirby-button::after {
   content: 'FOUL!';
   font-size: calc(var(--button-height) / 2.5);
 }
-#quick-draw.fouled #quick-draw-button {
+#samurai-kirby.fouled #samurai-kirby-button {
   --draw-button-color: rgb(83, 67, 67);
 }
 
@@ -559,7 +609,7 @@ button, .game-selection {
   display: none;
 }
 
-#quick-draw.showing-score #quit-button {
+#samurai-kirby.showing-score #quit-button {
   display: block;
 }
 
@@ -617,23 +667,23 @@ button, .game-selection {
   --height: calc(var(--game-screen-height) * 0.1);
   height: var(--height);
   width: calc(var(--height) * (12/16));
-  background-image: url(../media/quickdraw/images/ui/teardrop.png);
+  background-image: url(../media/samurai-kirby/images/ui/teardrop.png);
   background-repeat: no-repeat;
   background-size: contain;
   display: none;
 }
 
-#quick-draw.fouled #kirby::after {
+#samurai-kirby.fouled #kirby::after {
   display: block;
   animation: drip 1000ms ease forwards;
 }
 
-#quick-draw.fouled #enemy {
+#samurai-kirby.fouled #enemy {
   animation: hop 300ms ease forwards;
   animation-delay: 100ms;
 }
 
-#quick-draw.fouled #kirby {
+#samurai-kirby.fouled #kirby {
   animation: hop-left 300ms ease forwards;
 }
 
@@ -662,23 +712,23 @@ body:not(.round-started) #enemy {
   translate: 100% 0;
 }
 
-#quick-draw.kirby-attacking #enemy {
+#samurai-kirby.kirby-attacking #enemy {
   animation: fly-off-right 800ms linear forwards;
   animation-delay: 200ms
 }
 
-#quick-draw.kirby-attacking #kirby {
+#samurai-kirby.kirby-attacking #kirby {
   left:  calc(var(--game-screen-height) * 0.25);
   bottom:  calc(var(--game-screen-height) / 4.5);
   transition-delay: 200ms;
 }
 
-#quick-draw.time-up #kirby {
+#samurai-kirby.time-up #kirby {
   animation: fly-off-left 400ms linear forwards;
   animation-delay: 200ms
 }
 
-#quick-draw.time-up #enemy {
+#samurai-kirby.time-up #enemy {
   right: calc(var(--game-screen-height) / 6);
   bottom:  calc(var(--game-screen-height) / 3.5);
   transition-delay: 200ms;
@@ -686,7 +736,7 @@ body:not(.round-started) #enemy {
 
 #exclamation-point {
   position: absolute;
-  background-image: url(../media/quickdraw/images/ui/exclamationpointfilled.png);
+  background-image: url(../media/samurai-kirby/images/ui/exclamationpointfilled.png);
   background-repeat: no-repeat;
   background-size: contain;
   width: calc(var(--game-screen-height) * 0.3125);
@@ -700,7 +750,7 @@ body:not(.round-started) #enemy {
   animation: flash 60ms linear infinite;
 }
 
-#quick-draw.called #exclamation-point {
+#samurai-kirby.called #exclamation-point {
   opacity: 1;
   scale: 1;
 }
@@ -712,7 +762,7 @@ body:not(.round-started) #enemy {
   --height: calc(var(--game-screen-height) / 4);
   height: var(--height);
   width: calc(var(--height) * 1.5);
-  background-image: url(../media/quickdraw/images/ui/scorepostwide.png);
+  background-image: url(../media/samurai-kirby/images/ui/scorepostwide.png);
   background-repeat: no-repeat;
   background-size: contain;
   display: flex;
@@ -727,7 +777,7 @@ body:not(.round-started) #enemy {
   filter: unset;
 }
 
-#quick-draw.fouled #score-post::after {
+#samurai-kirby.fouled #score-post::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -735,7 +785,7 @@ body:not(.round-started) #enemy {
   translate: -50% -50%;
   width: calc(var(--game-screen-height) * 0.15);
   height: calc(var(--game-screen-height) * 0.15);
-  background-image: url(../media/quickdraw/images/ui/xmark.png);
+  background-image: url(../media/samurai-kirby/images/ui/xmark.png);
   background-repeat: no-repeat;
   background-size: contain;
   rotate: -90deg;
@@ -808,7 +858,7 @@ body:not(.round-started) #enemy {
   transition: opacity 300ms ease;
 }
 
-body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
+body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status {
   opacity: 1;
 }
 
@@ -833,7 +883,7 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
 #lives-area > .life-marker {
   width: calc(var(--game-screen-height) * 0.1);
   height: calc(var(--game-screen-height) * 0.1);
-  background-image: url(../media/quickdraw/images/ui/xmark.png);
+  background-image: url(../media/samurai-kirby/images/ui/xmark.png);
   background-repeat: no-repeat;
   background-size: contain;
   opacity: 0.3;
@@ -846,10 +896,10 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
 
 @keyframes flash {
   from {
-    background-image: url(../media/quickdraw/images/ui/exclamationpointfilled.png);
+    background-image: url(../media/samurai-kirby/images/ui/exclamationpointfilled.png);
   }
   to {
-    background-image: url(../media/quickdraw/images/ui/exclamationpoint.png);
+    background-image: url(../media/samurai-kirby/images/ui/exclamationpoint.png);
   }
 }
 
@@ -974,10 +1024,10 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
 
 @keyframes blink-border-image {
   from {
-    border-image-outset: calc(var(--button-height) * 0.18) calc(var(--button-height) * 0.2);
+    border-image-outset: calc(var(--button-height) * 0.1) calc(var(--button-height) * 0.1);
   }
   to {
-    border-image-outset: calc(var(--button-height) * 0.28) calc(var(--button-height) * 0.28);
+    border-image-outset: calc(var(--button-height) * 0.18) calc(var(--button-height) * 0.2);
   }
 }
 
@@ -995,7 +1045,7 @@ body.round-started #quick-draw:not(.showing-score, .resetting) .player-status {
 #loading-bar {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--button-height) * 0.75);
+  bottom: calc(var(--button-height) * 0.5);
   width: calc(var(--button-height) * 3);
   height: calc(var(--button-height) * 0.45);
   display: flex;

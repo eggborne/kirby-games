@@ -1,13 +1,13 @@
 import './css/style.css';
 import { pause } from './js/util.js';
-import QuickDrawGame from './js/QuickDrawGame';
+import SamuraiKirbyGame from './js/SamuraiKirbyGame';
 // import BombRallyGame from './js/BombRallyGame';
 let isMobile = true;
 class KirbyGames {
   constructor() {
     this.game;
     this.games = {
-      'quickdraw': () => new QuickDrawGame(),
+      'samurai-kirby': () => new SamuraiKirbyGame(),
       // 'bombrally': () => new BombRallyGame(),
     };
 
@@ -49,11 +49,11 @@ window.addEventListener('load', () => {
     });
   });
   document.getElementById('start-button').addEventListener('click', async e => {
-    let selectedGameTitle = app.selectedGame.id.split('-').slice(0, 2).join('');
+    let selectedGameTitle = app.selectedGame.id.split('-').slice(0, 2).join('-');
+    console.log('selectedGame', selectedGameTitle);
     app.game = app.games[selectedGameTitle]();
     await pause(150);
     document.getElementById('game-select-screen').classList.add('hidden');
     app.game.showInstructions();
   });
-
 });

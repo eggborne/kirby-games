@@ -31,15 +31,15 @@ const importAll = async require => {
 };
 let images;
 
-export default class QuickDrawGame {
+export default class SamuraiKirbyGame {
   constructor() {
-    this.className = 'quick-draw';
+    this.className = 'samurai-kirby';
     this.roundStartDelay = 800;
     this.totalScore = 0;
     this.level = 0;
     this.attacker;
     this.scorePost = document.getElementById('score-post');
-    this.veil = document.querySelector('#quick-draw-screen > .veil');
+    this.veil = document.querySelector('#samurai-kirby-screen > .veil');
     this.calledAt;
     this.currentRoundTime = 0;
     this.roundTimes = [];
@@ -75,23 +75,23 @@ export default class QuickDrawGame {
     ];
 
     this.buildLifeMarkers();
-    console.log('----------- initialized QuickDrawGame!');
+    console.log('----------- initialized SamuraiKirbyGame!');
     this.assignHandlers();
   }
 
   get phase() {
-    return document.getElementById('quick-draw').className;
+    return document.getElementById('samurai-kirby').className;
   }
 
   set phase(newPhase) {
-    document.getElementById('quick-draw').className = newPhase;
+    document.getElementById('samurai-kirby').className = newPhase;
   }
 
   async loadImages() {
     let startedLoadAt = Date.now();
     
     images = await importAll(
-      require.context("../media/quickdraw/images/", true, /\.(png)$/)
+      require.context("../media/samurai-kirby/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt));
     document.querySelector('#loading-bar > #details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
@@ -117,7 +117,7 @@ export default class QuickDrawGame {
   }
 
   assignHandlers() {
-    document.getElementById('quick-draw-button').addEventListener('pointerdown', e => {
+    document.getElementById('samurai-kirby-button').addEventListener('pointerdown', e => {
       this.handleAButtonClick(e);
     });
     document.getElementById('quit-button').addEventListener('click', e => {
@@ -178,7 +178,7 @@ export default class QuickDrawGame {
     this.resetPlayerStatus();
     if (!resetOnly) {
       await this.resetForNewRound();
-      document.getElementById('quick-draw').classList.add('hidden');
+      document.getElementById('samurai-kirby').classList.add('hidden');
       document.getElementById('game-select-screen').classList.remove('hidden');
       this.veil.classList.add('showing');
     } else {
@@ -336,11 +336,11 @@ export default class QuickDrawGame {
   }
 
   async showInstructions() {
-    document.getElementById('quick-draw-button').classList.add('receded');
+    document.getElementById('samurai-kirby-button').classList.add('receded');
     this.phase = 'showing-instructions';
     await this.loadImages();
     this.createSprites();
-    document.getElementById('quick-draw-button').classList.remove('receded');
+    document.getElementById('samurai-kirby-button').classList.remove('receded');
   }
 
   async handleAButtonClick() {
