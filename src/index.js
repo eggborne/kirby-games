@@ -1,6 +1,6 @@
 import './css/style.css';
 import { pause } from './js/util.js';
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 import SamuraiKirbyGame from './js/SamuraiKirbyGame';
 // import BombRallyGame from './js/BombRallyGame';
 let isMobile = true;
@@ -82,5 +82,18 @@ window.addEventListener('load', () => {
     await pause(150);
     document.getElementById('game-select-screen').classList.add('hidden');
     app.game.showInstructions();
+  });
+  document.querySelector('#sound-controls > input').addEventListener('change', async e => {
+    Howler.volume(e.target.value / 100);
+    app.playSound('select');
+  });
+  document.getElementById('mute-icon').addEventListener('pointerdown', async e => {
+    Howler.volume(0);
+    document.querySelector('#sound-controls > input').value = '0';
+  });
+  document.getElementById('full-icon').addEventListener('pointerdown', async e => {
+    Howler.volume(1);
+    app.playSound('select');
+    document.querySelector('#sound-controls > input').value = '100';
   });
 });

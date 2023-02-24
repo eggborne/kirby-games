@@ -57,6 +57,40 @@ button, .game-selection {
   display: none !important;
 }
 
+#sound-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--controls-height) / 7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5%;
+  padding: 0 10%;
+  z-index: 4;
+}
+
+#game-select-screen.hidden + * + #sound-controls{
+  display: none;
+}
+
+#sound-controls > input {
+  flex-grow: 1;
+}
+
+#sound-controls > .icon {
+  width: calc(var(--controls-height) / 16);
+  height: calc(var(--controls-height) / 16);
+}
+
+#sound-controls > #mute-icon {
+  content: url("svg/volume-mute-icon.svg");
+}
+#sound-controls > #full-icon {
+  content: url("svg/volume-icon.svg");  
+}
+
 #game-select-screen {
   background-color: #aaa;
   height: 100%;
