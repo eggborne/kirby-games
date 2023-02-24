@@ -1,5 +1,5 @@
-import {Howl, Howler} from 'howler';
 import { pause, randomInt, getPercent } from './util.js';
+import { Howl } from 'howler';
 
 let totalKBLoaded = 0;
 const loadImage = (bundledPath) => {
@@ -10,7 +10,7 @@ const loadImage = (bundledPath) => {
   });
 };
 const importAll = async require => {
-  let reduced = require.keys().reduce((acc, next) => { 
+  let reduced = require.keys().reduce((acc, next) => {
     acc[next.replace("./", "")] = require(next);
     return acc;
   }, {});
@@ -31,11 +31,13 @@ const importAll = async require => {
   return reduced;
 };
 let images;
-let sounds = {};
+let sounds;
 
 export default class SamuraiKirbyGame {
   constructor() {
     this.className = 'samurai-kirby';
+    this.images = {};
+    this.sounds = {};
     this.soundOn = true;
     this.roundStartDelay = 800;
     this.difficulty = 1;
@@ -54,12 +56,12 @@ export default class SamuraiKirbyGame {
       {
         name: 'eyeballman',
         drawSpeed: 800,
-        suspenseTime: { min: 2000, max: 2500 },
+        suspenseTime: { min: 3000, max: 5000 },
       },
       {
         name: 'wheelbro',
         drawSpeed: 500,
-        suspenseTime: { min: 1500, max: 5000 },
+        suspenseTime: { min: 2000, max: 5000 },
       },
       {
         name: 'fishchef',
@@ -101,7 +103,9 @@ export default class SamuraiKirbyGame {
     return images;
   }
 
-  async loadSounds() {
+  loadSounds() {
+    sounds = {};
+    this.loadSound('whiplow', 'mp3');
     this.loadSound('gong', 'mp3');
     this.loadSound('wind', 'mp3');
     this.loadSound('call', 'mp3');
@@ -109,6 +113,7 @@ export default class SamuraiKirbyGame {
     this.loadSound('foul', 'mp3');
     this.loadSound('goodclear', 'mp3');
     this.loadSound('badclear', 'mp3');
+    this.loadSound('select', 'mp3');
   }
 
   loadSound(soundName, extension) {
@@ -160,6 +165,7 @@ export default class SamuraiKirbyGame {
     [...document.getElementsByClassName('level-segment')].forEach((segment, i) => {
       let highlightElement = document.getElementById('level-bar-highlight');
       segment.addEventListener('pointerdown', e => {
+        this.playSound('whiplow');
         let positionClass = `position-${(i + 1)}`;
         console.log('adding class', positionClass);
         highlightElement.className = positionClass;
@@ -322,7 +328,7 @@ export default class SamuraiKirbyGame {
     this.playRound(roundToPlay);
   }
 
-  async playRound(roundNumber, extraPause=0) {
+  async playRound(roundNumber, extraPause = 0) {
     await pause(2);
     this.veil.classList.remove('showing');
     // await pause(extraPause);
@@ -349,7 +355,7 @@ export default class SamuraiKirbyGame {
         this.printNumerals(currentScore, this.scorePost);
         this.currentRoundTime = currentScore;
       }, 1);
-      
+
       await pause(this.attacker.drawSpeed);
       if (this.phase === 'called') { // if no kirby attack occurred
         clearInterval(this.callInterval);
@@ -390,8 +396,13 @@ export default class SamuraiKirbyGame {
   async showInstructions() {
     document.getElementById('samurai-kirby-button').classList.add('receded');
     this.phase = 'showing-instructions';
-    await this.loadImages();
-    this.loadSounds();
+    console.log('images is', images);
+    if (!images) {
+      await this.loadImages();
+    }
+    if (!sounds) {
+      this.loadSounds();
+    }
     this.createSprites();
     document.getElementById('samurai-kirby-button').classList.remove('receded');
   }
@@ -443,6 +454,8 @@ export default class SamuraiKirbyGame {
   }
 
   async handleQuitButtonClick() {
+    this.playSound('select');
+    await pause(150);
     this.endGame();
   }
 }

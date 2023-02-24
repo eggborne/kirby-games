@@ -4,8 +4,8 @@
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / var(--screen-aspect-ratio));
   --bottom-padding: calc(var(--game-screen-height) / 6);
-  --samurai-kirby-button-width: calc(var(--game-screen-height) / 1.65);
-  --samurai-kirby-button-height: calc(var(--game-screen-height) / 1.65);
+  --samurai-kirby-button-width: calc(var(--game-screen-height) / 1.7);
+  --samurai-kirby-button-height: calc(var(--game-screen-height) / 1.7);
   --button-height: calc(var(--actual-height) / 8);
   --control-panel-bg-color: #586838;
   --level-select-bg-color: #393939;
@@ -74,7 +74,7 @@ button, .game-selection {
   padding: calc(var(--button-height) * 0.5) 0;
 }
 
-.game-selection {
+.game-selection, .game-selection::after {
   height: var(--button-height);
   width: 80%;
   display: flex;
@@ -91,6 +91,16 @@ button, .game-selection {
 }
 
 .game-selection {
+  /* border-image-source: url("../media/samurai-kirby/images/ui/qdborder.png");
+  border-image-slice: 33.3% 33.3% 33.3% 33.3%;
+  border-image-repeat: stretch stretch;
+  border-style: solid;
+  border-image-width: 0; */
+}
+.game-selection::after {
+  content: '';
+  height: var(--button-height);
+  position: absolute;
   border-image-source: url("../media/samurai-kirby/images/ui/qdborder.png");
   border-image-slice: 33.3% 33.3% 33.3% 33.3%;
   border-image-repeat: stretch stretch;
@@ -114,7 +124,6 @@ button, .game-selection {
 }
 #samurai-kirby-selection > .logo {
   background-image: url("../media/samurai-kirby/images/ui/sklogo.png");
-  
 }
 
 #bomb-rally-selection > .logo {
@@ -131,7 +140,7 @@ button, .game-selection {
   width: calc(var(--button-logo-height) * (235/90));
 }
 
-.game-selection.selected {
+.game-selection.selected::after {
   border-image-width: calc(var(--button-height) * 0.3);
   animation: blink-border-image 300ms ease-in-out infinite alternate;
 }
@@ -202,7 +211,7 @@ button, .game-selection {
   width: 33.3%;
   z-index: -1;
   scale: 0.65 1;
-  transition: translate 300ms ease;
+  transition: translate 200ms ease;
 }
 #samurai-kirby #level-bar-highlight.position-1 {
   translate: 0 0;
@@ -536,6 +545,7 @@ button, .game-selection {
 .fancy-button.receded {
   opacity: 0;
   scale: 0.8;
+  transition: none;
 }
 
 #samurai-kirby.waiting #samurai-kirby-button,
