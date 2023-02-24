@@ -30,14 +30,12 @@ const importAll = async require => {
   }
   return reduced;
 };
-let images;
-let sounds;
 
 export default class SamuraiKirbyGame {
   constructor() {
     this.className = 'samurai-kirby';
-    this.images = {};
-    this.sounds = {};
+    this.images;
+    this.sounds;
     this.soundOn = true;
     this.roundStartDelay = 800;
     this.difficulty = 1;
@@ -95,16 +93,15 @@ export default class SamuraiKirbyGame {
 
   async loadImages() {
     let startedLoadAt = Date.now();
-    images = await importAll(
+    this.images = await importAll(
       require.context("../media/samurai-kirby/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt));
     document.querySelector('#loading-bar > #details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
-    return images;
   }
 
   loadSounds() {
-    sounds = {};
+    this.sounds = {};
     this.loadSound('whiplow', 'mp3');
     this.loadSound('gong', 'mp3');
     this.loadSound('wind', 'mp3');
@@ -117,8 +114,8 @@ export default class SamuraiKirbyGame {
   }
 
   loadSound(soundName, extension) {
-    sounds[soundName] = {};
-    sounds[soundName].file = new Howl({
+    this.sounds[soundName] = {};
+    this.sounds[soundName].file = new Howl({
       src: [require(`../media/${this.className}/sounds/${soundName}.${extension}`)],
       preload: true,
     });
@@ -127,19 +124,19 @@ export default class SamuraiKirbyGame {
   playSound(soundName) {
     console.log('>>>>> PLAYING', soundName);
     if (this.soundOn) {
-      sounds[soundName].file.play();
+      this.sounds[soundName].file.play();
     }
   }
   stopSound(soundName) {
     console.log('<<<<< STOPPING', soundName);
     if (this.soundOn) {
-      sounds[soundName].file.stop();
+      this.sounds[soundName].file.stop();
     }
   }
 
   createSprites() {
     this.kirbyElement = document.getElementById('kirby');
-    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
+    this.kirbyElement.style.backgroundImage = `url(${this.images['samuraikirby/drawing.png']})`;
     this.kirbyElement.addEventListener('transitionend', e => {
       e.target.classList.add('bouncing');
       pause(200).then(() => {
@@ -197,7 +194,7 @@ export default class SamuraiKirbyGame {
     this.scorePost.classList.remove('showing');
     this.kirbyElement.classList = ['fighter'];
     this.enemyElement.classList = ['fighter'];
-    this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/drawing.png']})`;
+    this.kirbyElement.style.backgroundImage = `url(${this.images['samuraikirby/drawing.png']})`;
     await pause(10);
     this.calledAt = 0;
     this.currentRoundTime = 0;
@@ -256,7 +253,7 @@ export default class SamuraiKirbyGame {
   loadAttacker(attacker) {
     this.attacker = attacker;
     this.enemyElement.style.display = 'block';
-    this.enemyElement.style.backgroundImage = `url(${images[attacker.name + '/waiting.png']})`;
+    this.enemyElement.style.backgroundImage = `url(${this.images[attacker.name + '/waiting.png']})`;
   }
 
   displayScorePost() {
@@ -274,7 +271,7 @@ export default class SamuraiKirbyGame {
     scoreNumerals.forEach(numeral => {
       let numeralElement = document.createElement('div');
       numeralElement.className = 'score-numeral';
-      numeralElement.style.backgroundImage = `url(${images[`numerals/tile00${numeral}.png`]})`;
+      numeralElement.style.backgroundImage = `url(${this.images[`numerals/tile00${numeral}.png`]})`;
       targetElement.append(numeralElement);
     });
     if (timeLimit) {
@@ -344,7 +341,7 @@ export default class SamuraiKirbyGame {
     await pause(400);
     this.playSound('wind');
     await pause(suspenseTime);
-    // user could foul now...
+    // kirby could foul now...
     if (this.phase === 'waiting') { // but if not, call for the draw
       this.calledAt = Date.now();
       this.phase = 'called';
@@ -364,8 +361,8 @@ export default class SamuraiKirbyGame {
         this.stopSound('wind');
         this.playSound('strike');
         await this.displaySlashes(90);
-        document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
-        this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
+        document.getElementById('enemy').style.backgroundImage = `url(${this.images[this.attacker.name + '/attacking.png']})`;
+        this.kirbyElement.style.backgroundImage = `url(${this.images['samuraikirby/defeated.png']})`;
         this.loseLife(2000);
       }
     }
@@ -397,15 +394,14 @@ export default class SamuraiKirbyGame {
   async showInstructions() {
     document.getElementById('samurai-kirby-button').classList.add('receded');
     this.phase = 'showing-instructions';
-    console.log('images is', images);
-    if (!images) {
+    if (!this.images) {
       await this.loadImages();
-    }
-    if (!sounds) {
-      this.loadSounds();
     }
     this.createSprites();
     document.getElementById('samurai-kirby-button').classList.remove('receded');
+    if (!this.sounds) {
+      this.loadSounds();
+    }
   }
 
   async handleAButtonClick() {
@@ -416,8 +412,8 @@ export default class SamuraiKirbyGame {
       this.stopSound('call');
       this.playSound('strike');
       await this.displaySlashes(90);
-      this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
-      document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
+      this.kirbyElement.style.backgroundImage = `url(${this.images['samuraikirby/attacking.png']})`;
+      document.getElementById('enemy').style.backgroundImage = `url(${this.images[this.attacker.name + '/defeated.png']})`;
       this.roundTimes[this.level] = this.currentRoundTime;
       let scoreForRound = ((this.attacker.drawSpeed + (this.level * 250)) - (this.currentRoundTime * 5)) * (this.level + 1);
       this.totalScore += scoreForRound;
@@ -435,7 +431,7 @@ export default class SamuraiKirbyGame {
       this.stopSound('gong');
       this.stopSound('wind');
       this.playSound('foul');
-      this.enemyElement.style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
+      this.enemyElement.style.backgroundImage = `url(${this.images[this.attacker.name + '/defeated.png']})`;
       let penalty = Math.round((1000 - this.attacker.drawSpeed) / 2);
       this.totalScore -= penalty;
       if (this.totalScore <= 0) {
@@ -450,6 +446,7 @@ export default class SamuraiKirbyGame {
       // Game is over, button says 'Try Again'
       this.endGame(true);
     } else if (this.phase === 'showing-instructions') {
+      await pause(300);
       this.startGame();
     }
   }

@@ -210,7 +210,7 @@ button, .game-selection {
   background-image: none;
   background-color: rgb(82, 249, 82);
   width: 33.3%;
-  height: 80%;
+  height: 85%;
   z-index: -1;
   scale: 0.65 1;
   transition: translate 200ms ease;
@@ -360,7 +360,7 @@ button, .game-selection {
   /* opacity: 0.5; */
   transform-origin: right;
   transform: scaleX(1);
-  transition: transform 80ms linear;
+  transition: transform 80ms linear !important;
 }
 .slash-mark.revealing::after {
   transform: scaleX(0);
@@ -376,7 +376,7 @@ button, .game-selection {
   height: var(--height);
   width: calc(var(--height) * (54/32));
   background-image: url(../media/samurai-kirby/images/ui/slashcenter.png);
-  animation: blink 2ms linear infinite;
+  animation: blink 2ms linear infinite, zoom-in 200ms ease forwards;
 }
 #center-slash::after {
   display: none;
@@ -961,6 +961,15 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
   to {
     opacity: 0;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 2;
   }
 }
 

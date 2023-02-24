@@ -71,7 +71,6 @@ window.addEventListener('load', () => {
     element.addEventListener('pointerdown', e => {
       app.playSound('blip');
       app.selectedGame = e.target;
-      console.log(app.selectedGame);
     });
   });
 
