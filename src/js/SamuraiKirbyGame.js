@@ -1,3 +1,4 @@
+import {Howl, Howler} from 'howler';
 import { pause, randomInt, getPercent } from './util.js';
 
 let totalKBLoaded = 0;
@@ -30,11 +31,14 @@ const importAll = async require => {
   return reduced;
 };
 let images;
+let sounds = {};
 
 export default class SamuraiKirbyGame {
   constructor() {
     this.className = 'samurai-kirby';
+    this.soundOn = true;
     this.roundStartDelay = 800;
+    this.difficulty = 1;
     this.totalScore = 0;
     this.level = 0;
     this.attacker;
@@ -89,13 +93,43 @@ export default class SamuraiKirbyGame {
 
   async loadImages() {
     let startedLoadAt = Date.now();
-    
     images = await importAll(
       require.context("../media/samurai-kirby/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt));
     document.querySelector('#loading-bar > #details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
     return images;
+  }
+
+  async loadSounds() {
+    this.loadSound('gong', 'mp3');
+    this.loadSound('wind', 'mp3');
+    this.loadSound('call', 'mp3');
+    this.loadSound('strike', 'mp3');
+    this.loadSound('foul', 'mp3');
+    this.loadSound('goodclear', 'mp3');
+    this.loadSound('badclear', 'mp3');
+  }
+
+  loadSound(soundName, extension) {
+    sounds[soundName] = {};
+    sounds[soundName].file = new Howl({
+      src: [require(`../media/${this.className}/sounds/${soundName}.${extension}`)],
+      preload: true,
+    });
+  }
+
+  playSound(soundName) {
+    console.log('>>>>> PLAYING', soundName);
+    if (this.soundOn) {
+      sounds[soundName].file.play();
+    }
+  }
+  stopSound(soundName) {
+    console.log('<<<<< STOPPING', soundName);
+    if (this.soundOn) {
+      sounds[soundName].file.stop();
+    }
   }
 
   createSprites() {
@@ -122,6 +156,15 @@ export default class SamuraiKirbyGame {
     });
     document.getElementById('quit-button').addEventListener('click', e => {
       this.handleQuitButtonClick(e);
+    });
+    [...document.getElementsByClassName('level-segment')].forEach((segment, i) => {
+      let highlightElement = document.getElementById('level-bar-highlight');
+      segment.addEventListener('pointerdown', e => {
+        let positionClass = `position-${(i + 1)}`;
+        console.log('adding class', positionClass);
+        highlightElement.className = positionClass;
+        this.difficulty = (i + 1);
+      });
     });
   }
 
@@ -172,6 +215,11 @@ export default class SamuraiKirbyGame {
     }
     this.veil.classList.remove('showing');
     this.phase = 'showing-score';
+    if (this.totalScore > 3000) {
+      this.playSound('goodclear');
+    } else {
+      this.playSound('badclear');
+    }
   }
 
   async endGame(resetOnly) {
@@ -277,33 +325,37 @@ export default class SamuraiKirbyGame {
   async playRound(roundNumber, extraPause=0) {
     await pause(2);
     this.veil.classList.remove('showing');
-    await pause(extraPause);
+    // await pause(extraPause);
     this.printNumerals((roundNumber + 1), document.getElementById('round-display'), 'white');
     this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
     this.phase = 'waiting';
     this.loadAttacker(this.attackers[roundNumber]);
     await pause(100);
     document.body.classList.add('round-started');
-    await pause(400);
     this.displayScorePost();
     let suspenseTime = randomInt(this.attacker.suspenseTime.min, this.attacker.suspenseTime.max);
-
+    this.playSound('gong');
+    await pause(400);
+    this.playSound('wind');
     await pause(suspenseTime);
     // user could foul now...
     if (this.phase === 'waiting') { // but if not, call for the draw
       this.calledAt = Date.now();
       this.phase = 'called';
+      this.stopSound('wind');
+      this.playSound('call');
       this.callInterval = setInterval(() => {
         let currentScore = Math.round((Date.now() - this.calledAt) / 5);
         this.printNumerals(currentScore, this.scorePost);
         this.currentRoundTime = currentScore;
       }, 1);
-
+      
       await pause(this.attacker.drawSpeed);
-      // user needs to click now, or else...
-      if (this.phase === 'called') { // if no kirby attack
+      if (this.phase === 'called') { // if no kirby attack occurred
         clearInterval(this.callInterval);
         this.phase = 'time-up';
+        this.stopSound('call');
+        this.playSound('strike');
         await this.displaySlashes(90);
         document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
         this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/defeated.png']})`;
@@ -339,6 +391,7 @@ export default class SamuraiKirbyGame {
     document.getElementById('samurai-kirby-button').classList.add('receded');
     this.phase = 'showing-instructions';
     await this.loadImages();
+    this.loadSounds();
     this.createSprites();
     document.getElementById('samurai-kirby-button').classList.remove('receded');
   }
@@ -348,6 +401,8 @@ export default class SamuraiKirbyGame {
       // Kirby wins
       clearInterval(this.callInterval);
       this.phase = 'kirby-attacking';
+      this.stopSound('call');
+      this.playSound('strike');
       await this.displaySlashes(90);
       this.kirbyElement.style.backgroundImage = `url(${images['samuraikirby/attacking.png']})`;
       document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
@@ -365,6 +420,9 @@ export default class SamuraiKirbyGame {
       // Kirby fouled
       clearInterval(this.callInterval);
       this.phase = 'fouled';
+      this.stopSound('gong');
+      this.stopSound('wind');
+      this.playSound('foul');
       this.enemyElement.style.backgroundImage = `url(${images[this.attacker.name + '/defeated.png']})`;
       let penalty = Math.round((1000 - this.attacker.drawSpeed) / 2);
       this.totalScore -= penalty;
