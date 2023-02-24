@@ -3,9 +3,10 @@
   --screen-aspect-ratio: (8/7);
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / var(--screen-aspect-ratio));
-  --bottom-padding: calc(var(--game-screen-height) / 6);
-  --samurai-kirby-button-width: calc(var(--game-screen-height) / 1.7);
-  --samurai-kirby-button-height: calc(var(--game-screen-height) / 1.7);
+  --controls-height: calc(var(--actual-height) - var(--game-screen-height));
+  --bottom-padding: calc(var(--controls-height) / 6);
+  --samurai-kirby-button-width: calc(var(--controls-height) / 2.25);
+  --samurai-kirby-button-height: calc(var(--controls-height) / 2.25);
   --button-height: calc(var(--actual-height) / 8);
   --control-panel-bg-color: #586838;
   --level-select-bg-color: #393939;
@@ -197,7 +198,7 @@ button, .game-selection {
   position: absolute;
   background-image: url(../media/samurai-kirby/images/ui/levelbar.png);
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   left: 0;
   bottom: 0;
@@ -209,6 +210,7 @@ button, .game-selection {
   background-image: none;
   background-color: rgb(82, 249, 82);
   width: 33.3%;
+  height: 80%;
   z-index: -1;
   scale: 0.65 1;
   transition: translate 200ms ease;
@@ -495,7 +497,8 @@ button, .game-selection {
   justify-content: space-between;
   gap: calc(var(--game-screen-height) * 0.1);
   flex-grow: 1;
-  padding-top: calc(var(--game-screen-height) / 4);
+  /* padding-top: calc(var(--game-screen-height) / 4); */
+  padding-top: var(--bottom-padding);
   padding-bottom: var(--bottom-padding);
 }
 
@@ -514,10 +517,12 @@ button, .game-selection {
 #samurai-kirby-button {
   width: var(--samurai-kirby-button-width);
   height: var(--samurai-kirby-button-height);
+  min-width: 55vw;
+  min-height: 55vw;
   max-width: var(--samurai-kirby-button-width);
   max-height: var(--samurai-kirby-button-height);
-  /* max-width: calc(var(--actual-height) / 3.5);
-  max-height: calc(var(--actual-height) / 3.5); */
+  /* max-width: calc(var(--actual-height) / 4);
+  max-height: calc(var(--actual-height) / 4); */
 }
 
 .fancy-button:active::after {
@@ -533,6 +538,8 @@ button, .game-selection {
   position: absolute;
   width: inherit;
   height: inherit;
+  min-width: inherit;
+  min-height: inherit;
   max-width: inherit;
   max-height: inherit;
   top: 2.5%;
@@ -560,6 +567,8 @@ button, .game-selection {
   background-color: var(--draw-button-color);
   width: inherit;
   height: inherit;
+  min-width: inherit;
+  min-height: inherit;
   max-width: inherit;
   max-height: inherit;
   display: flex;
@@ -1088,9 +1097,9 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #loading-bar {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--button-height) * 0.5);
+  bottom: calc(var(--controls-height) * 0.08);
   width: calc(var(--button-height) * 3);
-  height: calc(var(--button-height) * 0.45);
+  height: calc(var(--controls-height) * 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1120,6 +1129,8 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 #loading-bar > #details {
+  font-size: 70%;
+  color: #aaa;
   position: absolute;
   height: inherit;
   text-align: center;

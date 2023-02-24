@@ -361,6 +361,7 @@ export default class SamuraiKirbyGame {
         clearInterval(this.callInterval);
         this.phase = 'time-up';
         this.stopSound('call');
+        this.stopSound('wind');
         this.playSound('strike');
         await this.displaySlashes(90);
         document.getElementById('enemy').style.backgroundImage = `url(${images[this.attacker.name + '/attacking.png']})`;
