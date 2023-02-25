@@ -11,15 +11,15 @@
       <div id="samurai-kirby-selection" class="game-selection selected">
         <div class="samurai-kirby-logo logo"></div>
       </div>
-      <div id="bomb-rally-selection" class="game-selection">
-        <div class="bomb-rally-logo logo"></div>
-      </div>
       <div id="kotd-selection" class="game-selection">
         <div class="kotd-logo logo"></div>
       </div>
+      <div id="bomb-rally-selection" class="game-selection">
+        <div class="bomb-rally-logo logo"></div>
+      </div>
     </div>
     <div class="button-area">
-      <button type="button" class="fancy-button" id="start-button"></button>
+      <button type="button" class="fancy-button start-button" id="start-button"></button>
     </div>
   </div>
 
@@ -44,10 +44,10 @@
           <div class="star"></div>
         </div>
       </div>
-      <div id="loading-bar">
-        <span id="label"></span>
-        <div id="filler"></div>
-        <span id="details"></span>
+      <div class="loading-bar">
+        <span class="label"></span>
+        <div class="filler"></div>
+        <span class="details"></span>
       </div>
       <div id="samurai-kirby-instructions">
         <div id="button-name"></div>
@@ -88,6 +88,22 @@
       <button type="button" class="fancy-button" id="quit-button"></button>
     </div>
   </div>
+
+  <div class="game-container" id="kotd">
+    <div class="game-instructions-screen" id="kotd-instructions-screen">
+      <div class="top-screen"></div>
+      <div class="bottom-screen"></div>
+    </div>
+    <div id="kotd-screen">
+      <div class="veil showing"></div>
+      <div class="top-screen"></div>
+      <div class="bottom-screen"></div>
+    </div>
+    <div id="kotd-controls">
+      <button type="button" class="fancy-button start-button" id="kotd-button"></button>
+    </div>
+  </div>
+
   <div id="sound-controls">
     <img class="icon" id="mute-icon"></img>
     <input type="range" min="0" max="100" value="100">

@@ -14,7 +14,7 @@ const importAll = async require => {
     acc[next.replace("./", "")] = require(next);
     return acc;
   }, {});
-  document.querySelector('#loading-bar > #details').innerText = `loading images...`;
+  document.querySelector('#samurai-kirby .loading-bar > .details').innerText = `loading images...`;
   let count = 0;
   for (const imagePath in reduced) {
     count++;
@@ -22,10 +22,10 @@ const importAll = async require => {
     let imageKB = Math.round(loadResponse.size / 1024);
     totalKBLoaded += imageKB;
     let percentDone = getPercent(count / Object.keys(reduced).length);
-    document.querySelector('#loading-bar > #label').innerText = `${percentDone}% (${totalKBLoaded}kb)`;
-    document.querySelector('#loading-bar > #filler').style.scale = `${percentDone}% 1`;
+    document.querySelector('#samurai-kirby .loading-bar > .label').innerText = `${percentDone}% (${totalKBLoaded}kb)`;
+    document.querySelector('#samurai-kirby .loading-bar > .filler').style.scale = `${percentDone}% 1`;
     if (percentDone === 100) {
-      document.querySelector('#loading-bar > #details').innerText = `done!`;
+      document.querySelector('#samurai-kirby .loading-bar > .details').innerText = `done!`;
     }
   }
   return reduced;
@@ -97,7 +97,7 @@ export default class SamuraiKirbyGame {
       require.context("../media/samurai-kirby/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt));
-    document.querySelector('#loading-bar > #details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
+    document.querySelector('#samurai-kirby .loading-bar > .details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
   }
 
   loadSounds() {
@@ -182,7 +182,7 @@ export default class SamuraiKirbyGame {
   }
 
   async startGame() {
-    console.log('--------------- starting game --------------------');
+    console.log('--------------- starting SamuraiKirby --------------------');
     this.phase = '';
     document.getElementById(this.className).classList.remove('hidden');
     this.playRound(0, this.roundStartDelay);

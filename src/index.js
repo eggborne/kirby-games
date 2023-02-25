@@ -2,7 +2,9 @@ import './css/style.css';
 import { pause } from './js/util.js';
 import { Howl, Howler } from 'howler';
 import SamuraiKirbyGame from './js/SamuraiKirbyGame';
+import KirbyOnTheDrawGame from './js/KirbyOnTheDrawGame';
 // import BombRallyGame from './js/BombRallyGame';
+
 let isMobile = true;
 class KirbyGames {
   constructor() {
@@ -11,6 +13,7 @@ class KirbyGames {
     this.game;
     this.games = {
       'samurai-kirby': () => new SamuraiKirbyGame(),
+      'kotd': () => new KirbyOnTheDrawGame(),
       // 'bombrally': () => new BombRallyGame(),
     };
 
@@ -76,21 +79,30 @@ window.addEventListener('load', () => {
 
   document.getElementById('start-button').addEventListener('click', async e => {
     app.playSound('select');
-    let selectedGameTitle = app.selectedGame.id.split('-').slice(0, 2).join('-');
+    let splitID = app.selectedGame.id.split('-');
+    let selectedGameTitle = splitID.slice(0, splitID.length - 1).join('-');
     console.log('selectedGame', selectedGameTitle);
     app.game = app.games[selectedGameTitle]();
     await pause(150);
     document.getElementById('game-select-screen').classList.add('hidden');
+    if (selectedGameTitle === 'kotd') {
+      document.getElementById('samurai-kirby').style.display = 'none';
+    } else if (selectedGameTitle === 'samurai-kirby') {
+      document.getElementById('kotd').style.display = 'none';
+    } 
     app.game.showInstructions();
   });
+
   document.querySelector('#sound-controls > input').addEventListener('change', async e => {
     Howler.volume(e.target.value / 100);
     app.playSound('select');
   });
+
   document.getElementById('mute-icon').addEventListener('pointerdown', async e => {
     Howler.volume(0);
     document.querySelector('#sound-controls > input').value = '0';
   });
+
   document.getElementById('full-icon').addEventListener('pointerdown', async e => {
     Howler.volume(1);
     app.playSound('select');

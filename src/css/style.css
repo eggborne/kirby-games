@@ -3,6 +3,9 @@
   --screen-aspect-ratio: (8/7);
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / var(--screen-aspect-ratio));
+  --ds-aspect-ratio: (4/3);
+  --ds-screen-width: 100vw;
+  --ds-screen-height: calc(var(--ds-screen-width) / var(--ds-aspect-ratio));
   --controls-height: calc(var(--actual-height) - var(--game-screen-height));
   --bottom-padding: calc(var(--controls-height) / 6);
   --samurai-kirby-button-width: calc(var(--controls-height) / 2.25);
@@ -71,7 +74,7 @@ button, .game-selection {
   z-index: 4;
 }
 
-#game-select-screen.hidden + * + #sound-controls{
+#game-select-screen.hidden + * + * + #sound-controls{
   display: none;
 }
 
@@ -125,13 +128,6 @@ button, .game-selection {
   padding-bottom: var(--bottom-padding);
 }
 
-.game-selection {
-  /* border-image-source: url("../media/samurai-kirby/images/ui/qdborder.png");
-  border-image-slice: 33.3% 33.3% 33.3% 33.3%;
-  border-image-repeat: stretch stretch;
-  border-style: solid;
-  border-image-width: 0; */
-}
 .game-selection::after {
   content: '';
   height: var(--button-height);
@@ -227,6 +223,7 @@ button, .game-selection {
   width: var(--width);
   height: calc(var(--width) / (240/90));
 }
+
 #samurai-kirby #level-bar-highlight, 
 #samurai-kirby #level-bar {
   position: absolute;
@@ -306,7 +303,7 @@ button, .game-selection {
   width: calc(var(--button-logo-height) / 0.583);
 }
 
-#samurai-kirby.showing-instructions #samurai-kirby-instructions-screen {
+.showing-instructions .game-instructions-screen {
   opacity: 1;
 }
 
@@ -675,7 +672,7 @@ button, .game-selection {
   --draw-button-color: rgb(83, 67, 67);
 }
 
-#start-button, #quit-button {
+.start-button, #quit-button {
   height: calc(var(--button-height) * 1);
   font-size: calc(var(--button-height) / 3.5);
   font-size: calc(var(--button-height) * 0.35);
@@ -683,7 +680,7 @@ button, .game-selection {
   border-radius: calc(var(--button-height) * 0.325);
 }
 
-#start-button {
+.start-button {
   --start-button-color: green;
   width: calc(var(--button-height) * 2.75);
 }
@@ -699,12 +696,12 @@ button, .game-selection {
   display: block;
 }
 
-#start-button::before,
+.start-button::before,
 #quit-button::before {
   top: 5%;
 }
 
-#start-button::before {
+.start-button::before {
   background-color: var(--start-button-color);
   filter: brightness(50%);
 }
@@ -714,14 +711,14 @@ button, .game-selection {
   filter: brightness(50%);
 }
 
-#start-button::after, #quit-button::after {
+.start-button::after, #quit-button::after {
   text-shadow:
     -1px 0 0 #222, 
     1px 0 0 #222,
     0 -1px 0 #222,
     0 1px 0 #222;
 }
-#start-button::after {
+.start-button::after {
   content: 'START GAME';
   background-color: var(--start-button-color);
 }
@@ -1137,7 +1134,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
 }
 
-#loading-bar {
+.loading-bar {
   position: fixed;
   left: 50%;
   bottom: calc(var(--controls-height) * 0.08);
@@ -1153,13 +1150,13 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   pointer-events: none;
 }
 
-#loading-bar > #label {
+.loading-bar > .label {
   color: var(--control-panel-bg-color);
   font-size: calc(var(--button-height) * 0.175);
   z-index: 1;
 }
 
-#loading-bar > #filler {
+.loading-bar > .filler {
   position: absolute;
   transform-origin: inherit;
   width: inherit;
@@ -1171,11 +1168,68 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   transition: scale 200ms ease;
 }
 
-#loading-bar > #details {
+.loading-bar > .details {
   font-size: 70%;
   color: #aaa;
   position: absolute;
   height: inherit;
   text-align: center;
   translate: 0 125%;
+}
+
+
+#kotd-screen, #kotd-instructions-screen {
+  width: var(--ds-screen-width);
+  height: calc(var(--ds-screen-height) * 2);
+  z-index: 1;
+}
+
+.top-screen, .bottom-screen {
+  width: var(--ds-screen-width);
+  height: var(--ds-screen-height);
+}
+
+.top-screen, .bottom-screen {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#kotd-instructions-screen > .top-screen {
+  background-image: url(../media/kotd/images/ui/kotdtitlescreen.png);
+}
+#kotd-instructions-screen > .bottom-screen {
+  background-image: url(../media/kotd/images/ui/kotdinstructions.png);
+}
+#kotd-screen > .top-screen {
+  background-image: url(../media/kotd/images/ui/bgtop.png);
+}
+#kotd-screen > .bottom-screen {
+  background-image: url(../media/kotd/images/ui/bgbottom.png);
+}
+
+#kotd-controls {
+  position: fixed;
+  background-color: rgb(82, 53, 42);
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: calc(var(--actual-height) - (var(--ds-screen-height) * 2));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+#kotd-button::after {
+  background-color: green;
+  content: "LET\'S GO";
+}
+
+#kotd-button {
+  transition: all 300ms ease !important;
+}
+#kotd-button.invisible {
+  opacity: 0;
+  pointer-events: none;
 }
