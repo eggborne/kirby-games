@@ -86,9 +86,11 @@ window.addEventListener('load', () => {
     await pause(150);
     document.getElementById('game-select-screen').classList.add('hidden');
     if (selectedGameTitle === 'kotd') {
-      document.getElementById('samurai-kirby').style.display = 'none';
+      document.getElementById('samurai-kirby').classList.add('display-none');
+      document.getElementById('kotd').classList.remove('display-none');
     } else if (selectedGameTitle === 'samurai-kirby') {
-      document.getElementById('kotd').style.display = 'none';
+      document.getElementById('kotd').classList.add('display-none');
+      document.getElementById('samurai-kirby').classList.add('display-none');
     } 
     app.game.showInstructions();
   });

@@ -25,6 +25,10 @@
   margin: 0;
 }
 
+.display-none {
+  display: none !important;
+}
+
 body {
   font-family: kirbyFont;
   image-rendering: pixelated;
