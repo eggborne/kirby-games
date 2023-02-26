@@ -1,16 +1,14 @@
 import { pause, randomInt, getPercent } from './util.js';
 
-export default class Enemy {
-  constructor(type, positionClass) {
+export default class Kirby {
+  constructor(type) {
     this.type = type;
-    this.positionClass = positionClass;
-    this.spawnedAt = Date.now();
     this.container = document.createElement('div');
     this.container.classList.add('enemy-container');
     this.container.classList.add(positionClass);
     this.container.classList.add('obscured');
-    let randomScale = (randomInt(60, 110) / 100);
-    this.container.style.setProperty('--enemy-scale', randomScale);
+    // let randomScale = (randomInt(60, 110) / 100);
+    // this.container.style.setProperty('--enemy-scale', randomScale);
     this.container.innerHTML = `
       <div class="pole"></div>
       <div class="kotd-enemy ${type}"></div>

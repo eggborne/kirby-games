@@ -43,19 +43,52 @@ export default class KirbyOnTheDrawGame {
     this.spawnInterval;
     this.enemies = [];
     this.ammo = 8;
+    this.scores = {
+      player: 0,
+      yellow: 0,
+      pink: 0,
+      lime: 0
+    };
 
     this.veil = document.querySelector('#kotd > .veil');
 
-    this.enemyNames = [
-      'waddledee',
-      'cappy',
-      'brontoburt',
-      'knucklejoe',
-      'waddledoo',
-      'chefkawasaki',
-      'bonkers',
-      'dedede',
-      'metaknight',
+    this.enemyData = [
+      {
+        name: 'waddledee',
+        pointValue: 10,
+      },
+      {
+        name: 'cappy',
+        pointValue: 10,
+      },
+      {
+        name: 'brontoburt',
+        pointValue: 10,
+      },
+      {
+        name: 'knucklejoe',
+        pointValue: 20,
+      },
+      {
+        name: 'waddledoo',
+        pointValue: 20,
+      },
+      {
+        name: 'chefkawasaki',
+        pointValue: 40,
+      },
+      {
+        name: 'bonkers',
+        pointValue: 40,
+      },
+      {
+        name: 'dedede',
+        pointValue: 100,
+      },
+      {
+        name: 'metaknight',
+        pointValue: 100,
+      },
     ];
 
     this.assignHandlers();
@@ -68,6 +101,16 @@ export default class KirbyOnTheDrawGame {
 
   set phase(newPhase) {
     document.getElementById('kotd').className = newPhase;
+  }
+
+  enemyByName(enemyName) {
+    console.log('looking up', enemyName);
+    for (let enemyListing of this.enemyData) {
+      console.log('checking', enemyListing);
+      if (enemyListing.name === enemyName) {
+        return enemyListing;
+      }
+    }
   }
 
   async loadImages() {
@@ -114,7 +157,7 @@ export default class KirbyOnTheDrawGame {
   }
 
   async spawnEnemy() {
-    let randomType = this.enemyNames[randomInt(0, this.enemyNames.length - 1)];
+    let randomType = this.enemyData[randomInt(0, this.enemyData.length - 1)].name;
     let randomOrigin = 'bottom-edge';
     let newEnemy = new Enemy(randomType, randomOrigin);
     this.spawnCount++;
@@ -127,15 +170,19 @@ export default class KirbyOnTheDrawGame {
         await pause(80);
         document.querySelector('.kotd-kirby.player').classList.remove('fired');
         document.querySelector('.kotd-kirby.player').classList.add('firing');
+
         e.target.parentElement.classList.add('dead');
+        this.scores.player += this.enemyByName(randomType).pointValue;
+        console.log('socre now', this.scores.player);
+        this.renderScore(this.scores.player);
         await pause(600);
         e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+
       } else {
         console.log('no ammo');
         document.querySelector('#kotd #no-ammo').classList.add('showing');
         await pause(600);
         document.querySelector('#kotd #no-ammo').classList.remove('showing');
-        // reload etc.
       }
       
     });
@@ -154,6 +201,16 @@ export default class KirbyOnTheDrawGame {
     });
   }
 
+  renderScore(newScore) {
+    let scoreString = newScore.toString();
+    let leadingZeros = 4 - scoreString.length;
+    scoreString = '0'.repeat(leadingZeros) + scoreString;
+    [...document.querySelectorAll('#numeral-area > .red-number')].forEach((numeral, n) => {
+      let scoreNumeral = scoreString[n];
+      numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${scoreNumeral})`;
+    });
+  }
+
   assignHandlers() {
     document.getElementById('kotd-button').addEventListener('click', e => {
       e.target.classList.add('invisible');
@@ -162,6 +219,7 @@ export default class KirbyOnTheDrawGame {
     document.getElementById('kotd-ammo-bar').addEventListener('pointerdown', e => {
       this.reloadAmmo();
     });
+    this.renderScore(this.scores.player);
   }
 
   async reloadAmmo() {
