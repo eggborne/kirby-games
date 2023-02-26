@@ -1304,35 +1304,37 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-image: url(../media/kotd/images/ui/kotdkirbysheet.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
+  background-position-x: calc(var(--spacing-x) * var(--starting-bg-x));
 }
 
 .kotd-kirby.player {
-  background-position-x: 0;
-}
-.kotd-kirby.player.firing {
-  background-position-x: calc(var(--spacing-x) * 1);
-}
-.kotd-kirby.player.fired {
-  background-position-x: calc(var(--spacing-x) * 2);
+  --starting-bg-x: 0;
 }
 .kotd-kirby.yellow {
-  background-position-x: calc(var(--spacing-x) * 3);
+  --starting-bg-x: 3;
 }
 .kotd-kirby.pink {
-  background-position-x: calc(var(--spacing-x) * 6);
+  --starting-bg-x: 6;
 }
 .kotd-kirby.lime {
-  background-position-x: calc(var(--spacing-x) * 9);
+  --starting-bg-x: 9;
+}
+.kotd-kirby.firing {
+  background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 1));
+}
+.kotd-kirby.fired {
+  background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 2));
 }
 
 .enemy-container {
   position: absolute;
   transform-origin: 50% 175%;
   transition: opacity 500ms ease, translate 600ms ease;
+  animation: wobble 800ms ease-in-out alternate infinite;
 }
 
 .enemy-container.bottom-edge {
-  bottom: calc(var(--ds-screen-height) / 2.5 * 0.5)
+  bottom: calc(var(--ds-screen-height) / 2.5 * 0.65)
 }
 .enemy-container.bottom-edge.obscured {
   translate: 0 100%;
@@ -1354,10 +1356,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   height: calc(var(--ds-screen-height) / 2.5);
   pointer-events: none;
   /* z-index: 0; */
-}
-
-.enemy-container.bottom-edge {
-  bottom: calc(var(--ds-screen-height) / 2.5 * 0.5)
 }
 
 .kotd-enemy {
@@ -1401,10 +1399,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 @keyframes wobble {
   from {
-    rotate: -15deg;
+    rotate: -10deg;
   }
   to {
-    rotate: 15deg;
+    rotate: 10deg;
   }
 }
 @keyframes spin {
