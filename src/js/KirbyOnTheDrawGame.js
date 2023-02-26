@@ -1,6 +1,7 @@
 import { pause, randomInt, getPercent } from './util.js';
 import { Howl } from 'howler';
 import Enemy from './Enemy';
+import Kirby from './Kirby';
 
 let totalKBLoaded = 0;
 const loadImage = (bundledPath) => {
@@ -40,15 +41,18 @@ export default class KirbyOnTheDrawGame {
     this.soundOn = true;
     this.spawnCount = 0;
     this.level = 0;
+    this.reloading = false;
     this.spawnInterval;
+    this.intervalCounter = -1;
+    this.spawnStarted = 0;
     this.enemies = [];
-    this.ammo = 8;
     this.scores = {
       player: 0,
       yellow: 0,
       pink: 0,
       lime: 0
     };
+    this.players = [];
 
     this.veil = document.querySelector('#kotd > .veil');
 
@@ -89,6 +93,10 @@ export default class KirbyOnTheDrawGame {
         name: 'metaknight',
         pointValue: 100,
       },
+      {
+        name: 'bomb',
+        pointValue: (-50),
+      },
     ];
 
     this.assignHandlers();
@@ -104,9 +112,7 @@ export default class KirbyOnTheDrawGame {
   }
 
   enemyByName(enemyName) {
-    console.log('looking up', enemyName);
     for (let enemyListing of this.enemyData) {
-      console.log('checking', enemyListing);
       if (enemyListing.name === enemyName) {
         return enemyListing;
       }
@@ -125,14 +131,6 @@ export default class KirbyOnTheDrawGame {
   loadSounds() {
     this.sounds = {};
     // this.loadSound('whiplow', 'mp3');
-    // this.loadSound('gong', 'mp3');
-    // this.loadSound('wind', 'mp3');
-    // this.loadSound('call', 'mp3');
-    // this.loadSound('strike', 'mp3');
-    // this.loadSound('foul', 'mp3');
-    // this.loadSound('goodclear', 'mp3');
-    // this.loadSound('badclear', 'mp3');
-    // this.loadSound('select', 'mp3');
   }
 
   loadSound(soundName, extension) {
@@ -144,56 +142,66 @@ export default class KirbyOnTheDrawGame {
   }
 
   playSound(soundName) {
-    console.log('>>>>> PLAYING', soundName);
     if (this.soundOn) {
       this.sounds[soundName].file.play();
     }
   }
   stopSound(soundName) {
-    console.log('<<<<< STOPPING', soundName);
     if (this.soundOn) {
       this.sounds[soundName].file.stop();
     }
   }
 
   async spawnEnemy() {
-    let randomType = this.enemyData[randomInt(0, this.enemyData.length - 1)].name;
+    let randomType = this.enemyData[randomInt(0, this.enemyData.length - 2)].name;
     let randomOrigin = 'bottom-edge';
     let newEnemy = new Enemy(randomType, randomOrigin);
     this.spawnCount++;
-    newEnemy.container.id = `enemy-${this.spawnCount}`;
-    newEnemy.container.querySelector('.kotd-enemy').addEventListener('pointerdown', async e => {
-      if (!e.target.parentElement.classList.contains('dead') && this.ammo > 0) {
-        this.ammo--;
-        this.renderAmmo();
-        document.querySelector('.kotd-kirby.player').classList.add('fired');
-        await pause(80);
-        document.querySelector('.kotd-kirby.player').classList.remove('fired');
-        document.querySelector('.kotd-kirby.player').classList.add('firing');
-
-        e.target.parentElement.classList.add('dead');
-        this.scores.player += this.enemyByName(randomType).pointValue;
-        console.log('socre now', this.scores.player);
-        this.renderScore(this.scores.player);
-        await pause(600);
-        e.target.parentElement.parentElement.removeChild(e.target.parentElement);
-
-      } else {
-        console.log('no ammo');
-        document.querySelector('#kotd #no-ammo').classList.add('showing');
-        await pause(600);
-        document.querySelector('#kotd #no-ammo').classList.remove('showing');
-      }
-      
+    newEnemy.container.id = `${randomType}-${this.spawnCount}`;
+    newEnemy.container.querySelector('.kotd-enemy').addEventListener('pointerdown', (e) => {
+      let dataForEnemy = this.enemyByName(e.target.classList[1]);
+      let pointValue = dataForEnemy.pointValue;
+      this.players[0].fireAtTarget(e.target, pointValue);
+      this.renderPlayerScore();
+      this.renderPlayerAmmo();
     });
     this.enemies.push(newEnemy);
-    await pause(30);
+    newEnemy.pointValue = this.enemyByName(randomType).pointValue;
+    await pause(20);
     newEnemy.container.classList.remove('obscured');
   }
 
-  renderAmmo() {
+  async handleTargetEnemyClick(e) {
+    if (
+      !this.reloading &&
+      !e.target.parentElement.classList.contains('dead') &&
+      this.players[0].ammo > 0
+    ) {
+      this.players[0].ammo--;
+      this.players[0].playFireAnimation();
+      let dataForEnemy = this.enemyByName(e.target.classList[1]);
+      let pointValue = dataForEnemy.pointValue;
+      
+      this.players[0].score += pointValue;
+      if (this.players[0].score < 0) {
+        this.players[0].score = 0;
+      }
+
+      e.target.parentElement.classList.add('dead');
+      setTimeout(() => {
+        e.target.parentElement.remove();
+      }, 600);
+
+    } else {
+      document.querySelector('#kotd #no-ammo').classList.add('showing');
+      await pause(300);
+      document.querySelector('#kotd #no-ammo').classList.remove('showing');
+    }
+  }
+
+  renderPlayerAmmo() {
     [...document.getElementsByClassName('ammo-slot')].forEach((slot, s) => {
-      if (s < this.ammo) {
+      if (s < this.players[0].ammo) {
         slot.classList.remove('empty');
       } else {
         slot.classList.add('empty');
@@ -201,11 +209,11 @@ export default class KirbyOnTheDrawGame {
     });
   }
 
-  renderScore(newScore) {
-    let scoreString = newScore.toString();
+  renderPlayerScore() {
+    let scoreString = this.players[0].score.toString();
     let leadingZeros = 4 - scoreString.length;
     scoreString = '0'.repeat(leadingZeros) + scoreString;
-    [...document.querySelectorAll('#numeral-area > .red-number')].forEach((numeral, n) => {
+    [...document.querySelectorAll('#kotd-score-area .score-number')].forEach((numeral, n) => {
       let scoreNumeral = scoreString[n];
       numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${scoreNumeral})`;
     });
@@ -216,60 +224,47 @@ export default class KirbyOnTheDrawGame {
       e.target.classList.add('invisible');
       this.startGame();
     });
-    document.getElementById('kotd-ammo-bar').addEventListener('pointerdown', e => {
-      this.reloadAmmo();
+    document.getElementById('kotd-ammo-bar').addEventListener('pointerdown', async e => {
+      await this.players[0].reloadAmmo();
+      // await this.reloadAmmo();
+      this.renderPlayerAmmo();
     });
-    this.renderScore(this.scores.player);
-  }
-
-  async reloadAmmo() {
-    document.getElementById('kotd-ammo-bar').classList.add('off-y');
-    let reloadTime = (8 - this.ammo) * 60;
-    document.querySelector('#kotd-score-bar #cylinder').classList.add('spinning');
-    await pause(reloadTime);
-    document.querySelector('#kotd-score-bar #cylinder').classList.remove('spinning');
-    await pause(80);
-    this.ammo = 8;
-    this.renderAmmo();
-    document.getElementById('kotd-ammo-bar').classList.remove('off-y');
   }
 
   async startGame() {
     console.log('--------------- starting KirbyOnTheDraw --------------------');
-    this.phase = '';
+    this.players.push(new Kirby('player'), new Kirby('yellow'), new Kirby('pink'), new Kirby('lime'));
+    this.renderPlayerScore();
+    this.phase = 'round-started';
+
+    // await pause(1000);
+
+    document.getElementById('kotd-top-curtains').classList.remove('closed');
+    document.getElementById('kotd-bottom-curtains').classList.remove('closed');
+    await pause(800);
     document.getElementById(this.className).classList.remove('hidden');
     await pause(1000);
-    this.spawnEnemy();
-    await pause(400);
-    this.spawnEnemy();
-    await pause(400);
-    this.spawnEnemy();
+    // this.spawnEnemy();
+    // await pause(400);
+    // this.spawnEnemy();
+    // await pause(400);
+    // this.spawnEnemy();
+
+    this.spawnStarted = Date.now();
+    this.intervalCounter = 0;
     this.spawnInterval = setInterval(async () => {
-      this.spawnEnemy();
-      await pause(600);
-      this.spawnEnemy();
-      await pause(600);
-      this.spawnEnemy();
-    }, 2400);
-  }
+      if ((this.intervalCounter % 20) === 0) {
+        this.spawnEnemy();
+        pause(300).then(() => {
+          this.spawnEnemy();
+          pause(300).then(() => { 
+            this.spawnEnemy();
+          });
+        });
+      }
+      this.intervalCounter++;
+    }, 100);
 
-  async printNumerals(score, targetElement, color, timeLimit) {
-    // if (color) {
-
-    //   targetElement.classList.add(color);
-    // }
-    // targetElement.innerHTML = '';
-    // let scoreNumerals = score.toString().split('');
-    // scoreNumerals.forEach(numeral => {
-    //   let numeralElement = document.createElement('div');
-    //   numeralElement.className = 'score-numeral';
-    //   numeralElement.style.backgroundImage = `url(${this.images[`numerals/tile00${numeral}.png`]})`;
-    //   targetElement.append(numeralElement);
-    // });
-    // if (timeLimit) {
-    //   await pause(timeLimit);
-    //   targetElement.classList.remove(color);
-    // }
   }
 
   async showInstructions() {
@@ -280,58 +275,5 @@ export default class KirbyOnTheDrawGame {
     // if (!this.sounds) {
     //   this.loadSounds();
     // }
-  }
-
-  async handleAButtonClick() {
-    if (this.phase === 'called') {
-      // Kirby wins
-      clearInterval(this.callInterval);
-      this.phase = 'kirby-attacking';
-      this.stopSound('call');
-      this.playSound('strike');
-      await this.displaySlashes(90);
-      this.kirbyElement.style.backgroundImage = `url(${this.images['samuraikirby/attacking.png']})`;
-      document.getElementById('enemy').style.backgroundImage = `url(${this.images[this.attacker.name + '/defeated.png']})`;
-      this.roundTimes[this.level] = this.currentRoundTime;
-      let scoreForRound = ((this.attacker.drawSpeed + (this.level * 250)) - (this.currentRoundTime * 5)) * (this.level + 1);
-      this.totalScore += scoreForRound;
-      document.getElementById('score-change-display').classList.add('showing');
-      this.printNumerals(scoreForRound, document.getElementById('score-change-display'), 'green', 1800);
-      this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
-      await pause(1500);
-      document.getElementById('score-change-display').classList.remove('showing');
-      this.level++;
-      this.advanceToRound(this.level);
-    } else if (this.phase === 'waiting') {
-      // Kirby fouled
-      clearInterval(this.callInterval);
-      this.phase = 'fouled';
-      this.stopSound('gong');
-      this.stopSound('wind');
-      this.playSound('foul');
-      this.enemyElement.style.backgroundImage = `url(${this.images[this.attacker.name + '/defeated.png']})`;
-      let penalty = Math.round((1000 - this.attacker.drawSpeed) / 2);
-      this.totalScore -= penalty;
-      if (this.totalScore <= 0) {
-        this.totalScore = 0;
-      }
-      document.getElementById('score-change-display').classList.add('showing');
-      this.printNumerals(penalty, document.getElementById('score-change-display'), 'red', 1200);
-      this.printNumerals(this.totalScore, document.getElementById('player-score-display'), 'white');
-      await this.loseLife(1000);
-      document.getElementById('score-change-display').classList.remove('showing');
-    } else if (this.phase === 'showing-score') {
-      // Game is over, button says 'Try Again'
-      this.endGame(true);
-    } else if (this.phase === 'showing-instructions') {
-      await pause(300);
-      this.startGame();
-    }
-  }
-
-  async handleQuitButtonClick() {
-    this.playSound('select');
-    await pause(150);
-    this.endGame();
   }
 }

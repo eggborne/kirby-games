@@ -9,24 +9,23 @@ export default class Enemy {
     this.container.classList.add('enemy-container');
     this.container.classList.add(positionClass);
     this.container.classList.add('obscured');
-    let randomScale = (randomInt(60, 110) / 100);
-    this.container.style.setProperty('--enemy-scale', randomScale);
+    if (!randomInt(0, 4)) {
+      type = 'bomb';
+      setTimeout(async () => {
+        this.container.classList.add('obscured');
+        await pause(600);
+        this.container.remove();
+      }, randomInt(1000, 2500));
+    }
+    if (randomInt(0, 1)) {
+      this.container.style.animationDirection = 'alternate-reverse';
+    }
     this.container.innerHTML = `
       <div class="pole"></div>
       <div class="kotd-enemy ${type}"></div>
     `;
-    this.container.style.left = randomInt(window.innerWidth * 0.15, window.innerWidth * 0.85) + 'px';
+    this.container.style.left = randomInt(window.innerWidth * 0.1, window.innerWidth * 0.8) + 'px';
     document.querySelector('#kotd-screen .bottom-screen').appendChild(this.container);
-    // this.container.querySelector('.kotd-enemy').addEventListener('pointerdown', async e => {
-    //   console.log('clicked enemy', e.target.classList);
-    //   e.target.parentElement.classList.add('dead');
-    //   document.querySelector('.kotd-kirby.player').classList.add('fired');
-    //   await pause(80);
-    //   document.querySelector('.kotd-kirby.player').classList.remove('fired');
-    //   document.querySelector('.kotd-kirby.player').classList.add('firing');
-    //   await pause(600);
-    //   e.target.parentElement.parentElement.removeChild(e.target.parentElement);
-    // });
   }
 
   get phase() {

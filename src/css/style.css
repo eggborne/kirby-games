@@ -133,7 +133,7 @@ button, .game-selection {
 }
 
 .game-selection::after {
-  content: '';
+  content: "";
   height: var(--button-height);
   position: absolute;
   border-image-source: url("../media/samurai-kirby/images/ui/qdborder.png");
@@ -387,7 +387,7 @@ button, .game-selection {
   display: block;
 }
 .slash-mark::after {
-  content: '';
+  content: "";
   position: absolute;
   width: inherit;
   height: inherit;
@@ -569,7 +569,7 @@ button, .game-selection {
 }
 
 .fancy-button::before {
-  content: '';
+  content: "";
   position: absolute;
   width: inherit;
   height: inherit;
@@ -598,7 +598,7 @@ button, .game-selection {
 }
 
 .fancy-button::after {
-  content: '';
+  content: "";
   background-color: var(--draw-button-color);
   width: inherit;
   height: inherit;
@@ -747,7 +747,7 @@ button, .game-selection {
 }
 
 #kirby::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 35%;
   right: 20%;
@@ -865,7 +865,7 @@ body:not(.round-started) #enemy {
 }
 
 #samurai-kirby.fouled #score-post::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   top: 50%;
@@ -1181,14 +1181,92 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   translate: 0 125%;
 }
 
-#kotd-instructions-screen {
+#kotd-screen {
+  position: relative;
+}
+
+#kotd-screen .curtains {
+  position: absolute;
+  left: 0;
+  width: var(--ds-screen-width);
+  height: var(--ds-screen-height);
+  display: flex;
+  align-items: stretch;
+  z-index: 3;
   pointer-events: none;
 }
+#kotd-screen #kotd-top-curtains {
+  top: 0;
+}
+#kotd-screen #kotd-bottom-curtains {
+  top: var(--ds-screen-height);
+}
+
+#kotd-screen .curtains .left-curtain,
+#kotd-screen .curtains .right-curtain {
+  width: calc(var(--ds-screen-width) / 2);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  scale: 0.5 1;
+  transition: scale 800ms ease, translate 800ms ease;
+}
+
+#kotd-screen .curtains .left-curtain {
+  transform-origin: 0% center;
+  translate: -50% 0;
+}
+#kotd-screen .curtains .right-curtain {
+  transform-origin: 100% center;
+  translate: 50% 0;
+}
+
+#kotd-screen .curtains.closed > .curtain-half {
+  scale: 1 1;
+  translate: 0 0;
+}
+
+#kotd-screen .curtains .curtain-segment {
+  width: calc(var(--ds-screen-width) / 8);
+  background-image: url(../media/kotd/images/ui/curtainmiddle.png);
+  background-size: 100% calc(var(--ds-screen-height) / 2);
+}
+#kotd-screen .curtains .curtain-segment.end {
+  background-image: url(../media/kotd/images/ui/curtainend.png);
+}
+#kotd-screen .curtains .right-curtain > .curtain-segment.end {
+  transform: scaleX(-1);
+}
+
+#kotd-screen .curtains .curtain-segment::before,
+#kotd-screen .curtains .curtain-segment::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: inherit;
+  height: calc(var(--ds-screen-height) / 6);
+  background-image: inherit;
+  background-size: auto calc(var(--ds-screen-height) / 2);
+  background-position: 0 50%;
+}
+
+#kotd-screen .curtains .curtain-segment::before {
+  translate: 0 -99.5%;
+}
+#kotd-screen .curtains .curtain-segment::after {
+  translate: 0 0;
+}
+
 
 #kotd-screen, #kotd-instructions-screen {
   width: var(--ds-screen-width);
   height: calc(var(--ds-screen-height) * 2);
   z-index: 1;
+}
+
+#kotd-instructions-screen {
+  pointer-events: none;
+  z-index: 2;
 }
 
 .top-screen, .bottom-screen {
@@ -1327,8 +1405,22 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   bottom: calc(var(--ds-screen-height) / 3.25);
   display: flex;
   justify-content: space-around;
-
 }
+
+#kotd-kirby-score-area {
+  width: var(--ds-screen-width);
+  position: absolute;
+  bottom: calc(var(--ds-screen-height) / 16.5);
+  display: flex;
+  justify-content: space-around;
+}
+#kotd-kirby-score-area > .numeral-area {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: calc(var(--ds-screen-height) / 3.25);
+}
+
 .kotd-kirby {
   --kotd-kirby-height: calc(var(--ds-screen-height) / 3.428);
   --spacing-x: calc(var(--ds-screen-height) / -3.428);
@@ -1364,8 +1456,8 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   position: absolute;
   scale: var(--enemy-scale) var(--enemy-scale);
   transform-origin: 50% 175%;
-  transition: opacity 500ms ease, translate 500ms ease !important;
-  animation: wobble 800ms ease-in-out alternate infinite;
+  transition: translate 300ms ease;
+  animation: wobble-left 800ms ease-in-out alternate infinite;
 }
 
 .enemy-container.bottom-edge {
@@ -1376,6 +1468,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 .enemy-container.bottom-edge.dead {
   animation: spin 80ms linear alternate infinite;
+  transition-duration: 600ms;
   translate: 0 150%;
 }
 .enemy-container > .pole {
@@ -1433,6 +1526,13 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-x: calc(var(--spacing-x) * 8);
 }
 
+.kotd-enemy.bomb {
+  background-image: url(../media/kotd/images/ui/bomb.png);
+  height: calc(var(--ds-screen-height) / 4);
+  width: calc(var(--ds-screen-height) / 4 / (48/56));
+  background-position: 0;
+}
+
 #kotd #no-ammo {
   position: absolute;
   left: 50%;
@@ -1453,33 +1553,55 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   animation: blink 2ms linear infinite;
 }
 
-#kotd-score-area #numeral-area {
+.numeral-area {
   position: absolute;
-  left: calc(var(--ds-screen-height) / 24);
+  left: calc(var(--ds-screen-height) / 28);
   top: calc(var(--ds-screen-height) / 17);
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  width: calc(var(--ds-screen-height) / 3.8);
+  width: calc(var(--ds-screen-height) / 3.6);
   height: calc(var(--ds-screen-height) / 12);
 }
 
-.red-number {
+.score-number {
   background-image: url(../media/kotd/images/ui/rednumbers.png);
   background-repeat: no-repeat;
-  background-size: 100% auto;
+  background-size: cover;
   background-position-x: center;
   background-position-y: 0;
   height: calc(var(--ds-screen-height) / 12);
   width: calc(var(--ds-screen-height) / 24);
+  transition: background-position-y 200ms ease-out;
 }
 
-@keyframes wobble {
+.score-number.black {
+  filter: brightness(0);
+}
+
+.point-amount {
+  background-image: url(../media/kotd/images/ui/pointamountssheet.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: 0;
+  height: calc(var(--ds-screen-height) / 6);
+  width: calc(var(--ds-screen-height) / 8);
+}
+
+@keyframes wobble-right {
   from {
     rotate: -10deg;
   }
   to {
     rotate: 10deg;
+  }
+}
+@keyframes wobble-left {
+  from {
+    rotate: 10deg;
+  }
+  to {
+    rotate: -10deg;
   }
 }
 
