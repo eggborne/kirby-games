@@ -9,8 +9,8 @@ export default class Enemy {
     this.container.classList.add(positionClass);
     this.container.classList.add('obscured');
     this.container.innerHTML = `
-      <div class="kotd-enemy ${type}"></div>
       <div class="pole"></div>
+      <div class="kotd-enemy ${type}"></div>
     `;
     this.container.style.left = randomInt(window.innerWidth * 0.15, window.innerWidth * 0.85) + 'px';
     document.querySelector('#kotd-screen .bottom-screen').appendChild(this.container);

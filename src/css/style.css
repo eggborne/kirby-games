@@ -1352,7 +1352,8 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-repeat: repeat-y;
   width: calc(var(--ds-screen-height) / 21.333);
   height: calc(var(--ds-screen-height) / 2.5);
-  z-index: 0;
+  pointer-events: none;
+  /* z-index: 0; */
 }
 
 .enemy-container.bottom-edge {
@@ -1368,7 +1369,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-image: url(../media/kotd/images/ui/kotdenemysheet.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
-  z-index: 2;
 }
 
 .kotd-enemy.waddledee {
