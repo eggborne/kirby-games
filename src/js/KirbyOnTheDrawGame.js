@@ -1,5 +1,6 @@
 import { pause, randomInt, getPercent } from './util.js';
 import { Howl } from 'howler';
+import Enemy from './Enemy';
 
 let totalKBLoaded = 0;
 const loadImage = (bundledPath) => {
@@ -38,9 +39,23 @@ export default class KirbyOnTheDrawGame {
     this.sounds;
     this.soundOn = true;
     this.level = 0;
+    this.interval;
     this.veil = document.querySelector('#kotd > .veil');
-    console.log('----------- initialized KirbyOnTheDrawGame!');
+
+    this.enemies = [
+      'waddledee',
+      'cappy',
+      'brontoburt',
+      'knucklejoe',
+      'waddledoo',
+      'chefkawasaki',
+      'bonkers',
+      'dedede',
+      'metaknight',
+    ];
+
     this.assignHandlers();
+    console.log('----------- KirbyOnTheDrawGame constructor finished --->');
   }
 
   get phase() {
@@ -94,8 +109,12 @@ export default class KirbyOnTheDrawGame {
     }
   }
 
-  createSprites() {
-    
+  async spawnEnemy() {
+    let randomType = this.enemies[randomInt(0, this.enemies.length - 1)];
+    let newEnemy = new Enemy(randomType, 'bottom-edge');
+    await pause(100);
+    newEnemy.container.classList.remove('obscured');
+
   }
 
   assignHandlers() {
@@ -110,6 +129,13 @@ export default class KirbyOnTheDrawGame {
     console.log('--------------- starting KirbyOnTheDraw --------------------');
     this.phase = '';
     document.getElementById(this.className).classList.remove('hidden');
+    this.interval = setInterval(async () => {
+      this.spawnEnemy();
+      await pause(300);
+      this.spawnEnemy();
+      await pause(300);
+      this.spawnEnemy();
+    }, 3000);
   }
 
   async printNumerals(score, targetElement, color, timeLimit) {

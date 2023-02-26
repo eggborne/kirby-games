@@ -8,6 +8,9 @@ import KirbyOnTheDrawGame from './js/KirbyOnTheDrawGame';
 let isMobile = true;
 class KirbyGames {
   constructor() {
+    this.userSettings = {
+      userVolume: 100,
+    };
     this.sounds = {};
     this.soundOn = true;
     this.game;
@@ -67,6 +70,14 @@ window.addEventListener('load', () => {
     document.documentElement.style.setProperty('--actual-height', window.innerHeight + 'px');
   });
 
+  let userSettings = JSON.parse(localStorage.getItem('kirbyGamesSettings'));
+  if (userSettings) {
+    Howler.volume(userSettings.userVolume / 100);
+    document.querySelector('#sound-controls > input').value = userSettings.userVolume;
+  } else {
+    console.log('no local storage');
+  }
+
   let app = new KirbyGames();
   app.loadSounds();
 
@@ -96,7 +107,9 @@ window.addEventListener('load', () => {
   });
 
   document.querySelector('#sound-controls > input').addEventListener('change', async e => {
-    Howler.volume(e.target.value / 100);
+    app.userSettings.userVolume = e.target.value;
+    localStorage.setItem('kirbyGamesSettings', JSON.stringify(app.userSettings));
+    Howler.volume(app.userSettings.userVolume / 100);
     app.playSound('select');
   });
 

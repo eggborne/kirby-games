@@ -248,7 +248,7 @@ button, .game-selection {
   height: 85%;
   z-index: -1;
   scale: 0.65 1;
-  transition: translate 200ms ease;
+  transition: translate 200ms linear;
 }
 #samurai-kirby #level-bar-highlight.position-1 {
   translate: 0 0;
@@ -1181,6 +1181,9 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   translate: 0 125%;
 }
 
+#kotd-instructions-screen {
+  pointer-events: none;
+}
 
 #kotd-screen, #kotd-instructions-screen {
   width: var(--ds-screen-width);
@@ -1189,6 +1192,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 .top-screen, .bottom-screen {
+  position: relative;
   width: var(--ds-screen-width);
   height: var(--ds-screen-height);
 }
@@ -1210,6 +1214,53 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #kotd-screen > .bottom-screen {
   background-image: url(../media/kotd/images/ui/bgbottom.png);
 }
+#kotd-screen > .bottom-screen > #lower-indoor-bg {
+  position: absolute;
+  bottom: 0;
+  width: var(--ds-screen-width);
+  height: calc(var(--ds-screen-height) / 3);
+  background-image: url(../media/kotd/images/ui/indoorlowerbg.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+}
+
+#kotd-score-bar, #kotd-score-bar > div {
+  height: calc(var(--ds-screen-height) / 6);
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+}
+
+#kotd-score-bar {
+  position: absolute;
+  width: var(--ds-screen-width);
+  display: flex;
+  bottom: 0;
+  z-index: 3;
+}
+#kotd-ammo-bar {
+  flex-grow: 1;
+  display: flex;
+}
+.ammo-slot {
+  height: inherit;
+  width: calc(var(--ds-screen-height) / 8);
+  background-image: url(../media/kotd/images/ui/ammoslot.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position-x: calc(var(--ds-screen-height) / -8);
+}
+.ammo-slot.empty {
+  background-position-x: 0;
+}
+#kotd-score-area {
+  width: calc(var(--ds-screen-height) / 3);
+  background-image: url(../media/kotd/images/ui/scorebaredgeleft.png);
+  
+}
+#kotd-score-end {
+  width: calc(var(--ds-screen-height) / 24);
+  background-image: url(../media/kotd/images/ui/scorebaredgeright.png);
+}
 
 #kotd-controls {
   position: fixed;
@@ -1227,7 +1278,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 #kotd-button::after {
   background-color: green;
-  content: "LET\'S GO";
+  content: "GOT IT";
 }
 
 #kotd-button {
@@ -1236,4 +1287,131 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #kotd-button.invisible {
   opacity: 0;
   pointer-events: none;
+}
+#kotd-kirby-area {
+  width: var(--ds-screen-width);
+  position: absolute;
+  bottom: calc(var(--ds-screen-height) / 3.25);
+  display: flex;
+  justify-content: space-around;
+
+}
+.kotd-kirby {
+  --kotd-kirby-height: calc(var(--ds-screen-height) / 3.428);
+  --spacing-x: calc(var(--ds-screen-height) / -3.428);
+  height: var(--kotd-kirby-height);
+  width: var(--kotd-kirby-height);
+  background-image: url(../media/kotd/images/ui/kotdkirbysheet.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+}
+
+.kotd-kirby.player {
+  background-position-x: 0;
+}
+.kotd-kirby.player.firing {
+  background-position-x: calc(var(--spacing-x) * 1);
+}
+.kotd-kirby.player.fired {
+  background-position-x: calc(var(--spacing-x) * 2);
+}
+.kotd-kirby.yellow {
+  background-position-x: calc(var(--spacing-x) * 3);
+}
+.kotd-kirby.pink {
+  background-position-x: calc(var(--spacing-x) * 6);
+}
+.kotd-kirby.lime {
+  background-position-x: calc(var(--spacing-x) * 9);
+}
+
+.enemy-container {
+  position: absolute;
+  transform-origin: 50% 175%;
+  transition: opacity 500ms ease, translate 600ms ease;
+}
+
+.enemy-container.bottom-edge {
+  bottom: calc(var(--ds-screen-height) / 2.5 * 0.5)
+}
+.enemy-container.bottom-edge.obscured {
+  translate: 0 100%;
+}
+.enemy-container.bottom-edge.dead {
+  animation: spin 80ms linear alternate infinite;
+  translate: 0 150%;
+}
+.enemy-container > .pole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+
+  background-image: url(../media/kotd/images/ui/poletile.png);
+  background-repeat: repeat-y;
+  width: calc(var(--ds-screen-height) / 21.333);
+  height: calc(var(--ds-screen-height) / 2.5);
+  z-index: 0;
+}
+
+.enemy-container.bottom-edge {
+  bottom: calc(var(--ds-screen-height) / 2.5 * 0.5)
+}
+
+.kotd-enemy {
+  position: relative;
+  --kotd-enemy-height: calc(var(--ds-screen-height) / 3);
+  --spacing-x: calc(var(--ds-screen-height) / -3);
+  height: var(--kotd-enemy-height);
+  width: var(--kotd-enemy-height);
+  background-image: url(../media/kotd/images/ui/kotdenemysheet.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  z-index: 2;
+}
+
+.kotd-enemy.waddledee {
+  background-position-x: 0;
+}
+.kotd-enemy.cappy {
+  background-position-x: calc(var(--spacing-x) * 1);
+}
+.kotd-enemy.brontoburt {
+  background-position-x: calc(var(--spacing-x) * 2);
+}
+.kotd-enemy.knucklejoe {
+  background-position-x: calc(var(--spacing-x) * 3);
+}
+.kotd-enemy.waddledoo {
+  background-position-x: calc(var(--spacing-x) * 4);
+}
+.kotd-enemy.chefkawasaki {
+  background-position-x: calc(var(--spacing-x) * 5);
+}
+.kotd-enemy.bonkers {
+  background-position-x: calc(var(--spacing-x) * 6);
+}
+.kotd-enemy.dedede {
+  background-position-x: calc(var(--spacing-x) * 7);
+}
+.kotd-enemy.metaknight {
+  background-position-x: calc(var(--spacing-x) * 8);
+}
+
+@keyframes wobble {
+  from {
+    rotate: -15deg;
+  }
+  to {
+    rotate: 15deg;
+  }
+}
+@keyframes spin {
+  from {
+    scale: 1 1;
+  }
+  to {
+    scale: 0 1;
+  }
 }
