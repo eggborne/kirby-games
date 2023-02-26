@@ -1200,6 +1200,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .top-screen, .bottom-screen {
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: hidden;
 }
 
 #kotd-instructions-screen > .top-screen {
@@ -1240,13 +1241,45 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #kotd-ammo-bar {
   flex-grow: 1;
   display: flex;
+  transition: translate 100ms ease;
 }
+
+#kotd-score-bar > #reload-bar {
+  position: absolute;
+  right: 0;
+  width: calc(var(--ds-screen-width) - (var(--ds-screen-height) / 3));
+  height: calc(var(--ds-screen-height) / 6);
+  background-image: url(../media/kotd/images/ui/ammobartile.png);
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
+}
+
+#kotd-score-bar > #reload-bar > #cylinder {
+  width: calc(var(--ds-screen-height) / 6.4);
+  height: calc(var(--ds-screen-height) / 6.4);
+  background-image: url(../media/kotd/images/ui/cylinder.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+}
+
+#kotd-score-bar > #reload-bar > #cylinder.spinning {
+  animation: spin-cylinder 300ms linear infinite;
+}
+
+#kotd-ammo-bar.off-y {
+  translate: 0 100%;
+}
+
 .ammo-slot {
   height: inherit;
   width: calc(var(--ds-screen-height) / 8);
   background-image: url(../media/kotd/images/ui/ammoslot.png);
   background-repeat: no-repeat;
-  background-size: auto 100%;
+  background-size: auto 101%;
   background-position-x: calc(var(--ds-screen-height) / -8);
 }
 .ammo-slot.empty {
@@ -1329,7 +1362,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .enemy-container {
   position: absolute;
   transform-origin: 50% 175%;
-  transition: opacity 500ms ease, translate 600ms ease;
+  transition: opacity 500ms ease, translate 500ms ease !important;
   animation: wobble 800ms ease-in-out alternate infinite;
 }
 
@@ -1337,7 +1370,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   bottom: calc(var(--ds-screen-height) / 2.5 * 0.65)
 }
 .enemy-container.bottom-edge.obscured {
-  translate: 0 100%;
+  translate: 0 150%;
 }
 .enemy-container.bottom-edge.dead {
   animation: spin 80ms linear alternate infinite;
@@ -1397,6 +1430,26 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-x: calc(var(--spacing-x) * 8);
 }
 
+#kotd #no-ammo {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  translate: -50% -50%;
+  background-image: url(../media/kotd/images/ui/noammo.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  height: calc(var(--ds-screen-height) / 12);
+  width: calc(var(--ds-screen-height) / 12 * (60/16));
+  z-index: 4;
+  scale: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#kotd #no-ammo.showing {
+  animation: blink 2ms linear infinite;
+}
+
 @keyframes wobble {
   from {
     rotate: -10deg;
@@ -1405,11 +1458,21 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
     rotate: 10deg;
   }
 }
+
 @keyframes spin {
   from {
     scale: 1 1;
   }
   to {
     scale: 0 1;
+  }
+}
+
+@keyframes spin-cylinder {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
   }
 }
