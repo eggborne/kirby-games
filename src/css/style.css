@@ -1624,7 +1624,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .score-number {
   background-image: url(../media/kotd/images/ui/rednumbers.png);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100% auto;
   background-position-x: center;
   background-position-y: 0;
   height: calc(var(--ds-screen-height) / 12);
