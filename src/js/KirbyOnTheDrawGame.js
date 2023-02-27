@@ -56,6 +56,19 @@ export default class KirbyOnTheDrawGame {
 
     this.veil = document.querySelector('#kotd > .veil');
 
+    this.enemyOrigins = [
+      'top-edge',
+      'bottom-edge',
+      'left-edge',
+      'right-edge',
+    ];
+    this.enemySizes = [
+      'large',
+      'normal',
+      'small',
+      'xsmall',
+    ];
+
     this.enemyData = [
       {
         name: 'waddledee',
@@ -154,8 +167,9 @@ export default class KirbyOnTheDrawGame {
 
   async spawnEnemy() {
     let randomType = this.enemyData[randomInt(0, this.enemyData.length - 2)].name;
-    let randomOrigin = 'bottom-edge';
-    let newEnemy = new Enemy(randomType, randomOrigin);
+    let randomOrigin = this.enemyOrigins[randomInt(0, this.enemyOrigins.length - 1)];
+    let randomSize = this.enemySizes[randomInt(0, this.enemySizes.length - 1)];
+    let newEnemy = new Enemy(randomType, randomOrigin, randomSize);
     this.spawnCount++;
     newEnemy.container.id = `${randomType}-${this.spawnCount}`;
     newEnemy.container.querySelector('.kotd-enemy').addEventListener('pointerdown', (e) => {
@@ -244,16 +258,11 @@ export default class KirbyOnTheDrawGame {
     await pause(800);
     document.getElementById(this.className).classList.remove('hidden');
     await pause(1000);
-    // this.spawnEnemy();
-    // await pause(400);
-    // this.spawnEnemy();
-    // await pause(400);
-    // this.spawnEnemy();
 
     this.spawnStarted = Date.now();
     this.intervalCounter = 0;
     this.spawnInterval = setInterval(async () => {
-      if ((this.intervalCounter % 20) === 0) {
+      if ((this.intervalCounter % 40) === 0) {
         this.spawnEnemy();
         pause(300).then(() => {
           this.spawnEnemy();

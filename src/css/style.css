@@ -1451,6 +1451,40 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 2));
 }
 
+#bottom-edge-enemies, 
+#top-edge-enemies,
+#left-edge-enemies,
+#right-edge-enemies {
+  position: absolute;
+  width: var(--ds-screen-width);
+  height: var(--ds-screen-height);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+#bottom-edge-enemies {
+  bottom: 0;
+}
+#top-edge-enemies {
+  rotate: 180deg;
+  translate: -50% -70%;
+}
+#left-edge-enemies, #right-edge-enemies {
+  width: var(--ds-screen-height);
+  height: var(--ds-screen-width);
+  outline: 3px solid green;
+  transition: rotate 1000ms ease;
+}
+#left-edge-enemies {
+  rotate: 90deg;
+  translate: -65% -50%;
+}
+#right-edge-enemies {
+  rotate: -90deg;
+  translate: -35% -50%;
+}
+
 .enemy-container {
   --enemy-scale: 1;
   position: absolute;
@@ -1460,17 +1494,27 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   animation: wobble-left 800ms ease-in-out alternate infinite;
 }
 
-.enemy-container.bottom-edge {
-  bottom: calc(var(--ds-screen-height) / 2.5 * 0.65)
+.enemy-container.top-edge,
+.enemy-container.bottom-edge,
+.enemy-container.left-edge,
+.enemy-container.right-edge {
+  bottom: calc(var(--ds-screen-height) / 2.5 * 0.65);
 }
-.enemy-container.bottom-edge.obscured {
+.enemy-container.top-edge.obscured,
+.enemy-container.bottom-edge.obscured,
+.enemy-container.left-edge.obscured,
+.enemy-container.right-edge.obscured {
   translate: 0 150%;
 }
-.enemy-container.bottom-edge.dead {
+.enemy-container.top-edge.dead,
+.enemy-container.bottom-edge.dead,
+.enemy-container.left-edge.dead,
+.enemy-container.right-edge.dead {
   animation: spin 80ms linear alternate infinite;
   transition-duration: 600ms;
   translate: 0 150%;
 }
+
 .enemy-container > .pole {
   position: absolute;
   top: 50%;
@@ -1480,22 +1524,34 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
   background-image: url(../media/kotd/images/ui/poletile.png);
   background-repeat: repeat-y;
-  width: calc(var(--ds-screen-height) / 21.333);
-  height: calc(var(--ds-screen-height) / 2.5);
+  width: calc(var(--kotd-enemy-size) / 16);
+  height: calc(var(--kotd-enemy-size) * 1.2);
   pointer-events: none;
-  /* z-index: 0; */
 }
 
 .kotd-enemy {
   position: relative;
-  --kotd-enemy-height: calc(var(--ds-screen-height) / 3);
-  --spacing-x: calc(var(--ds-screen-height) / -3);
-  height: var(--kotd-enemy-height);
-  width: var(--kotd-enemy-height);
+  --spacing-x: calc(var(--kotd-enemy-size) * -1);
+  height: var(--kotd-enemy-size);
+  width: var(--kotd-enemy-size);
   background-image: url(../media/kotd/images/ui/kotdenemysheet.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
   filter: drop-shadow(0px 0px 3px black);
+  pointer-events: all !important;
+}
+
+.enemy-container.large {
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 2.5);
+}
+.enemy-container.normal {
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 3);
+}
+.enemy-container.small {
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 3.5);
+}
+.enemy-container.xsmall {
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 4);
 }
 
 .kotd-enemy.waddledee {
@@ -1528,8 +1584,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 .kotd-enemy.bomb {
   background-image: url(../media/kotd/images/ui/bomb.png);
-  height: calc(var(--ds-screen-height) / 4);
-  width: calc(var(--ds-screen-height) / 4 / (48/56));
+  /* height: calc(var(--ds-screen-height) / 4); */
+  height: calc(var(--kotd-enemy-size) * 0.75);
+  /* width: calc(var(--ds-screen-height) / 4 / (48/56)); */
+  width: calc(var(--kotd-enemy-size) * 0.75 / (48/56));
   background-position: 0;
 }
 
