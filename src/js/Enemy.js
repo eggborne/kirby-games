@@ -13,6 +13,7 @@ export default class Enemy {
     this.container.classList.add('obscured');
     if (!randomInt(0, 3)) {
       type = 'bomb';
+      this.type = 'bomb';
       setTimeout(async () => {
         this.recede();
       }, randomInt(1500, 3000));
@@ -49,12 +50,13 @@ export default class Enemy {
     document.getElementById('kotd').className = newPhase;
   }
 
-  async die() {
+  async die(killerType) {
     this.container.classList.add('dead');
+    this.container.classList.add(killerType);
     await pause(600);
     this.container.remove();
-
     delete this.game.activeEnemies[this.container.id];
+
   }
 
   async recede() {

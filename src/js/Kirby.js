@@ -3,12 +3,12 @@ import { pause } from './util.js';
 export default class Kirby {
   constructor(type) {
     this.type = type;
-    this.ammo = 8;
+    this.ammo = 0;
     this.score = 0;
 
     this.container = document.createElement('div');
     this.container.classList.add('kotd-kirby');
-    this.container.classList.add(type);
+    this.container.classList.add('resting');
     this.container.classList.add(type);
 
     this.scoreContainer = document.createElement('div');
@@ -19,11 +19,16 @@ export default class Kirby {
       <div class="score-number black"></div>
       <div class="score-number black"></div>
     `;
+    this.ammoContainer = document.createElement('div');
+    this.ammoContainer.classList.add('numeral-area');
+    this.ammoContainer.innerHTML = `
+      <div class="score-number white"></div>
+    `;
     
     
     document.querySelector('#kotd-screen #kotd-kirby-area').appendChild(this.container);
     document.querySelector('#kotd-screen #kotd-kirby-score-area').appendChild(this.scoreContainer);
-
+    document.querySelector('#kotd-screen #kotd-kirby-ammo-area').appendChild(this.ammoContainer);
   }
 
   get reloading() {
@@ -35,68 +40,96 @@ export default class Kirby {
     this.container.classList[action]('reloading');
   }
 
-  async reloadAmmo() {
-    this.reloading = true;
-    let reloadTime = (8 - this.ammo) * 40;
-    this.container.classList.remove('firing');
-
-    if (this.type === 'player') {
-      document.getElementById('kotd-ammo-bar').classList.add('off-y');
-      document.querySelector('#kotd-score-bar #cylinder').classList.add('spinning');
+  async reloadAmmo(instant) {
+    if (this.bombed) {
+      console.log(this.type, 'NO RELOAD DUE TO BOMBED!');
+    } else {
+      this.reloading = true;
+      let reloadTime = (8 - this.ammo) * 40;
+      if (this.type !== 'player') {
+        reloadTime *= 3;
+      }
+      console.warn('RELOADING WITH TIME', reloadTime);
+      this.container.classList.remove('drawn');
+      this.container.classList.add('resting');
+  
+      if (!instant && this.type === 'player') {
+        document.getElementById('kotd-ammo-bar').classList.add('off-y');
+        document.querySelector('#kotd-score-bar #cylinder').classList.add('spinning');
+      }
+      await pause(instant ? 1 : reloadTime);
+      if (!instant && this.type === 'player') {
+        document.querySelector('#kotd-score-bar #cylinder').classList.remove('spinning');
+        await pause(60);
+        document.getElementById('kotd-ammo-bar').classList.remove('off-y');
+      }
+      this.ammo = 8;
+      this.reloading = false;
+      this.container.classList.remove('resting');
+      this.container.classList.add('drawn');
+      this.renderAmmo();
     }
-    await pause(reloadTime);
-    if (this.type === 'player') {
-      document.querySelector('#kotd-score-bar #cylinder').classList.remove('spinning');
-    }
-    await pause(60);
-    if (this.type === 'player') {
-      document.getElementById('kotd-ammo-bar').classList.remove('off-y');
-    }
-    this.ammo = 8;
-    this.reloading = false;
-    this.container.classList.add('firing');
   }
 
   async playFireAnimation() {
     this.container.classList.add('fired');
     await pause(100);
     this.container.classList.remove('fired');
-    this.container.classList.add('firing');
+    this.container.classList.add('drawn');
   }
 
   async fireAtTarget(targetInstance) {
     if (
       !this.reloading &&
+      !this.bombed &&
       !targetInstance.container.classList.contains('dead') &&
       this.ammo > 0
     ) {
       this.ammo--;
       this.playFireAnimation();
-      
+      this.renderAmmo();
       this.score += targetInstance.pointValue;
       if (this.score < 0) {
         this.score = 0;
       }
-      targetInstance.die();
-      this.renderScore(this.score);
+      if (targetInstance.type === 'bomb') {
+        this.bombed = true;
+        pause(100).then(() => {
+          this.container.classList.add('bombed');
+          pause(1200).then(() => {
+            this.bombed = false;
+            this.container.classList.remove('bombed');
+          });
+        });
+      }
+
+      targetInstance.die(this.type);
+      this.renderScore();
     } else {
-      if (this.type === 'player') {
-        document.querySelector('#kotd #no-ammo').classList.add('showing');
-        await pause(300);
-        document.querySelector('#kotd #no-ammo').classList.remove('showing');
-      } else {
-        this.reloadAmmo();
+      if (this.ammo <= 0) {
+        if (this.type === 'player') {
+          document.querySelector('#kotd #no-ammo').classList.add('showing');
+          await pause(300);
+          document.querySelector('#kotd #no-ammo').classList.remove('showing');
+        } else {
+          this.reloadAmmo();
+        }
       }
     }
+    
   }
 
-  renderScore(newScore) {
-    let scoreString = newScore.toString();
+  renderScore() {
+    let scoreString = this.score.toString();
     let leadingZeros = 4 - scoreString.length;
     scoreString = '0'.repeat(leadingZeros) + scoreString;
     [...this.scoreContainer.children].forEach((numeral, n) => {
       let scoreNumeral = scoreString[n];
       numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${scoreNumeral})`;
     });
+  }
+
+  renderAmmo() {
+    this.ammoContainer.querySelector('.score-number').style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${this.ammo})`;
   }
 }

@@ -1209,7 +1209,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   align-items: stretch;
   justify-content: center;
   scale: 0.5 1;
-  transition: scale 800ms ease, translate 800ms ease;
+  transition: scale 800ms ease-out, translate 800ms ease;
+}
+#kotd-screen #kotd-bottom-curtains .left-curtain,
+#kotd-screen #kotd-bottom-curtains .right-curtain {
+  transition-delay: 400ms;
 }
 
 #kotd-screen .curtains .left-curtain {
@@ -1414,6 +1418,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   display: flex;
   justify-content: space-around;
 }
+#kotd-kirby-ammo-area {
+  bottom: calc(var(--ds-screen-height) / 5.5);
+}
+
+#kotd-kirby-ammo-area > .numeral-area,
 #kotd-kirby-score-area > .numeral-area {
   position: relative;
   left: 0;
@@ -1424,12 +1433,12 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .kotd-kirby {
   --kotd-kirby-height: calc(var(--ds-screen-height) / 3.428);
   --spacing-x: calc(var(--ds-screen-height) / -3.428);
+  --spacing-y: calc(var(--ds-screen-height) / -3.428);
   height: var(--kotd-kirby-height);
   width: var(--kotd-kirby-height);
-  background-image: url(../media/kotd/images/ui/kotdkirbysheet.png);
+  background-image: url(../media/kotd/images/ui/kotdkirbysheet2.png);
   background-repeat: no-repeat;
-  background-size: auto 100%;
-  background-position-x: calc(var(--spacing-x) * var(--starting-bg-x));
+  background-size: auto 200%;
 }
 
 .kotd-kirby.player {
@@ -1444,11 +1453,20 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .kotd-kirby.lime {
   --starting-bg-x: 9;
 }
-.kotd-kirby.firing {
+.kotd-kirby.resting {
+  background-position-x: calc(var(--spacing-x) * var(--starting-bg-x));
+}
+.kotd-kirby.drawn {
   background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 1));
 }
 .kotd-kirby.fired {
   background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 2));
+}
+.kotd-kirby.bombed {
+  background-position-x: 0 !important;
+  background-position-y: var(--spacing-y) !important;
+  animation: hop 200ms ease forwards;
+  animation-delay: 100ms;
 }
 
 .enemy-origin {
@@ -1618,6 +1636,14 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 .score-number.black {
   filter: brightness(0);
+}
+.score-number.white {
+  filter: brightness(0) invert(1) 
+  drop-shadow(2px 0px 0px black)
+  drop-shadow(0px 2px 0px black)
+  drop-shadow(-1px 0px 0px black)
+  drop-shadow(0px -1px 0px black)
+  ;
 }
 
 .point-amount {

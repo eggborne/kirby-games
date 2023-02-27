@@ -122,6 +122,7 @@ export default class KirbyOnTheDrawGame {
     ];
 
     this.assignHandlers();
+    this.players.push(new Kirby('player'), new Kirby('yellow'), new Kirby('pink'), new Kirby('lime'));
     console.log('----------- KirbyOnTheDrawGame constructor finished --->');
   }
 
@@ -150,7 +151,7 @@ export default class KirbyOnTheDrawGame {
     this.images = await importAll(
       require.context("../media/kotd/images/", true, /\.(png)$/)
     );
-    console.log('loaded in', (Date.now() - startedLoadAt));
+    console.log('loaded in', (Date.now() - startedLoadAt), this.images);
     // document.querySelector('#kotd .loading-bar > .details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
   }
 
@@ -235,18 +236,18 @@ export default class KirbyOnTheDrawGame {
 
   async startGame() {
     console.log('--------------- starting KirbyOnTheDraw --------------------');
-    this.players.push(new Kirby('player'), new Kirby('yellow'), new Kirby('pink'), new Kirby('lime'));
     this.renderPlayerScore();
     this.phase = 'round-started';
-
-    // await pause(1000);
-
+    await pause(600);
     document.getElementById('kotd-top-curtains').classList.remove('closed');
     document.getElementById('kotd-bottom-curtains').classList.remove('closed');
     await pause(800);
     document.getElementById(this.className).classList.remove('hidden');
+    for (let player of this.players) {
+      await player.reloadAmmo(true);
+      await pause(300);
+    }
     await pause(1000);
-
     this.spawnStarted = Date.now();
     this.intervalCounter = 0;
     this.spawnInterval = setInterval(async () => {
@@ -260,25 +261,35 @@ export default class KirbyOnTheDrawGame {
         });
       }
       if ((this.intervalCounter % 10) === 0) {
-        let firingKirby = this.players[randomInt(1,3)];
+        let firingKirby = this.players[randomInt(1,2)];
         let randomTarget = this.randomEnemy();
         if (randomTarget) {
           firingKirby.fireAtTarget(randomTarget);
         }
       }
+      if ((this.intervalCounter % 7) === 0) {
+        let limeKirby = this.players[3];
+        let randomTarget = this.randomEnemy(randomInt(0,2));
+        if (randomTarget) {
+          limeKirby.fireAtTarget(randomTarget);
+        }
+      }
       this.intervalCounter++;
     }, 100);
-
   }
 
-  randomEnemy() {
+  randomEnemy(enemiesOnly) {
     let validKeyList = Object.keys(this.activeEnemies).filter(key =>
       !this.activeEnemies[key].dead &&
       !this.activeEnemies[key].obscured &&
       ((Date.now() - this.activeEnemies[key].spawnedAt) > 400)
     );
+    if (enemiesOnly) {
+      validKeyList = validKeyList.filter(key => this.activeEnemies[key].type !== 'bomb');
+    }
     let randomKey = validKeyList[randomInt(0, validKeyList.length - 1)];
-    return this.activeEnemies[randomKey];
+    let randomTarget = this.activeEnemies[randomKey];
+    return randomTarget;
   }
 
   async showInstructions() {
