@@ -11,13 +11,11 @@ export default class Enemy {
     this.container.classList.add(positionClass);
     this.container.classList.add(sizeClass);
     this.container.classList.add('obscured');
-    if (!randomInt(0, 4)) {
+    if (!randomInt(0, 3)) {
       type = 'bomb';
       setTimeout(async () => {
-        this.container.classList.add('obscured');
-        await pause(600);
-        this.container.remove();
-      }, randomInt(1000, 2500));
+        this.recede();
+      }, randomInt(1500, 3000));
     }
     if (randomInt(0, 1)) {
       this.container.style.animationDirection = 'alternate-reverse';
@@ -26,8 +24,9 @@ export default class Enemy {
       <div class="pole"></div>
       <div class="kotd-enemy ${type}"></div>
     `;
+
     this.enemyElement = this.container.querySelector('.kotd-enemy');
-    // this.enemyElement.classList.add(sizeClass);
+
     let leftX;
     if (positionClass === 'bottom-edge' || positionClass === 'top-edge') {
       leftX = `calc(${randomInt(20, 80)} * (var(--ds-screen-width) / 100))`;
@@ -48,6 +47,21 @@ export default class Enemy {
 
   set phase(newPhase) {
     document.getElementById('kotd').className = newPhase;
+  }
+
+  async die() {
+    this.container.classList.add('dead');
+    await pause(600);
+    this.container.remove();
+
+    delete this.game.activeEnemies[this.container.id];
+  }
+
+  async recede() {
+    this.container.classList.add('obscured');
+    await pause(600);
+    this.container.remove();
+    delete this.game.activeEnemies[this.container.id];
   }
 
   

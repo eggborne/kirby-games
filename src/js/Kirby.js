@@ -37,15 +37,24 @@ export default class Kirby {
 
   async reloadAmmo() {
     this.reloading = true;
-    document.getElementById('kotd-ammo-bar').classList.add('off-y');
     let reloadTime = (8 - this.ammo) * 40;
-    document.querySelector('#kotd-score-bar #cylinder').classList.add('spinning');
+    this.container.classList.remove('firing');
+
+    if (this.type === 'player') {
+      document.getElementById('kotd-ammo-bar').classList.add('off-y');
+      document.querySelector('#kotd-score-bar #cylinder').classList.add('spinning');
+    }
     await pause(reloadTime);
-    document.querySelector('#kotd-score-bar #cylinder').classList.remove('spinning');
+    if (this.type === 'player') {
+      document.querySelector('#kotd-score-bar #cylinder').classList.remove('spinning');
+    }
     await pause(60);
+    if (this.type === 'player') {
+      document.getElementById('kotd-ammo-bar').classList.remove('off-y');
+    }
     this.ammo = 8;
-    document.getElementById('kotd-ammo-bar').classList.remove('off-y');
     this.reloading = false;
+    this.container.classList.add('firing');
   }
 
   async playFireAnimation() {
@@ -55,31 +64,29 @@ export default class Kirby {
     this.container.classList.add('firing');
   }
 
-  async fireAtTarget(targetElement, pointValue) {
+  async fireAtTarget(targetInstance) {
     if (
       !this.reloading &&
-      !targetElement.parentElement.classList.contains('dead') &&
+      !targetInstance.container.classList.contains('dead') &&
       this.ammo > 0
     ) {
       this.ammo--;
       this.playFireAnimation();
-      // let dataForEnemy = enemyByName(targetElement.classList[1]);
-      // let pointValue = dataForEnemy.pointValue;
       
-      this.score += pointValue;
+      this.score += targetInstance.pointValue;
       if (this.score < 0) {
         this.score = 0;
       }
-
-      targetElement.parentElement.classList.add('dead');
-      setTimeout(() => {
-        targetElement.parentElement.remove();
-      }, 600);
+      targetInstance.die();
       this.renderScore(this.score);
     } else {
-      document.querySelector('#kotd #no-ammo').classList.add('showing');
-      await pause(300);
-      document.querySelector('#kotd #no-ammo').classList.remove('showing');
+      if (this.type === 'player') {
+        document.querySelector('#kotd #no-ammo').classList.add('showing');
+        await pause(300);
+        document.querySelector('#kotd #no-ammo').classList.remove('showing');
+      } else {
+        this.reloadAmmo();
+      }
     }
   }
 

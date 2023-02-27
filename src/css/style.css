@@ -1407,7 +1407,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   justify-content: space-around;
 }
 
-#kotd-kirby-score-area {
+#kotd-kirby-score-area, #kotd-kirby-ammo-area {
   width: var(--ds-screen-width);
   position: absolute;
   bottom: calc(var(--ds-screen-height) / 16.5);
@@ -1451,10 +1451,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 2));
 }
 
-#bottom-edge-enemies, 
-#top-edge-enemies,
-#left-edge-enemies,
-#right-edge-enemies {
+.enemy-origin {
   position: absolute;
   width: var(--ds-screen-width);
   height: var(--ds-screen-height);
@@ -1491,27 +1488,16 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   transform-origin: 50% 175%;
   transition: translate 300ms ease;
   animation: wobble-left 800ms ease-in-out alternate infinite;
-}
-
-.enemy-container.top-edge,
-.enemy-container.bottom-edge,
-.enemy-container.left-edge,
-.enemy-container.right-edge {
   bottom: calc(var(--ds-screen-height) / 2.5 * 0.65);
 }
-.enemy-container.top-edge.obscured,
-.enemy-container.bottom-edge.obscured,
-.enemy-container.left-edge.obscured,
-.enemy-container.right-edge.obscured {
-  translate: 0 150%;
+
+.enemy-container.obscured {
+  translate: 0 175%;
 }
-.enemy-container.top-edge.dead,
-.enemy-container.bottom-edge.dead,
-.enemy-container.left-edge.dead,
-.enemy-container.right-edge.dead {
+.enemy-container.dead {
   animation: spin 80ms linear alternate infinite;
   transition-duration: 600ms;
-  translate: 0 150%;
+  translate: 0 175%;
 }
 
 .enemy-container > .pole {
@@ -1541,16 +1527,16 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 .enemy-container.large {
-  --kotd-enemy-size: calc(var(--ds-screen-height) / 2.5);
-}
-.enemy-container.normal {
   --kotd-enemy-size: calc(var(--ds-screen-height) / 3);
 }
+.enemy-container.normal {
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 4);
+}
 .enemy-container.small {
-  --kotd-enemy-size: calc(var(--ds-screen-height) / 3.5);
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 4.75);
 }
 .enemy-container.xsmall {
-  --kotd-enemy-size: calc(var(--ds-screen-height) / 4);
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 5.5);
 }
 
 .kotd-enemy.waddledee {
@@ -1583,9 +1569,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 .kotd-enemy.bomb {
   background-image: url(../media/kotd/images/ui/bomb.png);
-  /* height: calc(var(--ds-screen-height) / 4); */
   height: calc(var(--kotd-enemy-size) * 0.75);
-  /* width: calc(var(--ds-screen-height) / 4 / (48/56)); */
   width: calc(var(--kotd-enemy-size) * 0.75 / (48/56));
   background-position: 0;
 }
