@@ -1403,21 +1403,26 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   opacity: 0;
   pointer-events: none;
 }
-#kotd-kirby-area {
+
+.kirby-row {
   width: var(--ds-screen-width);
   position: absolute;
-  bottom: calc(var(--ds-screen-height) / 3.25);
   display: flex;
   justify-content: space-around;
 }
 
-#kotd-kirby-score-area, #kotd-kirby-ammo-area {
-  width: var(--ds-screen-width);
-  position: absolute;
-  bottom: calc(var(--ds-screen-height) / 16.5);
-  display: flex;
-  justify-content: space-around;
+#kotd-kirby-rank-area {
+  bottom: calc(var(--ds-screen-height) / 1.75);
 }
+
+#kotd-kirby-area {
+  bottom: calc(var(--ds-screen-height) / 3.25);
+}
+
+#kotd-kirby-score-area {
+  bottom: calc(var(--ds-screen-height) / 16.5);
+}
+
 #kotd-kirby-ammo-area {
   bottom: calc(var(--ds-screen-height) / 5.5);
 }
@@ -1646,13 +1651,43 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   ;
 }
 
-.point-amount {
+.point-amount, .rank, .rank::after {
+  width: calc(var(--ds-screen-height) / 6);
+  height: calc(var(--ds-screen-height) / 8);
+  --spacing-x: calc(var(--ds-screen-height) / -6);
+  --spacing-y: calc(var(--ds-screen-height) / -8);
   background-image: url(../media/kotd/images/ui/pointamountssheet.png);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 1000% 400%;
   background-position-x: 0;
-  height: calc(var(--ds-screen-height) / 6);
-  width: calc(var(--ds-screen-height) / 8);
+  background-position-y: 0;
+  transition: none;
+}
+
+.rank::after {
+  content: '';
+  position: absolute;
+  background-position-x: calc(var(--spacing-x) * 5);
+  opacity: 0;
+}
+
+.rank.rank-1 {
+  background-position-x: calc(var(--spacing-x) * 6);
+}
+.rank.rank-1::after {
+  animation: first-bg-flash 200ms linear infinite;
+}
+.rank.rank-1.flashing {
+  background-position-x: calc(var(--spacing-x) * 5);
+}
+.rank.rank-2 {
+  background-position-x: calc(var(--spacing-x) * 7);
+}
+.rank.rank-3 {
+  background-position-x: calc(var(--spacing-x) * 8);
+}
+.rank.rank-4 {
+  background-position-x: calc(var(--spacing-x) * 9);
 }
 
 @keyframes wobble-right {
@@ -1687,5 +1722,14 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
   to {
     rotate: 360deg;
+  }
+}
+
+@keyframes first-bg-flash {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

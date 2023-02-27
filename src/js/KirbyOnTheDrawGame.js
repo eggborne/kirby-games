@@ -202,6 +202,20 @@ export default class KirbyOnTheDrawGame {
     newEnemy.container.classList.remove('obscured');
   }
 
+  renderRanks() {
+    let sortedPlayers = this.players.sort((a, b) => {
+      return b.score - a.score;
+    });
+    
+    sortedPlayers.forEach((player, p) => {
+      let newRankClass = `rank-${p + 1}`;
+      if (!player.rankContainer.classList.contains(newRankClass)) {
+        player.rankContainer.classList = ['rank']; // remove any existing rank class
+        player.rankContainer.classList.add(newRankClass);
+      }
+    });
+  }
+
   renderPlayerAmmo() {
     [...document.getElementsByClassName('ammo-slot')].forEach((slot, s) => {
       if (s < this.players[0].ammo) {
@@ -273,6 +287,7 @@ export default class KirbyOnTheDrawGame {
         if (randomTarget) {
           limeKirby.fireAtTarget(randomTarget);
         }
+        this.renderRanks();
       }
       this.intervalCounter++;
     }, 100);

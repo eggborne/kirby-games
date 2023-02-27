@@ -24,8 +24,11 @@ export default class Kirby {
     this.ammoContainer.innerHTML = `
       <div class="score-number white"></div>
     `;
+    this.rankContainer = document.createElement('div');
+    this.rankContainer.classList.add('rank');
+    this.rankContainer.classList.add('rank-4');
     
-    
+    document.querySelector('#kotd-screen #kotd-kirby-rank-area').appendChild(this.rankContainer);
     document.querySelector('#kotd-screen #kotd-kirby-area').appendChild(this.container);
     document.querySelector('#kotd-screen #kotd-kirby-score-area').appendChild(this.scoreContainer);
     document.querySelector('#kotd-screen #kotd-kirby-ammo-area').appendChild(this.ammoContainer);
@@ -49,7 +52,6 @@ export default class Kirby {
       if (this.type !== 'player') {
         reloadTime *= 3;
       }
-      console.warn('RELOADING WITH TIME', reloadTime);
       this.container.classList.remove('drawn');
       this.container.classList.add('resting');
   
