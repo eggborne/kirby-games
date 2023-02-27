@@ -1,4 +1,4 @@
-import { pause, randomInt, getPercent } from './util.js';
+import { pause } from './util.js';
 
 export default class Kirby {
   constructor(type) {

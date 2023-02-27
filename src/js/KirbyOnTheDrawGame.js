@@ -238,7 +238,7 @@ export default class KirbyOnTheDrawGame {
       e.target.classList.add('invisible');
       this.startGame();
     });
-    document.getElementById('kotd-ammo-bar').addEventListener('pointerdown', async e => {
+    document.getElementById('kotd-ammo-bar').addEventListener('pointerdown', async () => {
       await this.players[0].reloadAmmo();
       // await this.reloadAmmo();
       this.renderPlayerAmmo();

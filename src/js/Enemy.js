@@ -1,4 +1,4 @@
-import { pause, randomInt, getPercent } from './util.js';
+import { pause, randomInt } from './util.js';
 
 export default class Enemy {
   constructor(type, positionClass, sizeClass) {
@@ -19,7 +19,6 @@ export default class Enemy {
         this.container.remove();
       }, randomInt(1000, 2500));
     }
-    console.log(`----> SPAWNING ${type}, ${positionClass}, ${sizeClass}`);
     if (randomInt(0, 1)) {
       this.container.style.animationDirection = 'alternate-reverse';
     }

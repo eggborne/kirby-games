@@ -74,8 +74,6 @@ window.addEventListener('load', () => {
   if (userSettings) {
     Howler.volume(userSettings.userVolume / 100);
     document.querySelector('#sound-controls > input').value = userSettings.userVolume;
-  } else {
-    console.log('no local storage');
   }
 
   let app = new KirbyGames();
@@ -92,7 +90,6 @@ window.addEventListener('load', () => {
     app.playSound('select');
     let splitID = app.selectedGame.id.split('-');
     let selectedGameTitle = splitID.slice(0, splitID.length - 1).join('-');
-    console.log('selectedGame', selectedGameTitle);
     app.game = app.games[selectedGameTitle]();
     await pause(150);
     document.getElementById('game-select-screen').classList.add('hidden');

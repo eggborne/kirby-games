@@ -161,10 +161,9 @@ export default class SamuraiKirbyGame {
     });
     [...document.getElementsByClassName('level-segment')].forEach((segment, i) => {
       let highlightElement = document.getElementById('level-bar-highlight');
-      segment.addEventListener('pointerdown', e => {
+      segment.addEventListener('pointerdown', () => {
         this.playSound('whiplow');
         let positionClass = `position-${(i + 1)}`;
-        console.log('adding class', positionClass);
         highlightElement.className = positionClass;
         this.difficulty = (i + 1);
       });
