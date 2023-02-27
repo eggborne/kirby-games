@@ -173,6 +173,7 @@ export default class KirbyOnTheDrawGame {
       this.sounds[soundName].file.play();
     }
   }
+  
   stopSound(soundName) {
     if (this.soundOn) {
       this.sounds[soundName].file.stop();
@@ -203,7 +204,7 @@ export default class KirbyOnTheDrawGame {
   }
 
   renderRanks() {
-    let sortedPlayers = this.players.sort((a, b) => {
+    let sortedPlayers = [...this.players].sort((a, b) => {
       return b.score - a.score;
     });
     
@@ -271,6 +272,9 @@ export default class KirbyOnTheDrawGame {
           this.spawnEnemy();
           pause(300).then(() => { 
             this.spawnEnemy();
+            pause(300).then(() => { 
+              this.spawnEnemy();
+            });
           });
         });
       }
