@@ -1473,7 +1473,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #left-edge-enemies, #right-edge-enemies {
   width: var(--ds-screen-height);
   height: var(--ds-screen-width);
-  outline: 3px solid green;
   transition: rotate 1000ms ease;
 }
 #left-edge-enemies {
