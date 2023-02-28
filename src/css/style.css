@@ -136,7 +136,7 @@ button, .game-selection {
   content: "";
   height: var(--button-height);
   position: absolute;
-  border-image-source: url("../media/samurai-kirby/images/ui/qdborder.png");
+  border-image-source: url(../media/samurai-kirby/images/ui/qdborder.png);
   border-image-slice: 33.3% 33.3% 33.3% 33.3%;
   border-image-repeat: stretch stretch;
   border-style: solid;
@@ -158,11 +158,11 @@ button, .game-selection {
   height: calc(var(--button-height) * 1.25);
 }
 #samurai-kirby-selection > .logo {
-  background-image: url("../media/samurai-kirby/images/ui/sklogo.png");
+  background-image: url(../media/samurai-kirby/images/ui/sklogo.png);
 }
 
 #bomb-rally-selection > .logo {
-  background-image: url("../media/bombrally/images/ui/brlogo.png");
+  background-image: url(../media/bombrally/images/ui/brlogo.png);
 }
 
 #kotd-selection {
@@ -171,7 +171,7 @@ button, .game-selection {
 
 #kotd-selection > .logo {
   --button-logo-height: calc(var(--button-height) * 1.1);
-  background-image: url("../media/kotd/images/ui/kotdlogo.png");
+  background-image: url(../media/kotd/images/ui/kotdlogo.png);
   width: calc(var(--button-logo-height) * (235/90));
 }
 
@@ -313,12 +313,12 @@ button, .game-selection {
 
 #samurai-kirby .samurai-kirby-logo-right {
   position: absolute;
-  background-image: url("../media/samurai-kirby/images/ui/sklogoright.png");
+  background-image: url(../media/samurai-kirby/images/ui/sklogoright.png);
   opacity: 0;
   translate: 100% 0;
 }
 #samurai-kirby .samurai-kirby-logo-left {
-  background-image: url("../media/samurai-kirby/images/ui/sklogoleft.png");
+  background-image: url(../media/samurai-kirby/images/ui/sklogoleft.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -1291,25 +1291,50 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 #kotd-instructions-screen > .top-screen {
-  background-image: url(../media/kotd/images/ui/kotdtitlescreen.png);
+  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  background-position-y: 0;
 }
 #kotd-instructions-screen > .bottom-screen {
-  background-image: url(../media/kotd/images/ui/kotdinstructions.png);
+  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  background-position-y: calc(var(--ds-screen-height) * -1);
 }
 #kotd-screen > .top-screen {
-  background-image: url(../media/kotd/images/ui/bgtop.png);
+  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  background-position-y: calc(var(--ds-screen-height) * -2);
 }
-#kotd-screen > .bottom-screen {
-  background-image: url(../media/kotd/images/ui/bgbottom.png);
+#kotd-screen > .bottom-screen > #lower-indoor-bg {
+  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  background-position-y: calc(var(--ds-screen-height) * -3);
+  z-index: 3;
 }
+#kotd-screen > .bottom-screen::before,
+#kotd-screen > .bottom-screen::after {
+  content: '';
+  position: absolute;
+  width: var(--ds-screen-width);
+  height: var(--ds-screen-height);
+  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  pointer-events: none;
+}
+#kotd-screen > .bottom-screen::before {
+  background-position-y: calc(var(--ds-screen-height) * -4);
+  z-index: 1;
+}
+#kotd-screen > .bottom-screen::after {
+  background-position-y: calc(var(--ds-screen-height) * -3);
+  z-index: 1;
+}
+
 #kotd-screen > .bottom-screen > #lower-indoor-bg {
   position: absolute;
   bottom: 0;
   width: var(--ds-screen-width);
   height: calc(var(--ds-screen-height) / 3);
-  background-image: url(../media/kotd/images/ui/indoorlowerbg.png);
   background-repeat: no-repeat;
-  background-size: auto 100%;
+  background-size: cover;
+  background-position-y: calc(var(--ds-screen-height) * -3.666);
   pointer-events: none;
 }
 
@@ -1498,6 +1523,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   rotate: 180deg;
   translate: -50% -70%;
 }
+#top-edge-enemies, #bottom-edge-enemies,
+#left-edge-enemies, #right-edge-enemies {
+  z-index: 3;
+}
 #left-edge-enemies, #right-edge-enemies {
   width: var(--ds-screen-height);
   height: var(--ds-screen-width);
@@ -1513,6 +1542,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 #behind-bar-enemies {
   top: 37%;
+  z-index: 2;
+}
+#bottom-window-edge-enemies {
+  top: 12%;
+  z-index: 1;
 }
 
 .enemy-container {
@@ -1569,6 +1603,9 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 .enemy-container.xsmall {
   --kotd-enemy-size: calc(var(--ds-screen-height) / 5.25);
+}
+.enemy-container.xxsmall {
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 7.5);
 }
 
 .kotd-enemy.waddledee {

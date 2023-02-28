@@ -59,8 +59,8 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         totalEnemies: 30,
-        groupAmount: 5,
-        groupTimeGap: 250, // ms
+        groupAmount: 6,
+        groupTimeGap: 180, // ms
         groupFrequency: 25, // .1s
         bombPercentChance: 25,
       }
@@ -75,8 +75,10 @@ export default class KirbyOnTheDrawGame {
       'left-edge',
       'right-edge',
       'behind-bar',
+      'bottom-window-edge',
     ];
     this.enemySizes = [
+      'xxsmall',
       'xsmall',
       'small',
       'normal',
@@ -211,8 +213,12 @@ export default class KirbyOnTheDrawGame {
   async spawnEnemy() {
     let enemyType = this.enemyData[randomInt(0, this.enemyData.length - 2)].name;
     let enemyOrigin = this.enemyOrigins[randomInt(0, this.enemyOrigins.length - 1)];
-    let sizeLimit = { min: 1, max: 3 };
+    let sizeLimit = { min: 1, max: 2 };
     if (enemyOrigin === 'behind-bar') {
+      sizeLimit.min = 1;
+      sizeLimit.max = 1;
+    }
+    if (enemyOrigin === 'bottom-window-edge') {
       sizeLimit.min = 0;
       sizeLimit.max = 0;
     }

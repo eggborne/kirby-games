@@ -27,8 +27,17 @@ export default class Enemy {
     this.enemyElement = this.container.querySelector('.kotd-enemy');
 
     let leftX;
-    if (positionClass === 'bottom-edge' || positionClass === 'top-edge' || positionClass === 'behind-bar') {
-      leftX = `calc(${randomInt(20, 80)} * (var(--ds-screen-width) / 100))`;
+    if (positionClass === 'bottom-edge' || positionClass === 'top-edge' || positionClass === 'behind-bar' || positionClass === 'bottom-window-edge') {
+      let randomXValue = randomInt(20, 80);
+      if (positionClass === 'bottom-window-edge') {
+        let side = randomInt(0, 1) ? 'left' : 'right';
+        if (side === 'left') {
+          randomXValue = randomInt(5, 30);
+        } else if (side === 'right') {
+          randomXValue = randomInt(60, 85);
+        }
+      }
+      leftX = `calc(${randomXValue} * (var(--ds-screen-width) / 100))`;
     } else if (positionClass === 'left-edge') {
       leftX = `calc(${randomInt(0, 60)} * (var(--ds-screen-height) / 100))`;
     } else if (positionClass === 'right-edge') {
