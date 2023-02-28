@@ -2,18 +2,16 @@ import { pause, randomInt } from './util.js';
 
 export default class Enemy {
   constructor(type, positionClass, sizeClass) {
+    this.spawnedAt = Date.now();
     this.type = type;
     this.positionClass = positionClass;
     this.sizeClass = 'normal' || sizeClass;
-    this.spawnedAt = Date.now();
     this.container = document.createElement('div');
     this.container.classList.add('enemy-container');
     this.container.classList.add(positionClass);
     this.container.classList.add(sizeClass);
     this.container.classList.add('obscured');
-    if (!randomInt(0, 3)) {
-      type = 'bomb';
-      this.type = 'bomb';
+    if (this.type === 'bomb') {
       setTimeout(async () => {
         this.recede();
       }, randomInt(1500, 3000));
@@ -29,12 +27,10 @@ export default class Enemy {
     this.enemyElement = this.container.querySelector('.kotd-enemy');
 
     let leftX;
-    if (positionClass === 'bottom-edge' || positionClass === 'top-edge') {
+    if (positionClass === 'bottom-edge' || positionClass === 'top-edge' || positionClass === 'behind-bar') {
       leftX = `calc(${randomInt(20, 80)} * (var(--ds-screen-width) / 100))`;
-      this.container.style.left = leftX;
     } else if (positionClass === 'left-edge') {
       leftX = `calc(${randomInt(0, 60)} * (var(--ds-screen-height) / 100))`;
-      this.container.style.left = leftX;
     } else if (positionClass === 'right-edge') {
       leftX = `calc(${randomInt(20, 80)} * (var(--ds-screen-height) / 100))`;
     }

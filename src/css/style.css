@@ -1164,7 +1164,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   height: inherit;
   left: 0;
   top: 0;
-  background-color: rgba(255, 255, 255, 0.293);
+  background-color: rgba(255, 255, 255, 0.2);
   scale: 1% 1;
   transition: scale 200ms ease;
 }
@@ -1183,7 +1183,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 .loading-bar > .details {
   font-size: 75%;
-  color: #d3d3d3;
+  color: #b6b6b6;
 }
 
 #kotd-screen {
@@ -1310,6 +1310,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-image: url(../media/kotd/images/ui/indoorlowerbg.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
+  pointer-events: none;
 }
 
 #kotd-score-bar, #kotd-score-bar > div {
@@ -1325,7 +1326,9 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   bottom: 0;
   z-index: 3;
 }
+
 #kotd-ammo-bar {
+  position: relative;
   flex-grow: 1;
   display: flex;
   transition: translate 100ms ease;
@@ -1508,6 +1511,9 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   rotate: -90deg;
   translate: -35% -50%;
 }
+#behind-bar-enemies {
+  top: 37%;
+}
 
 .enemy-container {
   --enemy-scale: 1;
@@ -1518,7 +1524,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   animation: wobble-left 800ms ease-in-out alternate infinite;
   bottom: calc(var(--ds-screen-height) / 2.5 * 0.65);
 }
-
 .enemy-container.obscured {
   translate: 0 175%;
 }
@@ -1534,7 +1539,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   left: 50%;
   bottom: 0;
   translate: -50% 0;
-
   background-image: url(../media/kotd/images/ui/poletile.png);
   background-repeat: repeat-y;
   width: calc(var(--kotd-enemy-size) / 16);
@@ -1561,10 +1565,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   --kotd-enemy-size: calc(var(--ds-screen-height) / 4);
 }
 .enemy-container.small {
-  --kotd-enemy-size: calc(var(--ds-screen-height) / 4.75);
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 4.5);
 }
 .enemy-container.xsmall {
-  --kotd-enemy-size: calc(var(--ds-screen-height) / 5.5);
+  --kotd-enemy-size: calc(var(--ds-screen-height) / 5.25);
 }
 
 .kotd-enemy.waddledee {
@@ -1605,21 +1609,63 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #kotd #no-ammo {
   position: absolute;
   left: 50%;
-  top: 35%;
-  translate: -50% -50%;
+  bottom: calc(var(--ds-screen-height) / 12);
+  translate: -50% 50%;
   background-image: url(../media/kotd/images/ui/noammo.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
   height: calc(var(--ds-screen-height) / 12);
   width: calc(var(--ds-screen-height) / 12 * (60/16));
   z-index: 4;
-  scale: 2;
   opacity: 0;
   pointer-events: none;
 }
 
-#kotd #no-ammo.showing {
-  animation: blink 2ms linear infinite;
+#kotd.no-ammo-message #no-ammo {
+  animation: blink 100ms linear infinite alternate;
+}
+
+#kotd.no-ammo-message #kotd-score-area {
+  background-position-x: -100%;
+  /* animation: blink 300ms linear infinite; */
+}
+
+#kotd.no-ammo-message #kotd-score-area > .numeral-area {
+  opacity: 0;
+}
+#kotd.no-ammo-message #cylinder,
+#kotd.no-ammo-message .ammo-slot {
+  opacity: 0;
+}
+
+#kotd #touch-bar-message,
+#kotd #touch-bar-message::after {
+  position: absolute;
+  bottom: 15%;
+  right: 20%;
+  width: calc(var(--ds-screen-height) / 2);
+  height: calc(var(--ds-screen-height) / 2);
+  background-image: url(../media/kotd/images/ui/touchbarmessage.png);
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+#kotd #touch-bar-message::after {
+  content: '';
+  background-position-x: 100%;
+  bottom: 0;
+  right: 0;
+}
+
+#kotd.no-ammo-message #touch-bar-message {
+  opacity: 1;
+  animation: slide-down 600ms ease;
+}
+#kotd.no-ammo-message #touch-bar-message::after {
+  animation: first-bg-flash 80ms linear infinite
 }
 
 .numeral-area {
@@ -1731,6 +1777,23 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 @keyframes first-bg-flash {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    translate: 0 -15%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes flash-opacity {
   from {
     opacity: 0;
   }
