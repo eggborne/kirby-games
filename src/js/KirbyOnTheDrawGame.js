@@ -24,10 +24,10 @@ const importAll = async require => {
     let imageKB = Math.round(loadResponse.size / 1024);
     totalKBLoaded += imageKB;
     let percentDone = getPercent(count / Object.keys(reduced).length);
-    document.querySelector('#samurai-kirby .loading-bar > .label').innerText = `${percentDone}% (${totalKBLoaded}kb)`;
-    document.querySelector('#samurai-kirby .loading-bar > .filler').style.scale = `${percentDone}% 1`;
+    document.querySelector('#kotd .loading-bar > .label').innerText = `${percentDone}% (${totalKBLoaded}kb)`;
+    document.querySelector('#kotd .loading-bar > .filler').style.scale = `${percentDone}% 1`;
     if (percentDone === 100) {
-      document.querySelector('#samurai-kirby .loading-bar > .details').innerText = `done!`;
+      document.querySelector('#kotd .loading-bar > .details').innerText = `done!`;
     }
   }
   return reduced;
@@ -76,6 +76,22 @@ export default class KirbyOnTheDrawGame {
       'normal',
       'small',
       'xsmall',
+    ];
+
+    this.cpuKirbyData = [
+      undefined,
+      {
+        name: 'yellow',
+        reactionSpeed: 500,
+      },
+      {
+        name: 'pink',
+        reactionSpeed: 500,
+      },
+      {
+        name: 'lime',
+        reactionSpeed: 100,
+      },
     ];
 
     this.enemyData = [
@@ -138,10 +154,10 @@ export default class KirbyOnTheDrawGame {
     return this.levels[this.level];
   }
 
-  enemyByName(enemyName) {
-    for (let enemyListing of this.enemyData) {
-      if (enemyListing.name === enemyName) {
-        return enemyListing;
+  itemByAttribute(attribute, searchValue, searchObj) {
+    for (let listItem of searchObj) {
+      if (listItem[attribute] === searchValue) {
+        return listItem;
       }
     }
   }
@@ -152,7 +168,8 @@ export default class KirbyOnTheDrawGame {
       require.context("../media/kotd/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt), this.images);
-    // document.querySelector('#kotd .loading-bar > .details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
+    await pause(100);
+    document.querySelector('#kotd .loading-bar > .details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
   }
 
   loadSounds() {
@@ -198,7 +215,7 @@ export default class KirbyOnTheDrawGame {
     });
 
     this.activeEnemies[newEnemy.container.id] = newEnemy;
-    newEnemy.pointValue = this.enemyByName(randomType).pointValue;
+    newEnemy.pointValue = this.itemByAttribute('name', randomType, this.enemyData).pointValue;
     await pause(20);
     newEnemy.container.classList.remove('obscured');
   }
