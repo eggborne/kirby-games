@@ -93,7 +93,7 @@ export default class Kirby {
       this.playFireAnimation();
       this.renderAmmo();
       this.score += targetInstance.pointValue;
-      if (this.score < 0) {
+      if (this.score < 0 || this.score > 9000) {
         this.score = 0;
       }
       if (targetInstance.type === 'bomb') {

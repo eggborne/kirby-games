@@ -1430,6 +1430,8 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 #kotd-button {
+  width: calc(var(--ds-screen-width) / 3);
+  height: calc(var(--ds-screen-width) / 3);
   transition: all 300ms ease !important;
 }
 #kotd-button.invisible {
@@ -1688,6 +1690,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   opacity: 0;
   pointer-events: none;
   transition: opacity 200ms ease;
+  z-index: 4;
 }
 
 #kotd #touch-bar-message::after {

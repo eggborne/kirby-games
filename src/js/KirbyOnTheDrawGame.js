@@ -90,16 +90,16 @@ export default class KirbyOnTheDrawGame {
       {
         name: 'yellow',
         targetFrequency: 8,
-        reactionSpeed: 2000,
-      },
-      {
-        name: 'pink',
-        targetFrequency: 8,
         reactionSpeed: 500,
       },
       {
-        name: 'lime',
+        name: 'pink',
         targetFrequency: 7,
+        reactionSpeed: 300,
+      },
+      {
+        name: 'lime',
+        targetFrequency: 6,
         reactionSpeed: 100,
       },
     ];

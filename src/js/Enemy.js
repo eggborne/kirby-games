@@ -58,6 +58,8 @@ export default class Enemy {
   async die(killerType) {
     this.container.classList.add('dead');
     this.container.classList.add(killerType);
+    let valueImage = document.createElement('div');
+    valueImage.classList;
     await pause(600);
     this.container.remove();
     delete this.game.activeEnemies[this.container.id];
