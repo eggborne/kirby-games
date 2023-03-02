@@ -25,7 +25,7 @@ export default class Enemy {
     `;
 
     this.enemyElement = this.container.querySelector('.kotd-enemy');
-
+    this.actualPosition = {};
     let leftX;
     if (positionClass === 'bottom-edge' || positionClass === 'top-edge' || positionClass === 'behind-bar' || positionClass === 'bottom-window-edge') {
       let randomXValue = randomInt(20, 80);
@@ -59,7 +59,46 @@ export default class Enemy {
     this.container.classList.add('dead');
     this.container.classList.add(killerType);
     let valueImage = document.createElement('div');
-    valueImage.classList;
+    valueImage.classList.add('point-amount');
+    valueImage.classList.add(this.positionClass);
+    valueImage.classList.add(this.sizeClass);
+    console.log('rect------------------------------------');
+    console.log('bound', this.enemyElement.getBoundingClientRect());
+    console.log('offsetLeft', this.enemyElement.offsetLeft);
+    console.log('offsetTop', this.enemyElement.offsetTop);
+    console.log('clientLeft', this.enemyElement.left);
+    console.log('getClientRects', this.enemyElement.getClientRects);
+    console.log('rect------------------------------------');
+
+    let deathX = 
+      this.enemyElement.getBoundingClientRect().left
+    // - this.enemyElement.getBoundingClientRect().width
+    ;
+
+    let deathY = 
+      this.enemyElement.getBoundingClientRect().top
+    // - this.enemyElement.getBoundingClientRect().height
+    ;
+    
+    let bgYPosition =
+      killerType === 'yellow' ? 1 :
+        killerType === 'pink' ? 2 :
+          killerType === 'lime' ? 3 : 0;
+    
+    let bgXPosition =
+      this.enemyData.pointValue === 10 ? 0 :
+        this.enemyData.pointValue === 20 ? 1 :
+          this.enemyData.pointValue === 40 ? 2 :
+            this.enemyData.pointValue === 100 ? 3 :
+              this.enemyData.pointValue === -50 ? 4 : 0;
+    
+    valueImage.style.backgroundPositionX = `calc(var(--spacing-x) * ${bgXPosition})`;
+    valueImage.style.backgroundPositionY = `calc(var(--spacing-y) * ${bgYPosition})`;
+    valueImage.style.left = `calc(${deathX}px)`;
+    valueImage.style.top = `calc(${deathY}px - var(--ds-screen-height))`;
+    // this.container.parentElement.appendChild(valueImage);
+    document.querySelector('#kotd-screen .bottom-screen').appendChild(valueImage);
+
     await pause(600);
     this.container.remove();
     delete this.game.activeEnemies[this.container.id];

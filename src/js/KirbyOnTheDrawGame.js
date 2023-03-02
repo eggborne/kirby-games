@@ -59,9 +59,9 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         totalEnemies: 30,
-        groupAmount: 6,
+        groupAmount: 3,
         groupTimeGap: 180, // ms
-        groupFrequency: 25, // .1s
+        groupFrequency: 18, // .1s
         bombPercentChance: 25,
       }
     ];
@@ -89,7 +89,7 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         name: 'yellow',
-        targetFrequency: 8,
+        targetFrequency: 9,
         reactionSpeed: 500,
       },
       {
@@ -99,7 +99,7 @@ export default class KirbyOnTheDrawGame {
       },
       {
         name: 'lime',
-        targetFrequency: 6,
+        targetFrequency: 4,
         reactionSpeed: 100,
       },
     ];
@@ -143,7 +143,7 @@ export default class KirbyOnTheDrawGame {
       },
       {
         name: 'bomb',
-        pointValue: (-50),
+        pointValue: -50,
       },
     ];
 
@@ -211,9 +211,10 @@ export default class KirbyOnTheDrawGame {
   }
 
   async spawnEnemy() {
-    let enemyType = this.enemyData[randomInt(0, this.enemyData.length - 2)].name;
+    let randomEnemyIndex = randomInt(0, this.enemyData.length - 2);
+    let enemyType = this.enemyData[randomEnemyIndex].name;
     let enemyOrigin = this.enemyOrigins[randomInt(0, this.enemyOrigins.length - 1)];
-    let sizeLimit = { min: 1, max: 2 };
+    let sizeLimit = { min: 3, max: 3 };
     if (enemyOrigin === 'behind-bar') {
       sizeLimit.min = 1;
       sizeLimit.max = 1;
@@ -231,6 +232,8 @@ export default class KirbyOnTheDrawGame {
     this.spawnCount++;
     newEnemy.container.id = `${enemyType}-${this.spawnCount}`;
     newEnemy.game = this;
+    let dataIndex = enemyType === 'bomb' ? this.enemyData.length - 1 : randomEnemyIndex;
+    newEnemy.enemyData = this.enemyData[dataIndex];
 
     newEnemy.container.querySelector('.kotd-enemy').addEventListener('pointerdown', (e) => {
       let elementId = e.target.parentElement.id;
