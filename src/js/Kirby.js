@@ -25,9 +25,11 @@ export default class Kirby {
       <div class="score-number white"></div>
     `;
     this.rankContainer = document.createElement('div');
+    this.rankContainer.id = `${type}-rank`;
     this.rankContainer.classList.add('rank');
     this.rankContainer.classList.add('rank-4');
     
+    document.querySelector('#kotd-screen #kotd-kirby-rank-area').appendChild(this.rankContainer);
     document.querySelector('#kotd-screen #kotd-kirby-rank-area').appendChild(this.rankContainer);
     document.querySelector('#kotd-screen #kotd-kirby-area').appendChild(this.container);
     document.querySelector('#kotd-screen #kotd-kirby-score-area').appendChild(this.scoreContainer);

@@ -1074,6 +1074,21 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
 }
 
+@keyframes dip-out {
+  0% {
+    scale: 1.5;
+  }
+  10% {
+    scale: 1.8;
+  }
+  20% {
+    scale: 1.5;
+  }
+  100% {
+    scale: 1.5;
+  }
+}
+
 @keyframes hop-left {
   from {
     translate: 0 0;
@@ -1463,14 +1478,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   width: 100%;
   height: calc(var(--ds-screen-height) / 8);
 }
-/* 
-#kotd-round-timer-area > .numeral-area {
-  position: relative;
-  width: calc(var(--ds-screen-height) / 8);
-  top: 0;
-  left: 0;
-  scale: 1.35;
-} */
 
 #kotd-kirby-rank-area {
   bottom: calc(var(--ds-screen-height) / 1.75);
@@ -1498,8 +1505,24 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 #kotd-round-timer-area > .numeral-area {
-  width: calc(var(--ds-screen-height) / 8);
-  scale: 1.35;
+  /* width: calc(var(--ds-screen-height) / 8); */
+  justify-content: center;
+  gap: 2.5%;
+  scale: 1.3;
+}
+
+#kotd-round-timer-area.double-digit > .numeral-area {
+  scale: 1.5;
+  gap: 3%;
+}
+
+#kotd-round-timer-area.low > .numeral-area {
+  animation: dip-out 1000ms ease infinite;
+  animation-delay: 200ms;
+}
+
+#kotd-round-timer-area.low > .numeral-area > .score-number {
+  filter: unset;
 }
 
 .kotd-kirby {
@@ -1537,8 +1560,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   animation: dip 100ms ease forwards;
 }
 .kotd-kirby.bombed {
-  background-position-x: 0 !important;
-  background-position-y: var(--spacing-y) !important;
+  background-position-x: calc(var(--spacing-x) * 12);
   animation: hop 200ms ease forwards;
   animation-delay: 100ms;
 }
@@ -1752,6 +1774,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   justify-content: space-evenly;
   width: calc(var(--ds-screen-height) / 3.6);
   height: calc(var(--ds-screen-height) / 12);
+  transition: scale 300ms ease;
 }
 
 .score-number {
@@ -1896,28 +1919,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-y: calc(var(--spacing-y) * 3);
 }
 
-.muzzle-flash {
-  animation: none;
-
-}
-
-
-/* .point-amount.bottom-edge {
-}
-
-#top-edge-enemies .point-amount {
-  rotate: 360deg;
-}
-#left-edge-enemies .point-amount {
-  rotate: -90deg;
-  top: calc(var(--kotd-enemy-size) * -1.75);
-}
-#right-edge-enemies .point-amount {
-  rotate: 90deg;
-  top: calc(var(--kotd-enemy-size) * -1);
-  animation-name: fade-rise-right;
-} */
-
 .rank::after {
   content: '';
   position: absolute;
@@ -1942,6 +1943,19 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 .rank.rank-4 {
   background-position-x: calc(var(--spacing-x) * 9);
+}
+
+.rank#player-rank {
+  background-position-y: 0;
+}
+.rank#yellow-rank {
+  background-position-y: calc(var(--spacing-y) * 1);
+}
+.rank#pink-rank {
+  background-position-y: calc(var(--spacing-y) * 2);
+}
+.rank#lime-rank {
+  background-position-y: calc(var(--spacing-y) * 3);
 }
 
 @keyframes wobble-right {

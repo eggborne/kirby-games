@@ -58,12 +58,12 @@ export default class KirbyOnTheDrawGame {
     this.levels = [
       undefined,
       {
-        roundLength: 60,
+        roundLength: 12,
         totalEnemies: 30,
         groupAmount: 3,
         groupTimeGap: 180, // ms
         groupFrequency: 18, // .1s
-        bombPercentChance: 25,
+        bombPercentChance: 45,
       }
     ];
     this.level = 1;
@@ -160,6 +160,7 @@ export default class KirbyOnTheDrawGame {
     this.timerContainer = document.createElement('div');
     this.timerContainer.classList.add('numeral-area');
     this.timerContainer.innerHTML = `
+      <div class="score-number black"></div>
       <div class="score-number black"></div>
       <div class="score-number black"></div>
     `;
@@ -300,12 +301,19 @@ export default class KirbyOnTheDrawGame {
   
   renderRoundTimer() {
     let timerString = this.roundTimer.toString();
-    let leadingZeros = 2 - timerString.length;
-    timerString = '0'.repeat(leadingZeros) + timerString;
+    let leadingZeros = 3 - timerString.length;
+    timerString = 'x'.repeat(leadingZeros) + timerString;
     console.log('rendering', timerString);
     [...document.querySelectorAll('#kotd-round-timer-area .score-number')].forEach((numeral, n) => {
       let timerNumeral = timerString[n];
-      numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${timerNumeral})`;
+      if (timerNumeral !== 'x') {
+        numeral.style.display = 'block';
+        // numeral.style.opacity = 1;
+        numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${timerNumeral})`;
+      } else {
+        numeral.style.display = 'none';
+        // numeral.style.opacity = 0.5;
+      }
     });
   }
 
@@ -371,9 +379,23 @@ export default class KirbyOnTheDrawGame {
       if (this.intervalCounter % 10 === 0) {
         this.roundTimer--;
         this.renderRoundTimer();
+        let timerElement = document.getElementById(`kotd-round-timer-area`);
+        if (this.roundTimer <= 99 && !timerElement.classList.contains('double-digit')) {
+          timerElement.classList.add('double-digit');
+        }
+        if (this.roundTimer === 10) {
+          // [...document.querySelectorAll(`#kotd-round-timer-area .score-number`)].forEach(numeral => {
+          //   numeral.classList.remove('black');
+          // });
+          timerElement.classList.add('low');
+        }
         if (this.roundTimer === 0) {
           clearInterval(this.spawnInterval);
           document.getElementById('kotd-bottom-curtains').classList.add('closed');
+          // [...document.querySelectorAll(`#kotd-round-timer-area .score-number`)].forEach(numeral => {
+          //   numeral.classList.add('black');
+          // });
+          timerElement.classList.remove('low');
         }
       }
     }, this.spawnTickDuration);
