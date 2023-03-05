@@ -58,6 +58,7 @@ export default class KirbyOnTheDrawGame {
     this.levels = [
       undefined,
       {
+        roundLength: 60,
         totalEnemies: 30,
         groupAmount: 3,
         groupTimeGap: 180, // ms
@@ -89,18 +90,21 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         name: 'yellow',
-        targetFrequency: 9,
-        reactionSpeed: 500,
+        targetFrequency: 11,
+        reactionSpeed: 800,
+        bombAvoidance: 30,
       },
       {
         name: 'pink',
-        targetFrequency: 7,
-        reactionSpeed: 300,
+        targetFrequency: 13,
+        reactionSpeed: 500,
+        bombAvoidance: 100,
       },
       {
         name: 'lime',
-        targetFrequency: 4,
-        reactionSpeed: 100,
+        targetFrequency: 6,
+        reactionSpeed: 400,
+        bombAvoidance: 0,
       },
     ];
 
@@ -152,6 +156,15 @@ export default class KirbyOnTheDrawGame {
     this.players.forEach((player, p) => {
       player.cpuKirbyData = this.cpuKirbyData[p];
     });
+
+    this.timerContainer = document.createElement('div');
+    this.timerContainer.classList.add('numeral-area');
+    this.timerContainer.innerHTML = `
+      <div class="score-number black"></div>
+      <div class="score-number black"></div>
+    `;
+    document.querySelector('#kotd-screen #kotd-round-timer-area').appendChild(this.timerContainer);
+
     console.log('----------- KirbyOnTheDrawGame constructor finished --->');
   }
 
@@ -214,7 +227,7 @@ export default class KirbyOnTheDrawGame {
     let randomEnemyIndex = randomInt(0, this.enemyData.length - 2);
     let enemyType = this.enemyData[randomEnemyIndex].name;
     let enemyOrigin = this.enemyOrigins[randomInt(0, this.enemyOrigins.length - 1)];
-    let sizeLimit = { min: 3, max: 3 };
+    let sizeLimit = { min: 2, max: 3 };
     if (enemyOrigin === 'behind-bar') {
       sizeLimit.min = 1;
       sizeLimit.max = 1;
@@ -284,6 +297,17 @@ export default class KirbyOnTheDrawGame {
       numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${scoreNumeral})`;
     });
   }
+  
+  renderRoundTimer() {
+    let timerString = this.roundTimer.toString();
+    let leadingZeros = 2 - timerString.length;
+    timerString = '0'.repeat(leadingZeros) + timerString;
+    console.log('rendering', timerString);
+    [...document.querySelectorAll('#kotd-round-timer-area .score-number')].forEach((numeral, n) => {
+      let timerNumeral = timerString[n];
+      numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${timerNumeral})`;
+    });
+  }
 
   assignHandlers() {
     document.getElementById('kotd-button').addEventListener('click', e => {
@@ -310,7 +334,11 @@ export default class KirbyOnTheDrawGame {
       await player.reloadAmmo(true);
       await pause(300);
     }
+
+    this.roundTimer = this.currentLevel.roundLength;
+    this.renderRoundTimer();
     await pause(1000);
+
     this.spawnStarted = Date.now();
     this.intervalCounter = 0;
     this.spawnInterval = setInterval(async () => {
@@ -321,7 +349,6 @@ export default class KirbyOnTheDrawGame {
       //      and calls Enemy.die()
 
       if ((this.intervalCounter % this.currentLevel.groupFrequency) === 0) {
-        console.log('---SPAWNING at', this.intervalCounter);
         for (let i = 0; i < this.currentLevel.groupAmount; i++) {
           let pauseTime = this.currentLevel.groupTimeGap * i;
           pause(pauseTime).then(() => {
@@ -331,25 +358,23 @@ export default class KirbyOnTheDrawGame {
           });
         }
       }
-      if ((this.intervalCounter % 8) === 0) {
-        let firingKirby = this.players[randomInt(1,2)];
-        let randomTarget = this.randomEnemy();
-        if (randomTarget) {
-          firingKirby.fireAtTarget(randomTarget);
+      this.players.filter(player => player.type !== 'player').forEach(player => {
+        if (this.intervalCounter % player.cpuKirbyData.targetFrequency === 0) {
+          let randomTarget = this.randomEnemy(randomInt(0, 100) <= player.cpuKirbyData.bombAvoidance);
+          if (randomTarget) {
+            player.fireAtTarget(randomTarget);
+          }
         }
-      }
-      if ((this.intervalCounter % 6) === 0) {
-        let limeKirby = this.players[3];
-        let randomTarget = this.randomEnemy(randomInt(0,3));
-        if (randomTarget) {
-          limeKirby.fireAtTarget(randomTarget);
-        }
-        this.renderRanks();
-      }
+      });
 
       this.intervalCounter++;
-      if (this.intervalCounter % 1000 === 0) {
-        this.roundTimer++;
+      if (this.intervalCounter % 10 === 0) {
+        this.roundTimer--;
+        this.renderRoundTimer();
+        if (this.roundTimer === 0) {
+          clearInterval(this.spawnInterval);
+          document.getElementById('kotd-bottom-curtains').classList.add('closed');
+        }
       }
     }, this.spawnTickDuration);
   }

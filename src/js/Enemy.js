@@ -5,11 +5,11 @@ export default class Enemy {
     this.spawnedAt = Date.now();
     this.type = type;
     this.positionClass = positionClass;
-    this.sizeClass = 'normal' || sizeClass;
+    this.sizeClass = sizeClass || 'normal';
     this.container = document.createElement('div');
     this.container.classList.add('enemy-container');
-    this.container.classList.add(positionClass);
-    this.container.classList.add(sizeClass);
+    this.container.classList.add(this.sizeClass);
+    this.container.classList.add(this.positionClass);
     this.container.classList.add('obscured');
     if (this.type === 'bomb') {
       setTimeout(async () => {
@@ -60,15 +60,16 @@ export default class Enemy {
     this.container.classList.add(killerType);
     let valueImage = document.createElement('div');
     valueImage.classList.add('point-amount');
-    valueImage.classList.add(this.positionClass);
+    valueImage.classList.add('enemy-dependent');
     valueImage.classList.add(this.sizeClass);
-    console.log('rect------------------------------------');
-    console.log('bound', this.enemyElement.getBoundingClientRect());
-    console.log('offsetLeft', this.enemyElement.offsetLeft);
-    console.log('offsetTop', this.enemyElement.offsetTop);
-    console.log('clientLeft', this.enemyElement.left);
-    console.log('getClientRects', this.enemyElement.getClientRects);
-    console.log('rect------------------------------------');
+    valueImage.classList.add(this.positionClass);
+    // console.log('rect------------------------------------');
+    // console.log('bound', this.enemyElement.getBoundingClientRect());
+    // console.log('offsetLeft', this.enemyElement.offsetLeft);
+    // console.log('offsetTop', this.enemyElement.offsetTop);
+    // console.log('clientLeft', this.enemyElement.left);
+    // console.log('getClientRects', this.enemyElement.getClientRects);
+    // console.log('rect------------------------------------');
 
     let deathX = 
       this.enemyElement.getBoundingClientRect().left
@@ -92,17 +93,61 @@ export default class Enemy {
             this.enemyData.pointValue === 100 ? 3 :
               this.enemyData.pointValue === -50 ? 4 : 0;
     
+    
     valueImage.style.backgroundPositionX = `calc(var(--spacing-x) * ${bgXPosition})`;
     valueImage.style.backgroundPositionY = `calc(var(--spacing-y) * ${bgYPosition})`;
     valueImage.style.left = `calc(${deathX}px)`;
     valueImage.style.top = `calc(${deathY}px - var(--ds-screen-height))`;
     // this.container.parentElement.appendChild(valueImage);
+    this.renderHole({x: deathX, y: deathY}, this.sizeClass, killerType);
     document.querySelector('#kotd-screen .bottom-screen').appendChild(valueImage);
-
+    this.game.renderRanks();
     await pause(600);
     this.container.remove();
     delete this.game.activeEnemies[this.container.id];
 
+  }
+
+  getRandomArcProperties() {
+    let randomArcHeight = `${randomInt(80, 120)}%`;
+    let randomSpreadDistance = `${randomInt(160, 240)}%`;
+    let randomArcSpeed = `${randomInt(900, 1100)}ms`;
+    return { randomArcHeight, randomSpreadDistance, randomArcSpeed };
+  }
+
+  async renderHole(coords, sizeClass, killerType) {
+    let holeElement = document.createElement('div');
+    holeElement.classList.add('bullet-hole');
+    holeElement.classList.add('enemy-dependent');
+    holeElement.classList.add(sizeClass);
+    holeElement.classList.add(killerType);
+    holeElement.style.left = `${coords.x}px`;
+    holeElement.style.top = `${coords.y}px`;
+    let starAmount = 12;
+    for (let i = 0; i < starAmount; i++) {
+      let starElement = document.createElement('div');
+      starElement.classList.add('star');
+      // let arcProperties = this.getRandomArcProperties();
+      starElement.style.setProperty('--arc-height', `${80 + (i * (40/starAmount))}%`);
+      starElement.style.setProperty('--spread-distance', `${160 + (i * (80/starAmount))}%`);
+      // starElement.style.setProperty('--arc-speed', `${900 + (i * (200/starAmount))}ms`);
+      starElement.style.setProperty('--arc-speed', `1000ms`);
+      if (randomInt(0,1)) {
+        starElement.classList.add('right');
+      }
+      holeElement.appendChild(starElement);
+      pause(10).then(() => {
+        starElement.classList.add('spinning');
+      });
+    }
+
+    document.querySelector('#kotd-screen .bottom-screen').appendChild(holeElement);
+    await pause(100);
+    holeElement.classList.add('formed');
+    await pause(200);
+    holeElement.classList.add('fading');
+    await pause(400);
+    holeElement.remove();
   }
 
   async recede() {
