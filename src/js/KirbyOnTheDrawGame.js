@@ -39,9 +39,10 @@ export default class KirbyOnTheDrawGame {
     this.images;
     this.sounds;
     this.soundOn = true;
+    this.difficulty = 0;
     this.roundTimer = 0;
     this.spawnCount = 0;
-    this.level = 0;
+    this.level = 1;
     this.reloading = false;
     this.spawnInterval;
     this.intervalCounter = -1;
@@ -56,17 +57,40 @@ export default class KirbyOnTheDrawGame {
     };
     this.players = [];
     this.levels = [
-      undefined,
-      {
-        roundLength: 12,
-        totalEnemies: 30,
-        groupAmount: 3,
-        groupTimeGap: 180, // ms
-        groupFrequency: 18, // .1s
-        bombPercentChance: 45,
-      }
+      // difficulty 0
+      [
+        undefined,
+        {
+          roundLength: 60,
+          groupAmount: 1,
+          groupTimeGap: 180, // ms
+          groupFrequency: 16, // .1s
+          bombPercentChance: 20,
+        }
+      ],
+      // difficulty 1
+      [
+        undefined,
+        {
+          roundLength: 90,
+          groupAmount: 3,
+          groupTimeGap: 220, // ms
+          groupFrequency: 14, // .1s
+          bombPercentChance: 30,
+        }
+      ],
+      // difficulty 2
+      [
+        undefined,
+        {
+          roundLength: 120,
+          groupAmount: 6,
+          groupTimeGap: 200, // ms
+          groupFrequency: 30, // .1s
+          bombPercentChance: 40,
+        }
+      ],
     ];
-    this.level = 1;
 
     this.veil = document.querySelector('#kotd > .veil');
 
@@ -178,7 +202,7 @@ export default class KirbyOnTheDrawGame {
   }
 
   get currentLevel() {
-    return this.levels[this.level];
+    return this.levels[this.difficulty][this.level];
   }
 
   itemByAttribute(attribute, searchValue, searchObj) {
@@ -308,11 +332,9 @@ export default class KirbyOnTheDrawGame {
       let timerNumeral = timerString[n];
       if (timerNumeral !== 'x') {
         numeral.style.display = 'block';
-        // numeral.style.opacity = 1;
         numeral.style.backgroundPositionY = `calc(var(--ds-screen-height) / 12 * -${timerNumeral})`;
       } else {
         numeral.style.display = 'none';
-        // numeral.style.opacity = 0.5;
       }
     });
   }
@@ -324,8 +346,16 @@ export default class KirbyOnTheDrawGame {
     });
     document.getElementById('kotd-score-bar').addEventListener('pointerdown', async () => {
       await this.players[0].reloadAmmo();
-      // await this.reloadAmmo();
       this.renderPlayerAmmo();
+    });
+    [...document.getElementsByClassName('level-sign')].forEach((signElement, s, arr) => {
+      signElement.addEventListener('pointerdown', e => {
+        e.target.classList.add('selected');
+        this.difficulty = s;
+        arr.filter(signElement => signElement !== e.target && signElement.classList.contains('selected')).forEach(signElement => {
+          signElement.classList.remove('selected');
+        });
+      });
     });
   }
 

@@ -392,7 +392,6 @@ button, .game-selection {
   width: inherit;
   height: inherit;
   background-color: #000000;
-  /* opacity: 0.5; */
   transform-origin: right;
   transform: scaleX(1);
   transition: transform 80ms linear !important;
@@ -1152,6 +1151,15 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
     border-image-outset: calc(var(--button-height) * 0.18) calc(var(--button-height) * 0.2);
   }
 }
+@keyframes flash-border-image {
+  from {
+    border-image-source: url(../media/kotd/images/ui/levelsignborderthin.png);
+
+  }
+  to {
+    border-image-source: url(../media/kotd/images/ui/levelsignborder.png);
+  }
+}
 
 @keyframes land {
   from {
@@ -1176,7 +1184,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   align-items: center;
   justify-content: center;
   background-color: #ffffff33;
-  /* border: calc(var(--button-height) / 48) solid #ffffff99; */
   transform-origin: left center;
   translate: -50% 0;
   pointer-events: none;
@@ -1302,6 +1309,101 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #kotd-instructions-screen {
   pointer-events: none;
   z-index: 2;
+}
+
+#touch-level-message-area,
+#level-sign-area {
+  position: absolute;
+  width: var(--ds-screen-width);
+  height: calc(var(--ds-screen-height) / 8);
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--ds-screen-height) / 32);
+}
+
+#touch-level-message, 
+.down-arrow,
+.level-sign {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#touch-level-message-area {
+  bottom: calc(var(--ds-screen-height) / 16);
+  animation: stab-downward 1000ms ease infinite;
+}
+
+#touch-level-message {
+  width: calc(var(--ds-screen-height) / 1.2);
+  height: calc(var(--ds-screen-height) / 12);
+  background-image: url(../media/kotd/images/ui/touchlevelmessage.png);
+}
+
+.down-arrow {
+  width: calc(var(--ds-screen-height) / 8);
+  height: calc(var(--ds-screen-height) / 8);
+  background-image: url(../media/kotd/images/ui/downarrow.png);
+  background-size: 200%;
+  --alt-bg-x: calc(var(--ds-screen-height) / -8);
+}
+
+.down-arrow.orange {
+  background-position-x: var(--alt-bg-x);
+}
+
+#level-sign-area {
+  bottom: calc(var(--ds-screen-height) / 32);
+  gap: 0;
+  justify-content: space-evenly;
+  height: calc(var(--ds-screen-height) / 6);
+}
+
+.showing-instructions .level-sign {
+  pointer-events: all;
+}
+
+.level-sign {
+  position: relative;
+  background-image: url(../media/kotd/images/ui/levelsignsheet.png);
+  background-size: 100% auto;
+  width: calc(var(--ds-screen-height) / 3);
+  height: calc(var(--ds-screen-height) / 6);
+  --spacing-y: calc(var(--ds-screen-height) / -6);
+}
+
+.level-sign::after {
+  content: '';
+  position: absolute;
+  /* left: 0;
+  top: 0; */
+  width: inherit;
+  height: inherit;
+  box-sizing: border-box;
+  border-image-source: url(../media/kotd/images/ui/levelsignborder.png);
+  border-image-slice: 33.3% 33.3% 33.3% 33.3%;
+  border-image-repeat: stretch stretch;
+  border-style: solid;
+  border-image-outset: calc(var(--ds-screen-height) / 40);
+  border-image-width: 0;
+  pointer-events: none;
+
+}
+
+.level-sign.selected::after {
+  border-image-width: calc(var(--ds-screen-height) / 12);
+  animation: flash-border-image 300ms ease infinite;
+}
+
+.level-sign.one {
+  background-position-y: 0;
+}
+.level-sign.two {
+  background-position-y: calc(var(--spacing-y));
+}
+.level-sign.three {
+  background-position-y: calc(var(--spacing-y) * 2);
 }
 
 .top-screen, .bottom-screen {
@@ -1452,7 +1554,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 #kotd-button::after {
   background-color: green;
-  content: "GOT IT";
+  content: "GO!";
 }
 
 #kotd-button {
@@ -2090,5 +2192,20 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
   100% {
     translate: calc(var(--spread-distance) * 1) 600%;
+  }
+}
+
+@keyframes stab-downward {
+  0% {
+    translate: 0 0;
+  }
+  25% {
+    translate: 0 50%;
+  }
+  50% {
+    translate: 0 0;
+  }
+  100% {
+    translate: 0 0;
   }
 }
