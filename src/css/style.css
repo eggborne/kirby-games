@@ -1470,16 +1470,21 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   overflow: hidden;
 }
 
-#kotd-instructions-screen > .top-screen {
+#kotd .full-screen-bg {
   background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  background-size: 200% auto;
+}
+
+#kotd-instructions-screen > .top-screen {
+  /* background-image: url(../media/kotd/images/ui/kotdbgsheet.png); */
   background-position-y: 0;
 }
 #kotd-instructions-screen > .bottom-screen {
-  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  /* background-image: url(../media/kotd/images/ui/kotdbgsheet.png); */
   background-position-y: calc(var(--ds-screen-height) * -1);
 }
 #kotd-screen > .top-screen {
-  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  /* background-image: url(../media/kotd/images/ui/kotdbgsheet.png); */
   background-position-y: calc(var(--ds-screen-height) * -2);
 }
 #kotd-screen > .bottom-screen > #lower-indoor-bg {
@@ -1495,7 +1500,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   height: var(--ds-screen-height);
   background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 200% auto;
   pointer-events: none;
 }
 #kotd-screen > .bottom-screen::before {
