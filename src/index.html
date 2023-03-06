@@ -90,6 +90,7 @@
   </div>
 
   <div class="game-container" id="kotd">
+    <div class="veil"></div>      
     <div class="game-instructions-screen" id="kotd-instructions-screen">
       <div class="top-screen">
         <div id="touch-level-message-area">
@@ -112,8 +113,10 @@
       </div>
     </div>
 
-    <div id="kotd-screen">      
+    <div id="kotd-screen">
+      <div class="level-sign" id="ready-sign"></div>
       <div class="top-screen">
+        <div id="level-indicator" class="level-sign"></div>
         <div class="kirby-row" id="kotd-round-timer-area"></div>
         <div class="kirby-row" id="kotd-kirby-rank-area"></div>
         <div class="kirby-row" id="kotd-kirby-area"></div>
@@ -153,7 +156,6 @@
           </div>
           <!-- <div id="kotd-score-end"></div> -->
         </div>
-        <!-- <div id="no-ammo"></div> -->
         <div id="touch-bar-message"></div>
       </div>
       <div class="curtains closed" id="kotd-top-curtains">

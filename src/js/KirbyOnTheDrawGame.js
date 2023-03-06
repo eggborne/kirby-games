@@ -93,6 +93,7 @@ export default class KirbyOnTheDrawGame {
     ];
 
     this.veil = document.querySelector('#kotd > .veil');
+    this.readySign = document.querySelector('#kotd-screen > #ready-sign');
 
     this.enemyOrigins = [
       'top-edge',
@@ -352,6 +353,7 @@ export default class KirbyOnTheDrawGame {
       signElement.addEventListener('pointerdown', e => {
         e.target.classList.add('selected');
         this.difficulty = s;
+        document.getElementById('level-indicator').style.backgroundPositionY = `calc(var(--spacing-y) * ${s})`;
         arr.filter(signElement => signElement !== e.target && signElement.classList.contains('selected')).forEach(signElement => {
           signElement.classList.remove('selected');
         });
@@ -361,16 +363,35 @@ export default class KirbyOnTheDrawGame {
 
   async startGame() {
     console.log('--------------- KirbyOnTheDraw.startGame() --------------------');
+    this.veil.classList.add('showing');
+    await pause(600);
     this.renderPlayerScore();
     this.phase = 'round-started';
-    await pause(600);
+    this.veil.classList.remove('showing');
+    await pause(600); // veil fade out
+    this.readySign.classList.add('showing');
+    this.readySign.classList.add('descending');
+    await pause(1000); // sign reach bottom screen center
+    await pause(500); // wait to flip
+    this.readySign.classList.add('flat');
+    await pause(200); // sign completely flat
+    this.readySign.classList.add('go'); // change bg while flat
+    this.readySign.classList.remove('flat'); 
+    await pause(200); // wait for unflatten
+    await pause(500);
+    this.readySign.classList.add('leaving');
+    await pause(300); // wait for scale out
+    this.readySign.classList.remove('leaving');
+    this.readySign.classList.remove('go');
+    this.readySign.classList.remove('showing');
+    await pause(200);
     document.getElementById('kotd-top-curtains').classList.remove('closed');
     document.getElementById('kotd-bottom-curtains').classList.remove('closed');
-    await pause(800);
+    await pause(800); // curtain time
     document.getElementById(this.className).classList.remove('hidden');
     for (let player of this.players) {
       await player.reloadAmmo(true);
-      await pause(300);
+      await pause(200);
     }
 
     this.roundTimer = this.currentLevel.roundLength;

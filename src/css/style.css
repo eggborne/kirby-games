@@ -349,18 +349,25 @@ button, .game-selection {
   overflow: hidden;
 }
 
-#samurai-kirby-screen > .veil {
+.veil {
   position: absolute;
   top: 0;
   left: 0;
   width: var(--game-screen-width);
-  height: var(--game-screen-height);
   background-color: white;
   opacity: 0;
   transition: opacity 600ms ease;
   z-index: 2;
+  pointer-events: none;
 }
-#samurai-kirby-screen > .veil.showing {
+#samurai-kirby-screen > .veil {
+  height: var(--game-screen-height);
+}
+#kotd > .veil {
+  height: calc(var(--ds-screen-height) * 2);
+  z-index: 4;
+}
+.veil.showing {
   opacity: 1;
 }
 #slash-screen, #score-screen {
@@ -980,6 +987,35 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   opacity: 1
 }
 
+#ready-sign {
+  position: fixed;
+  top: calc(var(--spacing-y) / 2);
+  left: 50%;
+  translate: -50% 0;
+  background-position-y: calc(var(--spacing-y) * 3);
+  z-index: 12;
+  animation: descend 1000ms ease forwards;
+  animation-play-state: paused;
+  transition: scale 200ms ease;
+  pointer-events: none;
+  opacity: 0;
+}
+#ready-sign.descending {
+  animation-play-state: running;
+}
+#ready-sign.flat {
+  scale: 1 0;
+}
+#ready-sign.go {
+  background-position-y: calc(var(--spacing-y) * 4);
+}
+#ready-sign.showing {
+  opacity: 1;
+}
+#ready-sign.leaving {
+  scale: 0;
+}
+
 @keyframes flash {
   from {
     background-image: url(../media/samurai-kirby/images/ui/exclamationpointfilled.png);
@@ -1388,7 +1424,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   border-image-outset: calc(var(--ds-screen-height) / 40);
   border-image-width: 0;
   pointer-events: none;
-
 }
 
 .level-sign.selected::after {
@@ -1404,6 +1439,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 .level-sign.three {
   background-position-y: calc(var(--spacing-y) * 2);
+}
+
+#kotd-screen .level-sign {
+  position: absolute;
 }
 
 .top-screen, .bottom-screen {
@@ -1614,8 +1653,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 #kotd-round-timer-area.double-digit > .numeral-area {
-  scale: 1.5;
-  gap: 3%;
+  scale: 1.9;
 }
 
 #kotd-round-timer-area.low > .numeral-area {
@@ -2207,5 +2245,14 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
   100% {
     translate: 0 0;
+  }
+}
+
+@keyframes descend {
+  0% {
+    translate: -50% 0;
+  }
+  100% {
+    translate: -50% calc(var(--ds-screen-height) * 1.5);
   }
 }
