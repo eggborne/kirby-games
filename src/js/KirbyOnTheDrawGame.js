@@ -61,7 +61,7 @@ export default class KirbyOnTheDrawGame {
       [
         undefined,
         {
-          roundLength: 60,
+          roundLength: 3,
           groupAmount: 1,
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
@@ -93,7 +93,8 @@ export default class KirbyOnTheDrawGame {
     ];
 
     this.veil = document.querySelector('#kotd > .veil');
-    this.readySign = document.querySelector('#kotd-screen > #ready-sign');
+    this.readySign = document.querySelector('#kotd-screen > #ready');
+    this.finishSign = document.querySelector('#kotd-screen > #finish');
 
     this.enemyOrigins = [
       'top-edge',
@@ -361,6 +362,28 @@ export default class KirbyOnTheDrawGame {
     });
   }
 
+  async descendSign(element, noFlip, leaveDelay) {
+    element.classList.add('showing');
+    element.classList.add('descending');
+    await pause(1000); // sign reach bottom screen center
+    if (!noFlip) {
+      await pause(500); // wait to flip
+      element.classList.add('flat');
+      await pause(200); // sign completely flat
+      element.classList.add('go'); // change bg while flat
+      element.classList.remove('flat'); 
+      await pause(200); // wait for unflatten
+      await pause(500);
+    } else {
+      await pause(leaveDelay);
+    }
+    element.classList.add('leaving');
+    await pause(300); // wait for scale out
+    element.classList.remove('leaving');
+    element.classList.remove('go');
+    element.classList.remove('showing');
+  }
+
   async startGame() {
     console.log('--------------- KirbyOnTheDraw.startGame() --------------------');
     this.veil.classList.add('showing');
@@ -369,21 +392,7 @@ export default class KirbyOnTheDrawGame {
     this.phase = 'round-started';
     this.veil.classList.remove('showing');
     await pause(600); // veil fade out
-    this.readySign.classList.add('showing');
-    this.readySign.classList.add('descending');
-    await pause(1000); // sign reach bottom screen center
-    await pause(500); // wait to flip
-    this.readySign.classList.add('flat');
-    await pause(200); // sign completely flat
-    this.readySign.classList.add('go'); // change bg while flat
-    this.readySign.classList.remove('flat'); 
-    await pause(200); // wait for unflatten
-    await pause(500);
-    this.readySign.classList.add('leaving');
-    await pause(300); // wait for scale out
-    this.readySign.classList.remove('leaving');
-    this.readySign.classList.remove('go');
-    this.readySign.classList.remove('showing');
+    await this.descendSign(this.readySign);
     await pause(200);
     document.getElementById('kotd-top-curtains').classList.remove('closed');
     document.getElementById('kotd-bottom-curtains').classList.remove('closed');
@@ -395,6 +404,12 @@ export default class KirbyOnTheDrawGame {
     }
 
     this.roundTimer = this.currentLevel.roundLength;
+    let timerElement = document.getElementById(`kotd-round-timer-area`);
+    if (this.roundTimer <= 99 && !timerElement.classList.contains('double-digit')) {
+      timerElement.classList.add('double-digit');
+    } else if (this.roundTimer > 99 && timerElement.classList.contains('double-digit')) {
+      timerElement.classList.remove('double-digit');
+    }
     this.renderRoundTimer();
     await pause(1000);
 
@@ -435,18 +450,14 @@ export default class KirbyOnTheDrawGame {
           timerElement.classList.add('double-digit');
         }
         if (this.roundTimer === 10) {
-          // [...document.querySelectorAll(`#kotd-round-timer-area .score-number`)].forEach(numeral => {
-          //   numeral.classList.remove('black');
-          // });
           timerElement.classList.add('low');
         }
         if (this.roundTimer === 0) {
           clearInterval(this.spawnInterval);
+          document.getElementById('kotd-top-curtains').classList.add('closed');
           document.getElementById('kotd-bottom-curtains').classList.add('closed');
-          // [...document.querySelectorAll(`#kotd-round-timer-area .score-number`)].forEach(numeral => {
-          //   numeral.classList.add('black');
-          // });
           timerElement.classList.remove('low');
+          await this.descendSign(this.finishSign, true, 1000);
         }
       }
     }, this.spawnTickDuration);

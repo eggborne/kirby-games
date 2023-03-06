@@ -987,33 +987,47 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   opacity: 1
 }
 
-#ready-sign {
+.ready-sign {
   position: fixed;
   top: calc(var(--spacing-y) / 2);
   left: 50%;
-  translate: -50% 0;
+  translate: -50% calc(var(--ds-screen-height) * 1.5);
   background-position-y: calc(var(--spacing-y) * 3);
   z-index: 12;
-  animation: descend 1000ms ease forwards;
+  animation: descend 1000ms ease-out forwards;
   animation-play-state: paused;
   transition: scale 200ms ease;
   pointer-events: none;
   opacity: 0;
 }
-#ready-sign.descending {
+.ready-sign.descending {
   animation-play-state: running;
 }
-#ready-sign.flat {
+.ready-sign.flat {
   scale: 1 0;
 }
-#ready-sign.go {
+.ready-sign.go {
   background-position-y: calc(var(--spacing-y) * 4);
 }
-#ready-sign.showing {
+.ready-sign.showing {
   opacity: 1;
 }
-#ready-sign.leaving {
+.ready-sign.leaving {
   scale: 0;
+}
+
+.ready-sign#finish {
+  width: calc(var(--ds-screen-height) / 2);
+  height: calc(var(--ds-screen-height) / 6);
+  background-image: url(../media/kotd/images/ui/finishsign.png);
+  background-position: 0;
+}
+
+.ready-sign#finish.leaving {
+  animation-name: descend-off;
+  animation-duration: 300ms;
+  scale: 1;
+  /* translate: -50% calc((var(--ds-screen-height) * 2) + calc(var(--ds-screen-height) / 12)) !important; */
 }
 
 @keyframes flash {
@@ -1412,8 +1426,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .level-sign::after {
   content: '';
   position: absolute;
-  /* left: 0;
-  top: 0; */
   width: inherit;
   height: inherit;
   box-sizing: border-box;
@@ -1443,6 +1455,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 #kotd-screen .level-sign {
   position: absolute;
+  border: 0;
 }
 
 .top-screen, .bottom-screen {
@@ -2254,5 +2267,14 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   }
   100% {
     translate: -50% calc(var(--ds-screen-height) * 1.5);
+  }
+}
+
+@keyframes descend-off {
+  0% {
+    translate: -50% calc(var(--ds-screen-height) * 1.5);
+  }
+  100% {
+    translate: -50% calc((var(--ds-screen-height) * 2) + calc(var(--ds-screen-height) / 12));
   }
 }
