@@ -1476,22 +1476,15 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 #kotd-instructions-screen > .top-screen {
-  /* background-image: url(../media/kotd/images/ui/kotdbgsheet.png); */
   background-position-y: 0;
 }
 #kotd-instructions-screen > .bottom-screen {
-  /* background-image: url(../media/kotd/images/ui/kotdbgsheet.png); */
   background-position-y: calc(var(--ds-screen-height) * -1);
 }
 #kotd-screen > .top-screen {
-  /* background-image: url(../media/kotd/images/ui/kotdbgsheet.png); */
   background-position-y: calc(var(--ds-screen-height) * -2);
 }
-#kotd-screen > .bottom-screen > #lower-indoor-bg {
-  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
-  background-position-y: calc(var(--ds-screen-height) * -3);
-  z-index: 3;
-}
+
 #kotd-screen > .bottom-screen::before,
 #kotd-screen > .bottom-screen::after {
   content: '';
@@ -1505,7 +1498,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 #kotd-screen > .bottom-screen::before {
   background-position-y: calc(var(--ds-screen-height) * -4);
-  z-index: 1;
+  z-index: 0;
 }
 #kotd-screen > .bottom-screen::after {
   background-position-y: calc(var(--ds-screen-height) * -3);
@@ -1518,8 +1511,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   width: var(--ds-screen-width);
   height: calc(var(--ds-screen-height) / 3);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 200% auto;
+  background-image: url(../media/kotd/images/ui/kotdbgsheet.png);
+  z-index: 3;
   background-position-y: calc(var(--ds-screen-height) * -3.666);
+  /* background: orange; */
   pointer-events: none;
 }
 

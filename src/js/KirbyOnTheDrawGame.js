@@ -97,10 +97,10 @@ export default class KirbyOnTheDrawGame {
     this.finishSign = document.querySelector('#kotd-screen > #finish');
 
     this.enemyOrigins = [
-      'top-edge',
-      'bottom-edge',
-      'left-edge',
-      'right-edge',
+      // 'top-edge',
+      // 'bottom-edge',
+      // 'left-edge',
+      // 'right-edge',
       'behind-bar',
       'bottom-window-edge',
     ];
