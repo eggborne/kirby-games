@@ -82,8 +82,8 @@ export default class Enemy {
     ;
     
     let bgYPosition =
-      killerType === 'yellow' ? 1 :
-        killerType === 'pink' ? 2 :
+      killerType === 'lemon' ? 1 :
+        killerType === 'strawberry' ? 2 :
           killerType === 'lime' ? 3 : 0;
     
     let bgXPosition =

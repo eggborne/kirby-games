@@ -994,7 +994,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   translate: -50% calc(var(--ds-screen-height) * 1.5);
   background-position-y: calc(var(--spacing-y) * 3);
   z-index: 12;
-  animation: descend 1000ms ease-out forwards;
+  animation: descend 600ms ease-out forwards;
   animation-play-state: paused;
   transition: scale 200ms ease;
   pointer-events: none;
@@ -1301,7 +1301,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 #kotd-screen #kotd-bottom-curtains .left-curtain,
 #kotd-screen #kotd-bottom-curtains .right-curtain {
-  transition-delay: 400ms;
+  /* transition-delay: 400ms; */
 }
 
 #kotd-screen .curtains .left-curtain {
@@ -1505,6 +1505,33 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   z-index: 1;
 }
 
+#kotd-screen > .results-screen {
+  position: absolute;
+  z-index: 3;
+  display: none;
+}
+
+#kotd-screen > .results-screen.showing {
+  display: block;
+}
+
+#kotd-screen > .top-screen.results-screen {
+  left: 0;
+  top: 0;
+  background-position-x: calc(var(--ds-screen-width) * -1);
+  background-position-y: calc(var(--ds-screen-height) * -3);
+}
+#kotd-screen > .bottom-screen.results-screen {
+  left: 0;
+  top: var(--ds-screen-height);
+  background-position-x: calc(var(--ds-screen-width) * -1);
+  background-position-y: calc(var(--ds-screen-height) * -4);
+}
+#kotd-screen > .bottom-screen.results-screen::before,
+#kotd-screen > .bottom-screen.results-screen::after {
+  display: none;
+}
+
 #kotd-screen > .bottom-screen > #lower-indoor-bg {
   position: absolute;
   bottom: 0;
@@ -1694,10 +1721,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .kotd-kirby.player {
   --starting-bg-x: 0;
 }
-.kotd-kirby.yellow {
+.kotd-kirby.lemon {
   --starting-bg-x: 3;
 }
-.kotd-kirby.pink {
+.kotd-kirby.strawberry {
   --starting-bg-x: 6;
 }
 .kotd-kirby.lime {
@@ -2046,11 +2073,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-y: var(--starting-bg-y);
 }
 
-.bullet-hole.yellow {
+.bullet-hole.lemon {
   background-position-y: calc(var(--starting-bg-y) + (var(--spacing-y) * 1))
 }
 
-.bullet-hole.pink {
+.bullet-hole.strawberry {
   background-position-y: calc(var(--starting-bg-y) + (var(--spacing-y) * 2))
 }
 
@@ -2061,11 +2088,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-y: 0;
 }
 
-.bullet-hole.yellow > .star {
+.bullet-hole.lemon > .star {
   background-position-y: calc(var(--spacing-y) * 1);
 }
 
-.bullet-hole.pink > .star {
+.bullet-hole.strawberry > .star {
   background-position-y: calc(var(--spacing-y) * 2);
 }
 
@@ -2102,10 +2129,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 .rank#player-rank {
   background-position-y: 0;
 }
-.rank#yellow-rank {
+.rank#lemon-rank {
   background-position-y: calc(var(--spacing-y) * 1);
 }
-.rank#pink-rank {
+.rank#strawberry-rank {
   background-position-y: calc(var(--spacing-y) * 2);
 }
 .rank#lime-rank {

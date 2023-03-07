@@ -51,8 +51,8 @@ export default class KirbyOnTheDrawGame {
     this.activeEnemies = {};
     this.scores = {
       player: 0,
-      yellow: 0,
-      pink: 0,
+      lemon: 0,
+      strawberry: 0,
       lime: 0
     };
     this.players = [];
@@ -61,21 +61,21 @@ export default class KirbyOnTheDrawGame {
       [
         undefined,
         {
-          roundLength: 3,
+          roundLength: 30,
           groupAmount: 1,
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
-          bombPercentChance: 20,
+          bombPercentChance: 10,
         }
       ],
       // difficulty 1
       [
         undefined,
         {
-          roundLength: 90,
+          roundLength: 60,
           groupAmount: 3,
-          groupTimeGap: 220, // ms
-          groupFrequency: 14, // .1s
+          groupTimeGap: 300, // ms
+          groupFrequency: 24, // .1s
           bombPercentChance: 30,
         }
       ],
@@ -97,11 +97,11 @@ export default class KirbyOnTheDrawGame {
     this.finishSign = document.querySelector('#kotd-screen > #finish');
 
     this.enemyOrigins = [
-      // 'top-edge',
-      // 'bottom-edge',
-      // 'left-edge',
-      // 'right-edge',
+      'bottom-edge',
       'behind-bar',
+      'left-edge',
+      'right-edge',
+      'top-edge',
       'bottom-window-edge',
     ];
     this.enemySizes = [
@@ -115,22 +115,22 @@ export default class KirbyOnTheDrawGame {
     this.cpuKirbyData = [
       undefined,
       {
-        name: 'yellow',
+        name: 'lemon',
         targetFrequency: 11,
-        reactionSpeed: 800,
+        reactionSpeed: 600,
         bombAvoidance: 30,
       },
       {
-        name: 'pink',
+        name: 'strawberry',
         targetFrequency: 13,
-        reactionSpeed: 500,
-        bombAvoidance: 100,
+        reactionSpeed: 700,
+        bombAvoidance: 50,
       },
       {
         name: 'lime',
         targetFrequency: 6,
-        reactionSpeed: 400,
-        bombAvoidance: 0,
+        reactionSpeed: 500,
+        bombAvoidance: 10,
       },
     ];
 
@@ -178,7 +178,7 @@ export default class KirbyOnTheDrawGame {
     ];
 
     this.assignHandlers();
-    this.players.push(new Kirby('player'), new Kirby('yellow'), new Kirby('pink'), new Kirby('lime'));
+    this.players.push(new Kirby('player'), new Kirby('lemon'), new Kirby('strawberry'), new Kirby('lime'));
     this.players.forEach((player, p) => {
       player.cpuKirbyData = this.cpuKirbyData[p];
     });
@@ -362,7 +362,7 @@ export default class KirbyOnTheDrawGame {
     });
   }
 
-  async descendSign(element, noFlip, leaveDelay) {
+  async descendSign(element, noFlip, leaveDelay, postFlipDelay) {
     element.classList.add('showing');
     element.classList.add('descending');
     await pause(1000); // sign reach bottom screen center
@@ -373,7 +373,7 @@ export default class KirbyOnTheDrawGame {
       element.classList.add('go'); // change bg while flat
       element.classList.remove('flat'); 
       await pause(200); // wait for unflatten
-      await pause(500);
+      await pause(postFlipDelay);
     } else {
       await pause(leaveDelay);
     }
@@ -391,13 +391,12 @@ export default class KirbyOnTheDrawGame {
     this.renderPlayerScore();
     this.phase = 'round-started';
     this.veil.classList.remove('showing');
-    await pause(600); // veil fade out
-    await this.descendSign(this.readySign);
-    await pause(200);
+    await pause(400); // veil fade out - sign flip
+    await this.descendSign(this.readySign, false, 0, 800);
     document.getElementById('kotd-top-curtains').classList.remove('closed');
     document.getElementById('kotd-bottom-curtains').classList.remove('closed');
     await pause(800); // curtain time
-    document.getElementById(this.className).classList.remove('hidden');
+    // document.getElementById(this.className).classList.remove('hidden');
     for (let player of this.players) {
       await player.reloadAmmo(true);
       await pause(200);
@@ -458,6 +457,12 @@ export default class KirbyOnTheDrawGame {
           document.getElementById('kotd-bottom-curtains').classList.add('closed');
           timerElement.classList.remove('low');
           await this.descendSign(this.finishSign, true, 1000);
+          // change to results screen, open curtains
+          document.querySelector('#kotd-screen > .top-screen.results-screen').classList.add('showing');
+          document.querySelector('#kotd-screen > .bottom-screen.results-screen').classList.add('showing');
+          document.getElementById('kotd-top-curtains').classList.remove('closed');
+          document.getElementById('kotd-bottom-curtains').classList.remove('closed');
+
         }
       }
     }, this.spawnTickDuration);
