@@ -66,6 +66,10 @@ export default class KirbyOnTheDrawGame {
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
           bombPercentChance: 10,
+          originLimit: {
+            min: 0,
+            max: 1
+          },
         }
       ],
       // difficulty 1
@@ -77,6 +81,10 @@ export default class KirbyOnTheDrawGame {
           groupTimeGap: 300, // ms
           groupFrequency: 24, // .1s
           bombPercentChance: 30,
+          originLimit: {
+            min: 0,
+            max: 3
+          },
         }
       ],
       // difficulty 2
@@ -88,6 +96,10 @@ export default class KirbyOnTheDrawGame {
           groupTimeGap: 200, // ms
           groupFrequency: 30, // .1s
           bombPercentChance: 40,
+          originLimit: {
+            min: 0,
+            max: 5
+          },
         }
       ],
     ];
@@ -117,64 +129,34 @@ export default class KirbyOnTheDrawGame {
       {
         name: 'lemon',
         targetFrequency: 11,
-        reactionSpeed: 600,
+        reactionSpeed: 700,
         bombAvoidance: 30,
       },
       {
         name: 'strawberry',
         targetFrequency: 13,
-        reactionSpeed: 700,
+        reactionSpeed: 800,
         bombAvoidance: 50,
       },
       {
         name: 'lime',
         targetFrequency: 6,
-        reactionSpeed: 500,
+        reactionSpeed: 600,
         bombAvoidance: 10,
       },
     ];
 
     this.enemyData = [
-      {
-        name: 'waddledee',
-        pointValue: 10,
-      },
-      {
-        name: 'cappy',
-        pointValue: 10,
-      },
-      {
-        name: 'brontoburt',
-        pointValue: 10,
-      },
-      {
-        name: 'knucklejoe',
-        pointValue: 20,
-      },
-      {
-        name: 'waddledoo',
-        pointValue: 20,
-      },
-      {
-        name: 'chefkawasaki',
-        pointValue: 40,
-      },
-      {
-        name: 'bonkers',
-        pointValue: 40,
-      },
-      {
-        name: 'dedede',
-        pointValue: 100,
-      },
-      {
-        name: 'metaknight',
-        pointValue: 100,
-      },
-      {
-        name: 'bomb',
-        pointValue: -50,
-      },
+      { name: 'waddledee', pointValue: 10, },
+      { name: 'cappy', pointValue: 10, },
+      { name: 'brontoburt', pointValue: 10, },
+      { name: 'knucklejoe', pointValue: 20, },
+      { name: 'waddledoo', pointValue: 20, },
+      { name: 'chefkawasaki', pointValue: 40, },
+      { name: 'bonkers', pointValue: 40, },
+      { name: 'dedede', pointValue: 100, },
+      { name: 'metaknight', pointValue: 100, },
+      { name: 'bomb', pointValue: -50, },
     ];
 
     this.assignHandlers();
@@ -253,7 +235,7 @@ export default class KirbyOnTheDrawGame {
   async spawnEnemy() {
     let randomEnemyIndex = randomInt(0, this.enemyData.length - 2);
     let enemyType = this.enemyData[randomEnemyIndex].name;
-    let enemyOrigin = this.enemyOrigins[randomInt(0, this.enemyOrigins.length - 1)];
+    let enemyOrigin = this.enemyOrigins[randomInt(this.currentLevel.originLimit.min, this.currentLevel.originLimit.max)];
     let sizeLimit = { min: 2, max: 3 };
     if (enemyOrigin === 'behind-bar') {
       sizeLimit.min = 1;
