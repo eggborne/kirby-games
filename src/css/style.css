@@ -1508,7 +1508,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 #kotd-screen > .results-screen {
   position: absolute;
   z-index: 3;
-  /* display: none; */
+  display: none;
 }
 
 #kotd-screen > .results-screen.showing {
