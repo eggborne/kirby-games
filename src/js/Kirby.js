@@ -30,7 +30,6 @@ export default class Kirby {
     this.rankContainer.classList.add('rank-4');
     
     document.querySelector('#kotd-screen #kotd-kirby-rank-area').appendChild(this.rankContainer);
-    document.querySelector('#kotd-screen #kotd-kirby-rank-area').appendChild(this.rankContainer);
     document.querySelector('#kotd-screen #kotd-kirby-area').appendChild(this.container);
     document.querySelector('#kotd-screen #kotd-kirby-score-area').appendChild(this.scoreContainer);
     document.querySelector('#kotd-screen #kotd-kirby-ammo-area').appendChild(this.ammoContainer);

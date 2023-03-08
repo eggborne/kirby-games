@@ -61,7 +61,7 @@ export default class KirbyOnTheDrawGame {
       [
         undefined,
         {
-          roundLength: 30,
+          roundLength: 1,
           groupAmount: 1,
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
@@ -128,21 +128,21 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         name: 'lemon',
-        targetFrequency: 11,
-        reactionSpeed: 700,
-        bombAvoidance: 30,
+        targetFrequency: 8,
+        reactionSpeed: 400,
+        bombAvoidance: 50,
       },
       {
         name: 'strawberry',
-        targetFrequency: 13,
-        reactionSpeed: 800,
-        bombAvoidance: 50,
+        targetFrequency: 7,
+        reactionSpeed: 500,
+        bombAvoidance: 75,
       },
       {
         name: 'lime',
         targetFrequency: 6,
-        reactionSpeed: 600,
-        bombAvoidance: 10,
+        reactionSpeed: 300,
+        bombAvoidance: 40,
       },
     ];
 
