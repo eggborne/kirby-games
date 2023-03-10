@@ -80,7 +80,7 @@ export default class KirbyOnTheDrawGame {
           groupAmount: 3,
           groupTimeGap: 300, // ms
           groupFrequency: 24, // .1s
-          bombPercentChance: 15,
+          bombPercentChance: 20,
           originLimit: {
             min: 0,
             max: 3
@@ -95,7 +95,7 @@ export default class KirbyOnTheDrawGame {
           groupAmount: 5 ,
           groupTimeGap: 300, // ms
           groupFrequency: 36, // .1s
-          bombPercentChance: 20,
+          bombPercentChance: 30,
           originLimit: {
             min: 0,
             max: 5
@@ -128,24 +128,27 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         name: 'lemon',
-        targetFrequency: 7,
+        targetFrequency: 8.5,
         reactionSpeed: 400,
         reloadTime: 60,
-        bombAvoidance: 100,
+        maxAmmo: 8,
+        bombAvoidance: 20,
       },
       {
         name: 'strawberry',
-        targetFrequency: 6,
-        reactionSpeed: 500,
-        reloadTime: 50,
-        bombAvoidance: 20,
+        targetFrequency: 7.5,
+        reactionSpeed: 400,
+        reloadTime: 60,
+        maxAmmo: 8,
+        bombAvoidance: 30,
       },
       {
         name: 'lime',
-        targetFrequency: 6,
-        reactionSpeed: 300,
-        reloadTime: 40,
-        bombAvoidance: 20,
+        targetFrequency: 8,
+        reactionSpeed: 400,
+        reloadTime: 60,
+        maxAmmo: 8,
+        bombAvoidance: 35,
       },
     ];
 
@@ -165,11 +168,9 @@ export default class KirbyOnTheDrawGame {
     this.assignHandlers();
     this.players.push(new Kirby('player'), new Kirby('lemon'), new Kirby('strawberry'), new Kirby('lime'));
     this.players.filter(player => player.type !== 'player').forEach((player, p, arr) => {
-      console.log('checking arr', arr);
-      console.log('assigning cpuKirbyData', this.cpuKirbyData);
       player.cpuKirbyData = this.cpuKirbyData[p+1];
-      console.log('player -->', player);
       player.reloadTime = player.cpuKirbyData.reloadTime;
+      player.maxAmmo = player.cpuKirbyData.maxAmmo;
     });
 
     this.timerContainer = document.createElement('div');
@@ -318,7 +319,6 @@ export default class KirbyOnTheDrawGame {
     let timerString = this.roundTimer.toString();
     let leadingZeros = 3 - timerString.length;
     timerString = 'x'.repeat(leadingZeros) + timerString;
-    console.log('rendering', timerString);
     [...document.querySelectorAll('#kotd-round-timer-area .score-number')].forEach((numeral, n) => {
       let timerNumeral = timerString[n];
       if (timerNumeral !== 'x') {

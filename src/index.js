@@ -103,6 +103,12 @@ window.addEventListener('load', () => {
     app.game.showInstructions();
   });
 
+  document.addEventListener('keyup', e => {
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+    }
+  });
+
   document.querySelector('#sound-controls > input').addEventListener('change', async e => {
     app.userSettings.userVolume = e.target.value;
     localStorage.setItem('kirbyGamesSettings', JSON.stringify(app.userSettings));

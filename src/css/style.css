@@ -1,5 +1,6 @@
 :root {
   --actual-height: 100vh;
+  --footer-height: 3rem;
   --screen-aspect-ratio: (8/7);
   --game-screen-width: 100vw;
   --game-screen-height: calc(var(--game-screen-width) / var(--screen-aspect-ratio));
@@ -48,6 +49,22 @@ body {
   transition: opacity 600ms ease;
 }
 
+footer {
+  display: absolute;
+  font-size: 0.75rem;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  bottom: 0;
+  left: 0;
+  width: var(--game-screen-width);
+  height: var(--footer-height);
+  background-color: #00000033;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
 button {
   font-family: inherit;
   text-shadow: inherit;
@@ -72,7 +89,7 @@ button, .game-selection {
 
 #sound-controls {
   position: absolute;
-  bottom: 0;
+  bottom: var(--footer-height);
   left: 0;
   width: 100%;
   height: calc(var(--controls-height) / 7);
@@ -86,6 +103,10 @@ button, .game-selection {
 
 #game-select-screen.hidden + * + * + #sound-controls{
   display: none;
+}
+
+#game-select-screen.hidden button {
+  pointer-events: none !important;
 }
 
 #sound-controls > input {
@@ -1839,6 +1860,7 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   background-position-x: calc(var(--spacing-x) * (var(--starting-bg-x) + 2));
   animation: dip 100ms ease forwards;
 }
+
 .kotd-kirby.bombed {
   background-position-x: calc(var(--spacing-x) * 12);
   animation: hop 200ms ease forwards;
