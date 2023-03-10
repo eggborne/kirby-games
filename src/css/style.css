@@ -504,7 +504,8 @@ button, .game-selection {
   width: calc(var(--game-screen-height) * 0.45);
   height: calc(var(--game-screen-height) * 0.45);
   translate: -17% 3%;
-  background-image: url(../media/samurai-kirby/images/samuraikirby/waiting.png);
+  background-position-x: calc(var(--spacing-x) * 3);
+  /* background-image: url(../media/samurai-kirby/images/samuraikirby/waiting.png); */
 }
 
 #total-score {
@@ -764,19 +765,36 @@ button, .game-selection {
   background-color: var(--quit-button-color);
 }
 
+.fighter, #score-kirby {
+  background-image: url(../media/samurai-kirby/images/samuraikirbysheet.png);
+  background-repeat: no-repeat;
+  background-size: 533.33% 766.7%;
+}
+
 .fighter {
   position: absolute;
   background-repeat: no-repeat;
-  background-size: contain;
   transform-origin: 80% 80%;
   transition: translate 300ms ease, left 100ms ease, right 100ms ease, bottom 100ms ease;
 }
-
+#kirby, #score-kirby {
+  --spacing-x: calc(var(--game-screen-height) * -0.45);
+}
 #kirby {
-  width: calc(var(--game-screen-height) * 0.45);
+  width: calc(var(--game-screen-height) * 0.45);;
   height: calc(var(--game-screen-height) * 0.45);
-  left:  calc(var(--game-screen-height) * 0.03);
-  bottom:  calc(var(--game-screen-height) / 10);
+  left: calc(var(--game-screen-height) * 0.03);
+  bottom: calc(var(--game-screen-height) / 10);
+}
+
+.fighter.waiting {
+  background-position-x: 0;
+}
+.fighter.attacking {
+  background-position-x: calc(var(--spacing-x) * 1);
+}
+.fighter.defeated {
+  background-position-x: calc(var(--spacing-x) * 2);
 }
 
 #kirby::after {
@@ -808,12 +826,33 @@ button, .game-selection {
 }
 
 #enemy {
+  --sheet-position-y: calc(var(--game-screen-height) * -0.45);
+  --width: calc((var(--game-screen-height) * 0.6) / (96/128));
+  --spacing-x: calc(var(--width) * -1);
+  --spacing-y: calc((var(--game-screen-height) * 0.6) * -1);
   height: calc(var(--game-screen-height) * 0.6);
-  width: calc((var(--game-screen-height) * 0.6) / (96/128));
+  width: var(--width);
+  background-size: 300% 575%;
   left:  unset;
   right: calc(var(--game-screen-height) / 18);
   bottom:  calc(var(--game-screen-height) / 2.2);
   display: none;
+  background-position-y: var(--starting-bg-y);
+}
+#enemy.eyeballman {
+  --starting-bg-y: var(--sheet-position-y);
+}
+#enemy.wheelbro {
+  --starting-bg-y: calc(var(--sheet-position-y) + var(--spacing-y));
+}
+#enemy.fishchef {
+  --starting-bg-y: calc(var(--sheet-position-y) + (var(--spacing-y) * 2));
+}
+#enemy.dedede {
+  --starting-bg-y: calc(var(--sheet-position-y) + (var(--spacing-y) * 3));
+}
+#enemy.metaknight {
+  --starting-bg-y: calc(var(--sheet-position-y) + (var(--spacing-y) * 4));
 }
 
 #kirby.bouncing {
@@ -844,7 +883,7 @@ body:not(.round-started) #enemy {
 }
 
 #samurai-kirby.time-up #kirby {
-  animation: fly-off-left 400ms linear forwards;
+  animation: fly-off-left 300ms linear forwards;
   animation-delay: 200ms
 }
 

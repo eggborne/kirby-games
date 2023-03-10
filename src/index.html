@@ -8,10 +8,10 @@
 <body style="opacity: 0">
   <div id="game-select-screen">
     <div id="game-list">
-      <div id="kotd-selection" class="game-selection selected">
+      <div id="kotd-selection" class="game-selection">
         <div class="kotd-logo logo"></div>
       </div>
-      <div id="samurai-kirby-selection" class="game-selection">
+      <div id="samurai-kirby-selection" class="game-selection selected">
         <div class="samurai-kirby-logo logo"></div>
       </div>
       <!-- <div id="bomb-rally-selection" class="game-selection">
@@ -63,7 +63,7 @@
           <span>Enemies Defeated: </span>
           <span class="score-screen-display" id="enemy-count-display"></span>
         </div>
-        <div id="score-kirby" class="fighter"></div>
+        <div id="score-kirby" class="fighter resting"></div>
         <div id="fastest-time">Fastest Time: <span class="score-screen-display" id="fastest-time-display"></span></div>
         <div id="total-score">
           <div>Total Score:</div>
@@ -76,9 +76,9 @@
         <div class="slash-mark"></div>
       </div>
       <div class="player-status" id="lives-area"></div>
-      <div class="fighter samuraikirbydrawing" id="kirby"></div>
+      <div class="fighter samuraikirby waiting" id="kirby"></div>
       <div id="exclamation-point"></div>
-      <div class="fighter" id="enemy"></div>
+      <div class="fighter waiting" id="enemy"></div>
       <div id="score-post"></div>
     </div>
     <div class="player-status" id="player-score">
