@@ -58,6 +58,13 @@ const loadImage = (bundledPath) => {
 
 const getPercent = decimal => Math.round(Math.round(decimal * 1e4) / 1e2);
 
+const swapClass = (element, oldClass, newClass) => {
+  if (element.classList.contains(oldClass)) {
+    element.classList.remove(oldClass);
+  }
+  element.classList.add(newClass);
+};
+
 export {
   importAll,
   pause,
@@ -67,5 +74,6 @@ export {
   angleOfPointABFromXY,
   degToRad,
   radToDeg,
-  getPercent
+  getPercent,
+  swapClass,
 };

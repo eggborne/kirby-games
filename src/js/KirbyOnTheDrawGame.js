@@ -80,7 +80,7 @@ export default class KirbyOnTheDrawGame {
           groupAmount: 3,
           groupTimeGap: 300, // ms
           groupFrequency: 24, // .1s
-          bombPercentChance: 30,
+          bombPercentChance: 15,
           originLimit: {
             min: 0,
             max: 3
@@ -92,10 +92,10 @@ export default class KirbyOnTheDrawGame {
         undefined,
         {
           roundLength: 120,
-          groupAmount: 6,
-          groupTimeGap: 200, // ms
-          groupFrequency: 30, // .1s
-          bombPercentChance: 40,
+          groupAmount: 5 ,
+          groupTimeGap: 300, // ms
+          groupFrequency: 36, // .1s
+          bombPercentChance: 20,
           originLimit: {
             min: 0,
             max: 5
@@ -128,21 +128,24 @@ export default class KirbyOnTheDrawGame {
       undefined,
       {
         name: 'lemon',
-        targetFrequency: 8,
+        targetFrequency: 7,
         reactionSpeed: 400,
-        bombAvoidance: 50,
+        reloadTime: 60,
+        bombAvoidance: 100,
       },
       {
         name: 'strawberry',
-        targetFrequency: 7,
+        targetFrequency: 6,
         reactionSpeed: 500,
-        bombAvoidance: 75,
+        reloadTime: 50,
+        bombAvoidance: 20,
       },
       {
         name: 'lime',
         targetFrequency: 6,
         reactionSpeed: 300,
-        bombAvoidance: 40,
+        reloadTime: 40,
+        bombAvoidance: 20,
       },
     ];
 
@@ -161,8 +164,12 @@ export default class KirbyOnTheDrawGame {
 
     this.assignHandlers();
     this.players.push(new Kirby('player'), new Kirby('lemon'), new Kirby('strawberry'), new Kirby('lime'));
-    this.players.forEach((player, p) => {
-      player.cpuKirbyData = this.cpuKirbyData[p];
+    this.players.filter(player => player.type !== 'player').forEach((player, p, arr) => {
+      console.log('checking arr', arr);
+      console.log('assigning cpuKirbyData', this.cpuKirbyData);
+      player.cpuKirbyData = this.cpuKirbyData[p+1];
+      console.log('player -->', player);
+      player.reloadTime = player.cpuKirbyData.reloadTime;
     });
 
     this.timerContainer = document.createElement('div');
@@ -380,7 +387,7 @@ export default class KirbyOnTheDrawGame {
     await pause(800); // curtain time
     // document.getElementById(this.className).classList.remove('hidden');
     for (let player of this.players) {
-      await player.reloadAmmo(true);
+      await player.reloadAmmo();
       await pause(200);
     }
 

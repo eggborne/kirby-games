@@ -1,10 +1,12 @@
-import { pause } from './util.js';
+import { pause, swapClass } from './util.js';
 
 export default class Kirby {
   constructor(type) {
     this.type = type;
+    this.maxAmmo = 8;
     this.ammo = 0;
     this.score = 0;
+    this.reloadTime = 40; // ms per bullet
 
     this.container = document.createElement('div');
     this.container.classList.add('kotd-kirby');
@@ -45,29 +47,36 @@ export default class Kirby {
   }
 
   async reloadAmmo(instant) {
+    console.warn(this.type, 'reloading');
     if (!this.bombed) {
       this.reloading = true;
-      let reloadTime = (8 - this.ammo) * 40;
-      if (this.type !== 'player') {
-        reloadTime *= 3;
-      }
+      let reloadTime = instant ? 1 : (this.maxAmmo - this.ammo) * this.reloadTime;
       this.container.classList.remove('drawn');
-      this.container.classList.add('resting');
+      let frameAnimationGap = Math.floor(reloadTime / 5);
+      this.container.classList.add('reloading-1');
+      await pause(frameAnimationGap);
+      swapClass(this.container, 'reloading-1', 'reloading-2');
+      await pause(frameAnimationGap);
+      swapClass(this.container, 'reloading-2', 'reloading-3');
+      await pause(frameAnimationGap);
+      swapClass(this.container, 'reloading-3', 'reloading-2');
+      await pause(frameAnimationGap);
+      swapClass(this.container, 'reloading-2', 'reloading-1');
+      await pause(frameAnimationGap);
   
       if (!instant && this.type === 'player') {
         document.getElementById('kotd-ammo-bar').classList.add('off-y');
         document.querySelector('#kotd-score-bar #cylinder').classList.add('spinning');
         document.getElementById('kotd').classList.remove('out-of-ammo');
       }
-      await pause(instant ? 1 : reloadTime);
       if (!instant && this.type === 'player') {
         document.querySelector('#kotd-score-bar #cylinder').classList.remove('spinning');
         await pause(60);
         document.getElementById('kotd-ammo-bar').classList.remove('off-y');
       }
-      this.ammo = 8;
+      this.ammo = this.maxAmmo;
       this.reloading = false;
-      this.container.classList.remove('resting');
+      this.container.classList.remove('reloading-1');
       this.container.classList.add('drawn');
       this.renderAmmo();
     }

@@ -110,8 +110,8 @@ export default class Enemy {
 
   getRandomArcProperties() {
     let randomArcHeight = `${randomInt(80, 120)}%`;
-    let randomSpreadDistance = `${randomInt(160, 240)}%`;
-    let randomArcSpeed = `${randomInt(900, 1100)}ms`;
+    let randomSpreadDistance = `${randomInt(100, 240)}%`;
+    let randomArcSpeed = `${randomInt(700, 1300)}ms`;
     return { randomArcHeight, randomSpreadDistance, randomArcSpeed };
   }
 
@@ -127,11 +127,16 @@ export default class Enemy {
     for (let i = 0; i < starAmount; i++) {
       let starElement = document.createElement('div');
       starElement.classList.add('star');
-      // let arcProperties = this.getRandomArcProperties();
-      starElement.style.setProperty('--arc-height', `${80 + (i * (40/starAmount))}%`);
-      starElement.style.setProperty('--spread-distance', `${160 + (i * (80/starAmount))}%`);
-      // starElement.style.setProperty('--arc-speed', `${900 + (i * (200/starAmount))}ms`);
-      starElement.style.setProperty('--arc-speed', `1000ms`);
+      let arcProperties = this.getRandomArcProperties();
+      // console.log(arcProperties);
+
+      // starElement.style.setProperty('--arc-height', `${80 + (i * (40/starAmount))}%`);
+      // starElement.style.setProperty('--spread-distance', `${160 + (i * (80/starAmount))}%`);
+      // // starElement.style.setProperty('--arc-speed', `${900 + (i * (200/starAmount))}ms`);
+      // starElement.style.setProperty('--arc-speed', `1000ms`);
+      starElement.style.setProperty('--arc-height', `${arcProperties.randomArcHeight}`);
+      starElement.style.setProperty('--spread-distance', `${arcProperties.randomSpreadDistance}`);
+      starElement.style.setProperty('--arc-speed', `${arcProperties.randomArcSpeed}`);
       if (randomInt(0,1)) {
         starElement.classList.add('right');
       }

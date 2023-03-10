@@ -29,6 +29,10 @@
   display: none !important;
 }
 
+html {
+  background-color: black;
+}
+
 body {
   font-family: kirbyFont;
   image-rendering: pixelated;
@@ -40,6 +44,8 @@ body {
   justify-content: space-between;
   user-select: none;
   overflow: hidden;
+  opacity: 1 !important;
+  transition: opacity 600ms ease;
 }
 
 button {
@@ -1838,6 +1844,18 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   animation: hop 200ms ease forwards;
   animation-delay: 100ms;
 }
+.kotd-kirby.reloading-1 {
+  background-position-x: calc(var(--spacing-x) * var(--starting-bg-x));
+  background-position-y: calc(var(--spacing-x) * 1);
+}
+.kotd-kirby.reloading-2 {
+  background-position-x: calc(var(--spacing-x) * calc(var(--starting-bg-x) + 1));
+  background-position-y: calc(var(--spacing-x) * 1);
+}
+.kotd-kirby.reloading-3 {
+  background-position-x: calc(var(--spacing-x) * calc(var(--starting-bg-x) + 2));
+  background-position-y: calc(var(--spacing-x) * 1);
+}
 
 .enemy-origin {
   position: absolute;
@@ -2191,6 +2209,10 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 .bullet-hole.lime > .star {
   background-position-y: calc(var(--spacing-y) * 3);
+}
+
+.star.muzzle-flash {
+
 }
 
 .rank::after {
