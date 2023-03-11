@@ -1,5 +1,19 @@
 import { pause, randomInt } from '../util.js';
 
+
+class RandomNumberGenerator {
+  constructor(seed) {
+    console.log(`Creating RandomNumberGenerator with seed ${seed}`);
+    this.seed = seed;
+  }
+
+  next() {
+    // use a Linear Congruential Generator (LCG) algorithm to generate the next random number
+    this.seed = (this.seed * 1103515245 + 12345) % 2147483648;
+    return this.seed / 2147483648;
+  }
+}
+
 export default class Enemy {
   constructor(type, positionClass, sizeClass) {
     this.spawnedAt = Date.now();
@@ -11,6 +25,7 @@ export default class Enemy {
     this.container.classList.add(this.sizeClass);
     this.container.classList.add(this.positionClass);
     this.container.classList.add('obscured');
+    this.randomGenerator = new RandomNumberGenerator(Date.now());
     if (this.type === 'bomb') {
       setTimeout(async () => {
         this.recede();
@@ -63,24 +78,10 @@ export default class Enemy {
     valueImage.classList.add('enemy-dependent');
     valueImage.classList.add(this.sizeClass);
     valueImage.classList.add(this.positionClass);
-    // console.log('rect------------------------------------');
-    // console.log('bound', this.enemyElement.getBoundingClientRect());
-    // console.log('offsetLeft', this.enemyElement.offsetLeft);
-    // console.log('offsetTop', this.enemyElement.offsetTop);
-    // console.log('clientLeft', this.enemyElement.left);
-    // console.log('getClientRects', this.enemyElement.getClientRects);
-    // console.log('rect------------------------------------');
 
-    let deathX = 
-      this.enemyElement.getBoundingClientRect().left
-    // - this.enemyElement.getBoundingClientRect().width
-    ;
+    let deathX = this.enemyElement.getBoundingClientRect().left ;
+    let deathY = this.enemyElement.getBoundingClientRect().top ;
 
-    let deathY = 
-      this.enemyElement.getBoundingClientRect().top
-    // - this.enemyElement.getBoundingClientRect().height
-    ;
-    
     let bgYPosition =
       killerType === 'lemon' ? 1 :
         killerType === 'strawberry' ? 2 :
@@ -105,13 +106,17 @@ export default class Enemy {
     await pause(600);
     this.container.remove();
     delete this.game.activeEnemies[this.container.id];
+  }
 
+  getRandomNumber(min, max) {
+    let rand = this.randomGenerator.next();
+    return Math.floor(rand * (max - min + 1) + min);
   }
 
   getRandomArcProperties() {
-    let randomArcHeight = `${randomInt(80, 120)}%`;
-    let randomSpreadDistance = `${randomInt(100, 240)}%`;
-    let randomArcSpeed = `${randomInt(700, 1300)}ms`;
+    let randomArcHeight = `${this.getRandomNumber(20, 100)}%`;
+    let randomSpreadDistance = `${this.getRandomNumber(50, 400)}%`;
+    let randomArcSpeed = `${this.getRandomNumber(800, 1300)}ms`;
     return { randomArcHeight, randomSpreadDistance, randomArcSpeed };
   }
 
@@ -123,27 +128,27 @@ export default class Enemy {
     holeElement.classList.add(killerType);
     holeElement.style.left = `${coords.x}px`;
     holeElement.style.top = `${coords.y}px`;
-    let starAmount = 12;
+    let starAmount = 8;
     for (let i = 0; i < starAmount; i++) {
       let starElement = document.createElement('div');
-      starElement.classList.add('star');
+      
       let arcProperties = this.getRandomArcProperties();
-      // console.log(arcProperties);
 
       // starElement.style.setProperty('--arc-height', `${80 + (i * (40/starAmount))}%`);
       // starElement.style.setProperty('--spread-distance', `${160 + (i * (80/starAmount))}%`);
       // // starElement.style.setProperty('--arc-speed', `${900 + (i * (200/starAmount))}ms`);
       // starElement.style.setProperty('--arc-speed', `1000ms`);
-      starElement.style.setProperty('--arc-height', `${arcProperties.randomArcHeight}`);
-      starElement.style.setProperty('--spread-distance', `${arcProperties.randomSpreadDistance}`);
-      starElement.style.setProperty('--arc-speed', `${arcProperties.randomArcSpeed}`);
       if (randomInt(0,1)) {
         starElement.classList.add('right');
       }
+      starElement.style.setProperty('--arc-height', `${arcProperties.randomArcHeight}`);
+      starElement.style.setProperty('--spread-distance', `${arcProperties.randomSpreadDistance}`);
+      starElement.style.setProperty('--arc-speed', `${arcProperties.randomArcSpeed}`);
+      starElement.classList.add('star');
       holeElement.appendChild(starElement);
-      pause(10).then(() => {
-        starElement.classList.add('spinning');
-      });
+      // pause(10).then(() => {
+      //   starElement.classList.add('spinning');
+      // });
     }
 
     document.querySelector('#kotd-screen .bottom-screen').appendChild(holeElement);

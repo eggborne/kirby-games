@@ -277,8 +277,8 @@ export default class KirbyOnTheDrawGame {
     newEnemy.pointValue = this.itemByAttribute('name', enemyType, this.enemyData).pointValue;
     await pause(20);
     newEnemy.container.classList.remove('obscured');
-    await pause(300);
-    newEnemy.container.classList.add('cpu-vulnerable');
+    // await pause(300);
+    // newEnemy.container.classList.add('cpu-vulnerable');
   }
 
   renderRanks() {

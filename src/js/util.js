@@ -1,5 +1,6 @@
 const pause = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
 const distanceFromABToXY = (a, b, x, y) => {
   let distanceX = x - a;
   let distanceY = y - b;
