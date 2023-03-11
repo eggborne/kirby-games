@@ -61,7 +61,7 @@ export default class KirbyOnTheDrawGame {
       [
         undefined,
         {
-          roundLength: 2,
+          roundLength: 30,
           groupAmount: 1,
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
