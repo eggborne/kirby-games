@@ -1,4 +1,4 @@
-import { pause, randomInt, getPercent, swapClass } from './util.js';
+import { pause, randomInt, getPercent, swapClass } from '../util.js';
 import { Howl } from 'howler';
 
 let totalKBLoaded = 0;
@@ -94,7 +94,7 @@ export default class SamuraiKirbyGame {
   async loadImages() {
     let startedLoadAt = Date.now();
     this.images = await importAll(
-      require.context("../media/samurai-kirby/images/", true, /\.(png)$/)
+      require.context("../../media/samurai-kirby/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt));
     document.querySelector('#samurai-kirby .loading-bar > .details').innerText = `Loaded ${totalKBLoaded}kb in ${Date.now() - startedLoadAt}ms`;
@@ -116,7 +116,7 @@ export default class SamuraiKirbyGame {
   loadSound(soundName, extension) {
     this.sounds[soundName] = {};
     this.sounds[soundName].file = new Howl({
-      src: [require(`../media/${this.className}/sounds/${soundName}.${extension}`)],
+      src: [require(`../../media/${this.className}/sounds/${soundName}.${extension}`)],
       preload: true,
     });
   }

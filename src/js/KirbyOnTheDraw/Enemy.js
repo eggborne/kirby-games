@@ -1,4 +1,4 @@
-import { pause, randomInt } from './util.js';
+import { pause, randomInt } from '../util.js';
 
 export default class Enemy {
   constructor(type, positionClass, sizeClass) {

@@ -1,4 +1,4 @@
-import { pause, randomInt, getPercent } from './util.js';
+import { pause, randomInt, getPercent } from '../util.js';
 import { Howl } from 'howler';
 import Enemy from './Enemy';
 import Kirby from './Kirby';
@@ -208,7 +208,7 @@ export default class KirbyOnTheDrawGame {
   async loadImages() {
     let startedLoadAt = Date.now();
     this.images = await importAll(
-      require.context("../media/kotd/images/", true, /\.(png)$/)
+      require.context("../../media/kotd/images/", true, /\.(png)$/)
     );
     console.log('loaded in', (Date.now() - startedLoadAt), this.images);
     await pause(100);
@@ -223,7 +223,7 @@ export default class KirbyOnTheDrawGame {
   loadSound(soundName, extension) {
     this.sounds[soundName] = {};
     this.sounds[soundName].file = new Howl({
-      src: [require(`../media/${this.className}/sounds/${soundName}.${extension}`)],
+      src: [require(`../../media/${this.className}/sounds/${soundName}.${extension}`)],
       preload: true,
     });
   }

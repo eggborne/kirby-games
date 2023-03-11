@@ -1,8 +1,8 @@
 import './css/style.css';
 import { pause } from './js/util.js';
 import { Howl, Howler } from 'howler';
-import SamuraiKirbyGame from './js/SamuraiKirbyGame';
-import KirbyOnTheDrawGame from './js/KirbyOnTheDrawGame';
+import SamuraiKirbyGame from './js/SamuraiKirby/SamuraiKirbyGame';
+import KirbyOnTheDrawGame from './js/KirbyOnTheDraw/KirbyOnTheDrawGame';
 // import BombRallyGame from './js/BombRallyGame';
 
 let isMobile = true;

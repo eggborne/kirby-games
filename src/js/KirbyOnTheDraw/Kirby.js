@@ -1,4 +1,4 @@
-import { pause, swapClass } from './util.js';
+import { pause, swapClass } from '../util.js';
 
 export default class Kirby {
   constructor(type) {
