@@ -1671,9 +1671,51 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
   align-items: center;
 }
 
+.kirby-stack > .kotd-kirby::after {
+  content: '';
+  --starting-bg-x: ;
+  --starting-bg-y: ;
+  position: absolute;
+  right: calc(var(--kotd-kirby-height) / 16);
+  bottom: calc(var(--kotd-kirby-height) / 16);
+  background-image: inherit;
+  background-repeat: no-repeat !important;
+  background-size: auto 800%;
+  width: calc(var(--kotd-kirby-height) / 2);
+  height: calc(var(--kotd-kirby-height) / 2);
+  background-position-x: var(--starting-bg-x);
+  background-position-y: var(--starting-bg-y);
+}
+
+.kirby-stack > .kotd-kirby.player::after {
+  background-position-x: calc((var(--kotd-kirby-height) * -1));
+  background-position-y: calc((var(--kotd-kirby-height) * -3));
+}
+.kirby-stack > .kotd-kirby.lemon::after {
+  --starting-bg-x: calc((var(--kotd-kirby-height) * -4));
+  --starting-bg-y: calc((var(--kotd-kirby-height) * -3));
+}
+.kirby-stack > .kotd-kirby.strawberry::after {
+  --starting-bg-x: calc((var(--kotd-kirby-height) * -7));
+  --starting-bg-y: calc((var(--kotd-kirby-height) * -3));
+}
+.kirby-stack > .kotd-kirby.lime::after {
+  --starting-bg-x: calc((var(--kotd-kirby-height) * -10));
+  --starting-bg-y: calc((var(--kotd-kirby-height) * -3));
+}
+
+.kirby-stack > .kotd-kirby.blinking-1::after {
+  background-position-x: calc(var(--starting-bg-x) + (var(--kotd-kirby-height) * -0.5));
+}
+.kirby-stack > .kotd-kirby.blinking-2::after {
+  background-position-x: calc(var(--starting-bg-x) + (var(--kotd-kirby-height) * -1));
+}
+
 #kotd-results-kirby-area .kirby-stack.rank-1 .kotd-kirby {
-  background-position-x: calc(var(--spacing-x) * 2);
   background-position-y: calc(var(--spacing-y) * 2);
+}
+#kotd-results-kirby-area .kirby-stack.rank-1 .kotd-kirby::after {
+  display: none;
 }
 #kotd-results-kirby-area .kirby-stack.rank-2 .kotd-kirby {
   background-position-y: calc(var(--spacing-y) * 3);
@@ -1683,6 +1725,9 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 #kotd-results-kirby-area .kirby-stack.rank-4 .kotd-kirby {
   background-position-y: calc(var(--spacing-y) * 3);
+}
+#kotd-results-kirby-area .kirby-stack.rank-4 .kotd-kirby::after {
+  background-position-y: calc(var(--starting-bg-y) + (var(--kotd-kirby-height) * -0.5));
 }
 
 #kotd-results-kirby-area .platform.middle {
@@ -2236,11 +2281,11 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 
 .bullet-hole > .star.spinning {
-  rotate: -720deg;
+  rotate: -360deg;
 }
 
 .bullet-hole > .star.spinning.right {
-  rotate: 720deg;
+  rotate: 360deg;
 }
 
 .bullet-hole > .star.right {

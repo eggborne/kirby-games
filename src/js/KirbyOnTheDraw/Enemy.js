@@ -115,7 +115,7 @@ export default class Enemy {
 
   getRandomArcProperties() {
     let randomArcHeight = `${this.getRandomNumber(20, 100)}%`;
-    let randomSpreadDistance = `${this.getRandomNumber(50, 400)}%`;
+    let randomSpreadDistance = `${this.getRandomNumber(50, 200)}%`;
     let randomArcSpeed = `${this.getRandomNumber(800, 1300)}ms`;
     return { randomArcHeight, randomSpreadDistance, randomArcSpeed };
   }
@@ -128,17 +128,13 @@ export default class Enemy {
     holeElement.classList.add(killerType);
     holeElement.style.left = `${coords.x}px`;
     holeElement.style.top = `${coords.y}px`;
-    let starAmount = 8;
+    let starAmount = 6;
     for (let i = 0; i < starAmount; i++) {
       let starElement = document.createElement('div');
       
       let arcProperties = this.getRandomArcProperties();
 
-      // starElement.style.setProperty('--arc-height', `${80 + (i * (40/starAmount))}%`);
-      // starElement.style.setProperty('--spread-distance', `${160 + (i * (80/starAmount))}%`);
-      // // starElement.style.setProperty('--arc-speed', `${900 + (i * (200/starAmount))}ms`);
-      // starElement.style.setProperty('--arc-speed', `1000ms`);
-      if (randomInt(0,1)) {
+      if (i % 2 === 0) {
         starElement.classList.add('right');
       }
       starElement.style.setProperty('--arc-height', `${arcProperties.randomArcHeight}`);
@@ -146,9 +142,9 @@ export default class Enemy {
       starElement.style.setProperty('--arc-speed', `${arcProperties.randomArcSpeed}`);
       starElement.classList.add('star');
       holeElement.appendChild(starElement);
-      // pause(10).then(() => {
-      //   starElement.classList.add('spinning');
-      // });
+      pause(10).then(() => {
+        starElement.classList.add('spinning');
+      });
     }
 
     document.querySelector('#kotd-screen .bottom-screen').appendChild(holeElement);

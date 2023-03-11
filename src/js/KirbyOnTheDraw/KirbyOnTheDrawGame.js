@@ -61,7 +61,7 @@ export default class KirbyOnTheDrawGame {
       [
         undefined,
         {
-          roundLength: 30,
+          roundLength: 2,
           groupAmount: 1,
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
@@ -132,7 +132,7 @@ export default class KirbyOnTheDrawGame {
         reactionSpeed: 400,
         reloadTime: 60,
         maxAmmo: 8,
-        bombAvoidance: 20,
+        bombAvoidance: 70,
       },
       {
         name: 'strawberry',
@@ -140,7 +140,7 @@ export default class KirbyOnTheDrawGame {
         reactionSpeed: 400,
         reloadTime: 60,
         maxAmmo: 8,
-        bombAvoidance: 30,
+        bombAvoidance: 80,
       },
       {
         name: 'lime',
@@ -148,7 +148,7 @@ export default class KirbyOnTheDrawGame {
         reactionSpeed: 400,
         reloadTime: 60,
         maxAmmo: 8,
-        bombAvoidance: 35,
+        bombAvoidance: 90,
       },
     ];
 
@@ -277,8 +277,7 @@ export default class KirbyOnTheDrawGame {
     newEnemy.pointValue = this.itemByAttribute('name', enemyType, this.enemyData).pointValue;
     await pause(20);
     newEnemy.container.classList.remove('obscured');
-    // await pause(300);
-    // newEnemy.container.classList.add('cpu-vulnerable');
+    // await pa .container.classList.add('cpu-vulnerable');
   }
 
   renderRanks() {
