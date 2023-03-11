@@ -105,6 +105,7 @@ export default class Enemy {
     this.game.renderRanks();
     await pause(600);
     this.container.remove();
+    valueImage.remove();
     delete this.game.activeEnemies[this.container.id];
   }
 
