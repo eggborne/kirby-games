@@ -1673,8 +1673,6 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 
 .kirby-stack > .kotd-kirby::after {
   content: '';
-  --starting-bg-x: ;
-  --starting-bg-y: ;
   position: absolute;
   right: calc(var(--kotd-kirby-height) / 16);
   bottom: calc(var(--kotd-kirby-height) / 16);
@@ -1709,6 +1707,19 @@ body.round-started #samurai-kirby:not(.showing-score, .resetting) .player-status
 }
 .kirby-stack > .kotd-kirby.blinking-2::after {
   background-position-x: calc(var(--starting-bg-x) + (var(--kotd-kirby-height) * -1));
+}
+
+.kirby-stack.rank-1 > .kotd-kirby.celebrating {
+  background-position-y: calc(var(--spacing-y) * 1);
+  background-position-x: var(--starting-bg-x);
+}
+.kirby-stack.rank-1 > .kotd-kirby.celebrating-1 {
+  background-position-y: calc(var(--spacing-y) * 2);
+  background-position-x: calc((var(--starting-bg-x) + 1) * var(--spacing-x));
+}
+.kirby-stack.rank-1 > .kotd-kirby.celebrating-2 {
+  background-position-y: calc(var(--spacing-y) * 2);
+  background-position-x: calc((var(--starting-bg-x) + 2) * var(--spacing-x));
 }
 
 #kotd-results-kirby-area .kirby-stack.rank-1 .kotd-kirby {

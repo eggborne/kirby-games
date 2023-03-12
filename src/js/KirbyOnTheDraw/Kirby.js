@@ -1,4 +1,4 @@
-import { pause, swapClass } from '../util.js';
+import { randomInt, pause, swapClass } from '../util.js';
 
 export default class Kirby {
   constructor(type) {
@@ -7,6 +7,10 @@ export default class Kirby {
     this.ammo = 0;
     this.score = 0;
     this.reloadTime = 40; // ms per bullet
+
+    this.blinkInterval;
+
+    this.scoreKirbyElement = document.querySelector(`#kotd-results-kirby-area .kotd-kirby.${type}`);
 
     this.container = document.createElement('div');
     this.container.classList.add('kotd-kirby');
@@ -44,6 +48,40 @@ export default class Kirby {
   set reloading(newStatus) {
     let action = newStatus ? 'add' : 'remove';
     this.container.classList[action]('reloading');
+  }
+
+  async startBlinkSequence(stop) {
+    if (stop) {
+      clearInterval(this.blinkInterval);
+    } else {
+      this.blinkInterval = setInterval(async () => {
+        swapClass(this.scoreKirbyElement, 'blinking', 'blinking-1');
+        await pause(60);
+        swapClass(this.scoreKirbyElement, 'blinking-1', 'blinking-2');
+        await pause(60);
+        swapClass(this.scoreKirbyElement, 'blinking-2', 'blinking-1');
+        await pause(60);
+        swapClass(this.scoreKirbyElement, 'blinking-1', 'blinking');
+        await pause(60);
+      }, randomInt(1000, 2000));
+    }
+  }
+
+  async startCelebrationSequence(stop) {
+    if (stop) {
+      clearInterval(this.blinkInterval);
+    } else {
+      this.blinkInterval = setInterval(async () => {
+        swapClass(this.scoreKirbyElement, 'celebrating', 'celebrating-2');
+        await pause(200);
+        swapClass(this.scoreKirbyElement, 'celebrating-2', 'celebrating');
+        await pause(200);
+        swapClass(this.scoreKirbyElement, 'celebrating', 'celebrating-1');
+        await pause(200);
+        swapClass(this.scoreKirbyElement, 'celebrating-1', 'celebrating');
+        await pause(200);
+      }, 800);
+    }
   }
 
   async reloadAmmo(instant) {

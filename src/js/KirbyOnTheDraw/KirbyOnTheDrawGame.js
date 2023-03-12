@@ -61,7 +61,7 @@ export default class KirbyOnTheDrawGame {
       [
         undefined,
         {
-          roundLength: 30,
+          roundLength: 3,
           groupAmount: 1,
           groupTimeGap: 180, // ms
           groupFrequency: 16, // .1s
@@ -93,11 +93,11 @@ export default class KirbyOnTheDrawGame {
         {
           roundLength: 120,
           groupAmount: 5 ,
-          groupTimeGap: 300, // ms
+          groupTimeGap: 400, // ms
           groupFrequency: 36, // .1s
           bombPercentChance: 30,
           originLimit: {
-            min: 0,
+            min: 1,
             max: 5
           },
         }
@@ -441,19 +441,29 @@ export default class KirbyOnTheDrawGame {
         }
         if (this.roundTimer === 0) {
           clearInterval(this.spawnInterval);
-          document.getElementById('kotd-top-curtains').classList.add('closed');
-          document.getElementById('kotd-bottom-curtains').classList.add('closed');
-          timerElement.classList.remove('low');
-          await this.descendSign(this.finishSign, true, 1000);
-          // change to results screen, open curtains
-          document.querySelector('#kotd-screen > .top-screen.results-screen').classList.add('showing');
-          document.querySelector('#kotd-screen > .bottom-screen.results-screen').classList.add('showing');
-          document.getElementById('kotd-top-curtains').classList.remove('closed');
-          document.getElementById('kotd-bottom-curtains').classList.remove('closed');
-
+          this.showResultsScreen();
         }
       }
     }, this.spawnTickDuration);
+  }
+
+  async showResultsScreen() {
+    document.getElementById('kotd-top-curtains').classList.add('closed');
+    document.getElementById('kotd-bottom-curtains').classList.add('closed');
+    document.getElementById(`kotd-round-timer-area`).classList.remove('low');
+    await this.descendSign(this.finishSign, true, 1000);
+    document.querySelector('#kotd-screen > .top-screen.results-screen').classList.add('showing');
+    document.querySelector('#kotd-screen > .bottom-screen.results-screen').classList.add('showing');
+    document.getElementById('kotd-top-curtains').classList.remove('closed');
+    document.getElementById('kotd-bottom-curtains').classList.remove('closed');
+    for (let player of this.players) {
+      if (document.querySelector(`.kirby-stack.${player.type}`).classList.contains('rank-1')) {
+        player.startCelebrationSequence();
+      } else {
+        player.startBlinkSequence();        
+        await pause(randomInt(500, 1200));
+      }
+    }
   }
 
   randomEnemy(enemiesOnly) {
